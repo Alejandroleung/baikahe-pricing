@@ -293,11 +293,11 @@
     <div class="form-row">
       <div class="form-label">*成品尺寸</div>
       <div class="dim-group">
-        <input type="number" id="length" value="200" min="50" max="800" placeholder="长">
+        <input type="number" id="length" min="50" max="800" placeholder="长">
         <span>x</span>
-        <input type="number" id="width" value="150" min="50" max="600" placeholder="宽">
+        <input type="number" id="width" min="50" max="600" placeholder="宽">
         <span>x</span>
-        <input type="number" id="height" value="80" min="20" max="400" placeholder="高">
+        <input type="number" id="height" min="20" max="400" placeholder="高">
         <span>mm</span>
       </div>
     </div>
@@ -308,7 +308,7 @@
     <div class="form-row">
       <div class="form-label">*印刷数量</div>
       <div style="flex:1;">
-        <input type="number" class="qty-input" id="quantity" value="1000" min="100">
+        <input type="number" class="qty-input" id="quantity" min="100">
         <span style="font-size:14px;color:#999;margin-left:8px;">个</span>
       </div>
     </div>
@@ -416,7 +416,7 @@ const boxTypes=[
   {id:'bag',name:'手提袋',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="14" y="28" width="44" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M24 28 Q24 12 36 12 Q48 12 48 28" stroke="#ff6b00" stroke-width="2" fill="none"/></svg>'},
   {id:'hook-lock',name:'扣底挂钩盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="34" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M18 56 L36 66 L54 56" stroke="#ff6b00" stroke-width="2" stroke-dasharray="3 2"/><rect x="30" y="2" width="12" height="8" rx="2" stroke="#ff6b00" stroke-width="1.5" fill="#333"/><circle cx="36" cy="6" r="2" stroke="#ff6b00" stroke-width="1" fill="#333"/></svg>'}
 ];
-let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:200,width:150,height:80,quantity:1000};
+let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0};
 function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')"><div class="box-icon">'+b.icon+'</div><h3>'+b.name+'</h3></div>';}).join('');}
 function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
 function setupOG(gid,sk){document.getElementById(gid).addEventListener('click',function(e){var i=e.target.closest('.option-item');if(!i||i.classList.contains('disabled'))return;i.parentElement.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active')});i.classList.add('active');S[sk]=i.dataset.value;calcPrice();});}
@@ -589,10 +589,12 @@ function calcPrice(){
   // 更新展开尺寸
   var unfolded = getUnfoldedSize(b.id, S.length, S.width, S.height);
   var el = document.getElementById('unfoldedSize');
-  if (unfolded) {
+  if (unfolded && S.length > 0 && S.width > 0 && S.height > 0) {
     el.innerHTML = '<strong>'+unfolded.width+'</strong> &times; <strong>'+unfolded.height+'</strong> mm';
-  } else {
+  } else if (!unfolded) {
     el.textContent = '该盒型暂无展开公式，需按实际刀模图计算';
+  } else {
+    el.textContent = '选择盒型并输入尺寸后自动计算';
   }
 }
 
