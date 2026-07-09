@@ -246,6 +246,17 @@
     .price-result .breakdown-item { text-align: center; }
     .price-result .breakdown-item .val { font-size: 18px; font-weight: 700; color: #ff8c00; }
     .price-result .breakdown-item .lbl { font-size: 12px; color: #777; }
+    .price-result .weight-info {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-top: 14px; padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px; color: #888; position: relative; z-index: 1;
+    }
+    .price-result .weight-info strong { color: #ff8c00; font-weight: 600; }
+    .price-result .weight-info .wi-dot {
+      display: inline-block; width: 3px; height: 3px;
+      border-radius: 50%; background: #555;
+    }
     /* ---- Button ---- */
     .btn-submit {
       display: inline-block;
@@ -391,6 +402,11 @@
       <div class="breakdown-item"><div class="val" id="printCost">¥0</div><div class="lbl">印刷费</div></div>
       <div class="breakdown-item"><div class="val" id="processCost">¥0</div><div class="lbl">工艺费</div></div>
       <div class="breakdown-item"><div class="val" id="unitPrice">¥0</div><div class="lbl">单价/个</div></div>
+    </div>
+    <div class="weight-info">
+      <span>单盒纸重: <strong id="singleWeight">0g</strong></span>
+      <span class="wi-dot"></span>
+      <span>总纸重: <strong id="totalWeight">0kg</strong></span>
     </div>
   </div>
   <div style="text-align:center;">
@@ -585,6 +601,19 @@ function calcPrice(){
   document.getElementById('unitPrice').textContent = '¥' + u.toFixed(0);
 
   document.getElementById('printCost').textContent = '¥' + displayPC.toFixed(0);
+
+  // 重量估算
+  var singleG = pw * 1000;
+  var totalKg = pw * q;
+  var swEl = document.getElementById('singleWeight');
+  var twEl = document.getElementById('totalWeight');
+  if (S.length > 0 && S.width > 0 && S.height > 0 && q > 0) {
+    swEl.textContent = singleG.toFixed(0) + 'g';
+    twEl.textContent = totalKg.toFixed(1) + 'kg';
+  } else {
+    swEl.textContent = '0g';
+    twEl.textContent = '0kg';
+  }
 
   // 更新展开尺寸
   var unfolded = getUnfoldedSize(b.id, S.length, S.width, S.height);
