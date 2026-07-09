@@ -1,0 +1,176 @@
+- generic [ref=e5]:
+  - generic [ref=e6]:
+    - generic [ref=e8] [cursor=pointer]:
+      - link "收藏本站" [ref=e9]:
+        - /url: javascript:void(0);
+        - generic [ref=e10]: 
+        - text: 收藏本站
+      - generic [ref=e11]:
+        - link "登录/注册" [ref=e12]:
+          - /url: /login
+        - link "我的订单" [ref=e13]:
+          - /url: /user/orderList?type=1
+        - link "购物车 (0)" [ref=e14]:
+          - /url: /shoppingCart
+          - generic [ref=e15]: 
+          - text: 购物车 (0)
+    - generic [ref=e18]:
+      - img [ref=e20] [cursor=pointer]
+      - generic [ref=e21]:
+        - link "自助报价" [ref=e22] [cursor=pointer]:
+          - /url: /
+        - link "下载刀模" [ref=e23] [cursor=pointer]:
+          - /url: /cutter
+        - link "领优惠券" [ref=e24] [cursor=pointer]:
+          - /url: /login
+  - generic [ref=e25]:
+    - generic [ref=e27]:
+      - tablist [ref=e31]:
+        - tab "卡纸盒" [selected] [ref=e32]
+        - tab "礼盒" [ref=e33]
+        - tab "自定义盒型" [ref=e34]
+      - tabpanel "卡纸盒" [ref=e36]:
+        - list [ref=e37]:
+          - listitem [ref=e38] [cursor=pointer]:
+            - generic [ref=e42]: 双插盒
+            - generic [ref=e43]: 0人付款
+          - listitem [ref=e44] [cursor=pointer]:
+            - generic [ref=e48]: 扣底盒
+            - generic [ref=e49]: 0人付款
+          - listitem [ref=e50] [cursor=pointer]:
+            - generic [ref=e54]: 平粘盒
+            - generic [ref=e55]: 0人付款
+          - listitem [ref=e56] [cursor=pointer]:
+            - generic [ref=e60]: 飞机盒
+            - generic [ref=e61]: 0人付款
+          - listitem [ref=e62] [cursor=pointer]:
+            - generic [ref=e66]: 封套盒
+            - generic [ref=e67]: 0人付款
+          - listitem [ref=e68] [cursor=pointer]:
+            - generic [ref=e72]: 天盒
+            - generic [ref=e73]: 0人付款
+          - listitem [ref=e74] [cursor=pointer]:
+            - generic [ref=e78]: 地盒
+            - generic [ref=e79]: 0人付款
+          - listitem [ref=e80] [cursor=pointer]:
+            - generic [ref=e84]: 自动锁底盒
+            - generic [ref=e85]: 0人付款
+          - listitem [ref=e86] [cursor=pointer]:
+            - generic [ref=e90]: 双插挂钩盒
+            - generic [ref=e91]: 0人付款
+          - listitem [ref=e92] [cursor=pointer]:
+            - generic [ref=e96]: 手提袋
+            - generic [ref=e97]: 0人付款
+          - listitem [ref=e98] [cursor=pointer]:
+            - generic [ref=e102]: 扣底挂钩盒
+            - generic [ref=e103]: 0人付款
+    - generic [ref=e104]:
+      - generic [ref=e107]:
+        - tablist [ref=e111]:
+          - tab "数码报价" [ref=e112]
+          - tab "合版报价" [selected] [ref=e113]
+          - tab "专版报价" [ref=e114]
+          - tab "加工报价" [ref=e115]
+          - tab "温馨提示:加工报价需要先选择自定义盒型!" [ref=e116]
+        - generic [ref=e117]:
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - generic [ref=e121]: "*成品外尺寸"
+              - generic [ref=e123]:
+                - generic [ref=e127]:
+                  - textbox "长" [ref=e128]
+                  - generic [ref=e129]: x
+                - generic [ref=e133]:
+                  - textbox "宽" [ref=e134]
+                  - generic [ref=e135]: x
+                - generic [ref=e139]:
+                  - textbox "高" [ref=e140]
+                  - generic [ref=e141]: mm
+            - generic [ref=e142]:
+              - generic [ref=e143]: "*印刷数量"
+              - generic [ref=e145]:
+                - textbox [ref=e146]
+                - generic [ref=e147]: 个
+          - text: "* *"
+          - tabpanel "礼盒" [ref=e150]:
+            - generic [ref=e152]:
+              - generic [ref=e153]:
+                - generic [ref=e154]: "*纸张材质"
+                - generic [ref=e155]:
+                  - radiogroup
+              - generic [ref=e156]:
+                - generic [ref=e157]: "*纸张克度"
+                - generic [ref=e158]:
+                  - radiogroup
+              - generic [ref=e159]:
+                - generic [ref=e160]: "*表面处理"
+                - generic [ref=e161]:
+                  - radiogroup
+              - generic [ref=e162]:
+                - generic [ref=e163]: "*印刷颜色"
+                - generic [ref=e164]:
+                  - radiogroup
+              - generic [ref=e165]:
+                - generic [ref=e166]: "*增加工艺"
+                - generic [ref=e167]:
+                  - group "checkbox-group"
+              - generic [ref=e168]:
+                - generic [ref=e169]: "*配件"
+                - generic [ref=e170]:
+                  - group "checkbox-group"
+              - generic [ref=e171]:
+                - generic [ref=e172]: "*服务"
+                - generic [ref=e173]:
+                  - group "checkbox-group"
+          - text: "* * * * * *"
+      - generic [ref=e174]:
+        - generic [ref=e176]: 双插盒 报价信息
+        - generic [ref=e177]:
+          - generic [ref=e180]: 重量
+          - generic [ref=e183]: 0kg
+        - generic [ref=e185]: "总金额: ￥0"
+        - generic [ref=e186]:
+          - button "立即购买" [ref=e187] [cursor=pointer]
+          - button " 加入购物车" [ref=e188] [cursor=pointer]:
+            - generic [ref=e189]: 
+            - text: 加入购物车
+    - generic [ref=e190]:
+      - generic [ref=e192]:
+        - generic [ref=e193] [cursor=pointer]: 商品详情
+        - generic [ref=e194] [cursor=pointer]: 纸品工艺
+        - generic [ref=e195] [cursor=pointer]: 下单须知
+      - generic [ref=e197] [cursor=pointer]:
+        - generic [ref=e198]: 
+        - generic [ref=e199]: 点击查看详细内容
+  - generic [ref=e200]:
+    - generic [ref=e202]:
+      - list [ref=e203]:
+        - listitem [ref=e204]:
+          - generic [ref=e206]: 
+          - generic [ref=e207]: 品种齐全，购物轻松
+        - listitem [ref=e208]:
+          - generic [ref=e210]: 
+          - generic [ref=e211]: 多仓直发，极速配送
+        - listitem [ref=e212]:
+          - generic [ref=e214]: 
+          - generic [ref=e215]: 正品行货，精致服务
+        - listitem [ref=e216]:
+          - generic [ref=e218]: 
+          - generic [ref=e219]: 天天低价，畅选无忧
+      - generic [ref=e221]:
+        - link "粤ICP备2020112547号-2" [ref=e222] [cursor=pointer]:
+          - /url: https://beian.miit.gov.cn/
+        - text: Copyright © 2022 俊茂丰包装盒
+    - generic [ref=e224] [cursor=pointer]:
+      - generic [ref=e226]:
+        - generic [ref=e227]: 
+        - generic [ref=e228]: 手机购买
+      - generic [ref=e230]:
+        - generic [ref=e231]: 
+        - generic [ref=e232]: 联系客服
+      - generic [ref=e233]:
+        - generic [ref=e234]: 
+        - generic [ref=e235]: 购物车
+    - generic [ref=e237]:
+      - img
+      - generic [ref=e238] [cursor=pointer]: 关闭

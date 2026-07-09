@@ -1,0 +1,85 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic "Ctrl[Command] + M" [ref=e5] [cursor=pointer]:
+        - generic [ref=e6]: 
+      - text:          
+      - generic "Disable all rules" [ref=e7] [cursor=pointer]:
+        - generic [ref=e8]: 
+        - text: "ON"
+      - text:       
+      - generic [ref=e9] [cursor=pointer]:
+        - generic [ref=e10]: 
+        - text: Import
+      - generic [ref=e11] [cursor=pointer]:
+        - generic [ref=e12]: 
+        - text: Export
+      - text: 
+      - generic "Ctrl[Command] + S" [ref=e13] [cursor=pointer]:
+        - generic [ref=e14]: 
+        - text: Save
+      - generic [ref=e15] [cursor=pointer]:
+        - generic [ref=e16]: +
+        - text: Create
+      - generic [ref=e17]:
+        - generic [ref=e18]: 
+        - text: Rename
+      - text:   
+      - generic [ref=e19]:
+        - generic [ref=e20]: 
+        - text: Delete
+      - generic [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: 
+        - text: Settings
+      - generic [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: 
+          - text: Weinre
+        - text: 
+      - generic [ref=e26] [cursor=pointer]:
+        - generic [ref=e27]: 
+        - text: HTTPS
+      - generic [ref=e28]:
+        - link " Help" [ref=e29] [cursor=pointer]:
+          - /url: https://github.com/avwo/whistle#whistle
+          - generic [ref=e30]: 
+          - text: Help
+        - text:    
+      - generic [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: 
+        - text: Online
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: 
+          - generic [ref=e37]: Network
+        - generic [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]: 
+          - generic [ref=e40]: Rules
+        - generic [ref=e41] [cursor=pointer]:
+          - generic [ref=e42]: 
+          - generic [ref=e43]: Values
+        - generic [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]: 
+          - generic [ref=e46]: Plugins
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - text: Full functionality of the rules requires activation of the 'Enable HTTPS (Capture Tunnel Traffic)' option
+          - button "Settings" [ref=e49] [cursor=pointer]
+        - generic [ref=e50]:
+          - generic [ref=e53]:
+            - generic [ref=e54]:
+              - generic [ref=e55]: 
+              - text: Enabled Rules (0)
+            - generic "Default" [ref=e57]:
+              - text: Default
+              - generic [ref=e58]: 
+            - textbox "Type filter text" [ref=e60]
+          - textbox [ref=e64]
+  - text:                
+  - text:     +     + +              + −  + −  + +    + − +      + −  + +    + −          + −   
+  - text:  
+  - text:  
+  - text:  
+  - text:  
+  - text:    +      

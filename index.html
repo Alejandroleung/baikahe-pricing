@@ -1,0 +1,684 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>白卡纸卡盒报价系统 - 合版印刷</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #ff6b00;
+      --primary-light: #1e0e03;
+      --primary-glow: rgba(255,107,0,0.15);
+      --accent: #ff8c00;
+      --bg: #0a0a0a;
+      --bg-secondary: #111111;
+      --card-bg: #1a1a1a;
+      --card-hover: #222222;
+      --text: #ffffff;
+      --text2: #999;
+      --border: #2a2a2a;
+      --shadow: 0 1px 3px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 32px rgba(255,107,0,0.12);
+      --radius: 12px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    /* ---- Particle Canvas ---- */
+    #particleCanvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+    }
+    /* ---- Animations ---- */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 8px var(--primary-glow); }
+      50%      { box-shadow: 0 0 20px var(--primary-glow), 0 0 40px rgba(255,107,0,0.08); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes logoPulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.85; }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .anim-fade { animation: fadeIn 0.6s ease both; }
+    .anim-fade-up { animation: fadeInUp 0.6s ease both; }
+    .anim-fade-up:nth-child(1) { animation-delay: 0.05s; }
+    .anim-fade-up:nth-child(2) { animation-delay: 0.10s; }
+    .anim-fade-up:nth-child(3) { animation-delay: 0.15s; }
+    .anim-fade-up:nth-child(4) { animation-delay: 0.20s; }
+    .anim-fade-up:nth-child(5) { animation-delay: 0.25s; }
+    .anim-fade-up:nth-child(6) { animation-delay: 0.30s; }
+    .anim-fade-up:nth-child(7) { animation-delay: 0.35s; }
+    .anim-fade-up:nth-child(8) { animation-delay: 0.40s; }
+    .anim-fade-up:nth-child(9) { animation-delay: 0.45s; }
+    .anim-fade-up:nth-child(10){ animation-delay: 0.50s; }
+    .anim-fade-up:nth-child(11){ animation-delay: 0.55s; }
+    .anim-fade-up:nth-child(12){ animation-delay: 0.60s; }
+    /* ---- Header ---- */
+    .header {
+      position: relative; z-index: 1;
+      background: linear-gradient(135deg, #0d0d0d 0%, #1a0a00 50%, #0d0d0d 100%);
+      border-bottom: 1px solid #2a2a2a;
+      padding: 36px 0 28px; text-align: center;
+      overflow: hidden;
+    }
+    .header::before {
+      content: ''; position: absolute; top: 0; left: -50%; width: 200%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,107,0,0.03), transparent);
+      animation: shimmer 8s ease-in-out infinite;
+    }
+    .header .brand-wrap {
+      display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px;
+      position: relative; z-index: 1;
+    }
+    .header .logo {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 26px; font-weight: 700; letter-spacing: 2px;
+      background: linear-gradient(135deg, #ff6b00, #ff8c00, #ff6b00);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s ease-in-out infinite;
+      position: relative;
+    }
+    .header .logo::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, #ff6b00, transparent);
+    }
+    .header h1 { font-size: 28px; font-weight: 700; color: #fff; position: relative; z-index: 1; }
+    .header p { font-size: 15px; color: #aaa; margin-top: 6px; position: relative; z-index: 1; }
+    .header .badge {
+      display: inline-block; background: rgba(255,107,0,0.12);
+      border: 1px solid rgba(255,107,0,0.25);
+      padding: 4px 16px; border-radius: 20px; font-size: 13px; color: #ff8c00;
+      margin-top: 10px; position: relative; z-index: 1;
+    }
+    /* ---- Layout ---- */
+    .container {
+      max-width: 1100px; margin: 0 auto; padding: 24px 20px;
+      position: relative; z-index: 1;
+    }
+    .section-title {
+      font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #fff;
+      padding-left: 12px; border-left: 3px solid var(--primary);
+      animation: fadeIn 0.5s ease both;
+    }
+    /* ---- Box Grid ---- */
+    .box-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px;
+      margin-bottom: 32px;
+    }
+    .box-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 10px; text-align: center;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+    }
+    .box-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, transparent, rgba(255,107,0,0.03));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .box-card:hover {
+      border-color: var(--primary); background: var(--card-hover);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+    .box-card:hover::before { opacity: 1; }
+    .box-card.active {
+      border-color: var(--primary); background: var(--primary-light);
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+    .box-card.active::after {
+      content: "\2713"; position: absolute; top: 8px; right: 8px;
+      background: var(--primary); color: #fff;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: bold; line-height: 22px;
+      box-shadow: 0 0 10px rgba(255,107,0,0.5);
+    }
+    .box-icon { width: 64px; height: 64px; margin: 0 auto 8px; position: relative; z-index: 1; }
+    .box-icon svg { width: 100%; height: 100%; }
+    .box-card h3 { font-size: 14px; font-weight: 600; color: #ddd; position: relative; z-index: 1; }
+    .box-card.active h3 { color: #fff; }
+    /* ---- Form ---- */
+    .form-section {
+      background: var(--card-bg); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 24px; margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: flex-start; }
+    .form-row:last-child { margin-bottom: 0; }
+    .form-label { font-size: 14px; font-weight: 600; min-width: 80px; padding-top: 8px; color: #ccc; }
+    .dim-group { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .dim-group input {
+      width: 80px; padding: 10px 12px; background: #0d0d0d;
+      border: 1px solid var(--border); border-radius: 8px; font-size: 14px;
+      text-align: center; color: #fff; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .dim-group input:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255,107,0,0.12);
+    }
+    .dim-group span { font-size: 14px; color: var(--text2); }
+    .qty-input {
+      width: 120px; padding: 10px 14px; background: #0d0d0d;
+      border: 1px solid var(--border); border-radius: 8px; font-size: 14px; color: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .qty-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,107,0,0.12); }
+    .option-group { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+    .option-item {
+      padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px;
+      font-size: 13px; cursor: pointer; transition: all 0.2s;
+      background: #0d0d0d; user-select: none; color: #aaa;
+    }
+    .option-item:hover { border-color: var(--primary); color: #fff; }
+    .option-item.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 12px rgba(255,107,0,0.3); }
+    .option-item.disabled { opacity: 0.3; cursor: not-allowed; }
+    .check-group { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+    .check-item {
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border: 1px solid var(--border); border-radius: 6px; font-size: 13px;
+      cursor: pointer; transition: all 0.2s;
+      background: #0d0d0d; user-select: none; color: #aaa;
+    }
+    .check-item:hover { border-color: var(--primary); }
+    .check-item.active { border-color: var(--primary); background: var(--primary-light); color: #fff; }
+    .check-item input[type="checkbox"] { accent-color: var(--primary); width: 15px; height: 15px; }
+    /* ---- Unfolded Display ---- */
+    .unfolded-display {
+      margin-top: 8px; margin-bottom: 4px; padding: 10px 16px;
+      background: var(--primary-light); border: 1px solid rgba(255,107,0,0.15);
+      border-radius: 8px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .unfolded-display .unfolded-label { font-size: 14px; font-weight: 600; color: #ccc; white-space: nowrap; }
+    .unfolded-display .unfolded-value { font-size: 14px; color: #ff8c00; font-weight: 500; }
+    .unfolded-display .unfolded-value strong { font-size: 18px; font-weight: 700; color: #fff; }
+    /* ---- Price Result ---- */
+    .price-result {
+      background: linear-gradient(135deg, #0d0d0d 0%, #1a0a00 100%);
+      border-radius: var(--radius); padding: 28px; color: #fff;
+      text-align: center; margin-bottom: 24px;
+      border: 1px solid rgba(255,107,0,0.15);
+      position: relative; overflow: hidden;
+    }
+    .price-result::before {
+      content: ''; position: absolute; top: 0; left: -50%; width: 200%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,107,0,0.03), transparent);
+      animation: shimmer 8s ease-in-out infinite;
+    }
+    .price-result .label { font-size: 14px; color: #aaa; margin-bottom: 8px; position: relative; z-index: 1; }
+    .price-result .price {
+      font-size: 44px; font-weight: 800; line-height: 1.2;
+      background: linear-gradient(135deg, #ff6b00, #ff8c00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative; z-index: 1;
+    }
+    .price-result .price small { font-size: 18px; font-weight: 400; -webkit-text-fill-color: #ff8c00; color: #ff8c00; }
+    .price-result .unit { font-size: 14px; color: #777; margin-top: 8px; position: relative; z-index: 1; }
+    .price-result .breakdown {
+      display: flex; justify-content: center; gap: 28px; margin-top: 16px;
+      padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06);
+      position: relative; z-index: 1;
+    }
+    .price-result .breakdown-item { text-align: center; }
+    .price-result .breakdown-item .val { font-size: 18px; font-weight: 700; color: #ff8c00; }
+    .price-result .breakdown-item .lbl { font-size: 12px; color: #777; }
+    /* ---- Button ---- */
+    .btn-submit {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff6b00, #ff8c00);
+      color: #fff; border: none; padding: 14px 40px; border-radius: 8px;
+      font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,107,0,0.3);
+    }
+    .btn-submit:active { transform: translateY(0); }
+    /* ---- Footer ---- */
+    .footer { text-align: center; padding: 24px; color: #555; font-size: 13px; border-top: 1px solid #1a1a1a; margin-top: 32px; }
+    /* ---- Responsive ---- */
+    @media (max-width: 600px) {
+      .header h1 { font-size: 20px; }
+      .header .logo { font-size: 20px; }
+      .box-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .box-card { padding: 10px 6px; }
+      .box-icon { width: 48px; height: 48px; }
+      .form-row { flex-direction: column; }
+      .price-result .price { font-size: 28px; }
+      .price-result .breakdown { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+<canvas id="particleCanvas"></canvas>
+<div class="header">
+  <div class="brand-wrap">
+    <div class="logo">Alejandro</div>
+  </div>
+  <h1>白卡纸卡盒报价系统</h1>
+  <p>专业卡纸盒合版印刷报价 · 支持多种盒型 · 即时出价</p>
+  <div class="badge">合版印刷 · 价格更优 · 交期更快</div>
+</div>
+<div class="container">
+  <div class="section-title">① 选择盒型</div>
+  <div class="box-grid anim-fade-up" id="boxGrid"></div>
+  <div class="section-title">② 报价参数</div>
+  <div class="form-section anim-fade-up">
+    <div class="form-row">
+    <div class="form-row">
+      <div class="form-label">*成品尺寸</div>
+      <div class="dim-group">
+        <input type="number" id="length" value="200" min="50" max="800" placeholder="长">
+        <span>x</span>
+        <input type="number" id="width" value="150" min="50" max="600" placeholder="宽">
+        <span>x</span>
+        <input type="number" id="height" value="80" min="20" max="400" placeholder="高">
+        <span>mm</span>
+      </div>
+    </div>
+    <div class="unfolded-display">
+      <span class="unfolded-label">展开尺寸：</span>
+      <span class="unfolded-value" id="unfoldedSize">选择盒型并输入尺寸后自动计算</span>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*印刷数量</div>
+      <div style="flex:1;">
+        <input type="number" class="qty-input" id="quantity" value="1000" min="100">
+        <span style="font-size:14px;color:#999;margin-left:8px;">个</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*纸张材质</div>
+      <div class="option-group" id="materialGroup">
+        <div class="option-item active" data-value="白卡纸">白卡纸</div>
+        <div class="option-item" data-value="瓦楞纸(300g白卡+A4E黄坑)">瓦楞纸(300g白卡+A4E黄坑)</div>
+        <div class="option-item" data-value="瓦楞纸(300g白卡+W4E白坑)">瓦楞纸(300g白卡+W4E白坑)</div>
+        <div class="option-item" data-value="银卡纸">银卡纸</div>
+        <div class="option-item" data-value="F坑内托">F坑内托</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*纸张克度</div>
+      <div class="option-group" id="weightGroup">
+        <div class="option-item disabled" data-value="240">240g</div>
+        <div class="option-item disabled" data-value="300">300g</div>
+        <div class="option-item active" data-value="350">350g</div>
+        <div class="option-item disabled" data-value="375">375g</div>
+        <div class="option-item" data-value="400">400g</div>
+        <div class="option-item disabled" data-value="600">600g</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*表面处理</div>
+      <div class="option-group" id="surfaceGroup">
+        <div class="option-item disabled" data-value="不处理">不处理</div>
+        <div class="option-item" data-value="过光膜">过光膜</div>
+        <div class="option-item active" data-value="过哑膜">过哑膜</div>
+        <div class="option-item disabled" data-value="白+UV逆向">白+UV逆向</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*印刷颜色</div>
+      <div class="option-group" id="printGroup">
+        <div class="option-item" data-value="不印刷">不印刷</div>
+        <div class="option-item active" data-value="四色">四色</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*增加工艺</div>
+      <div class="check-group" id="processGroup">
+        <label class="check-item"><input type="checkbox" data-cost="0.15" data-cost-100="100" data-cost-200="100" data-cost-500="120" data-cost-1000="117" data-cost-2000="144"> 击凹</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.18" data-cost-100="200" data-cost-200="150" data-cost-500="160" data-cost-1000="120" data-cost-2000="160"> 局部UV</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.15" data-cost-100="100" data-cost-200="100" data-cost-500="120" data-cost-1000="117" data-cost-2000="144"> 击凸</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.00" data-cost-100="0" data-cost-200="0" data-cost-500="0"> 缕空</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.10" data-cost-100="35" data-cost-200="45" data-cost-500="55" data-cost-1000="163" data-cost-2000="176"> 贴PVC</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.165" data-cost-100="110" data-cost-200="110" data-cost-500="150" data-cost-1000="120" data-cost-2000="160"> 烫金</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.165" data-cost-100="110" data-cost-200="110" data-cost-500="150"> 烫银</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.28" data-cost-100="200" data-cost-200="200" data-cost-500="250"> 4色印底不覆膜</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.20" data-cost-100="150" data-cost-200="180" data-cost-500="200"> 白卡1专色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.40" data-cost-100="260" data-cost-200="260" data-cost-500="320"> 银卡1专色</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*配件</div>
+      <div class="check-group" id="accessoryGroup">
+        <label class="check-item"><input type="checkbox" data-cost="0.10"> 塑料手提</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.15"> 手提绳</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*服务</div>
+      <div class="check-group" id="serviceGroup">
+        <label class="check-item"><input type="checkbox" data-cost="0.01"> 来样跟色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.00"> 屏幕跟色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.01"> 色稿跟色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.02"> 适配</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.00"> 橡皮筋打包</label>
+      </div>
+    </div>
+  </div>
+  <div class="price-result anim-fade-up">
+    <div class="label" id="priceLabel">双插盒 报价信息</div>
+    <div class="price"><small>¥</small><span id="totalPrice">0.00</span></div>
+    <div class="unit" id="priceUnit">总价（1,000个 · 合版印刷）</div>
+    <div class="breakdown">
+      <div class="breakdown-item"><div class="val" id="materialCost">¥0</div><div class="lbl">材料费</div></div>
+      <div class="breakdown-item"><div class="val" id="printCost">¥0</div><div class="lbl">印刷费</div></div>
+      <div class="breakdown-item"><div class="val" id="processCost">¥0</div><div class="lbl">工艺费</div></div>
+      <div class="breakdown-item"><div class="val" id="unitPrice">¥0</div><div class="lbl">单价/个</div></div>
+    </div>
+  </div>
+  <div style="text-align:center;">
+    <button class="btn-submit" onclick="alert('报价已生成！如需正式下单，请联系客服。')">立即购买</button>
+  </div>
+  <div class="footer">
+    <p>价格仅供参考，以实际下单为准</p>
+  </div>
+</div>
+<script>
+const boxTypes=[
+  // 数据来源：http://www.zsmaofeng.com:20001/api/box/manager/list
+  // 各盒型的粘位(socket/gluing)、间隔(intervalPosition)、废边(offcut)等参数来自API响应
+  {id:'double-tuck',name:'双插盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="6" x2="46" y2="6" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="12" y1="54" x2="26" y2="66" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="54" x2="46" y2="66" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="66" x2="46" y2="66" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/></svg>'},
+  {id:'lock-bottom',name:'扣底盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="6" x2="46" y2="6" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M22 54 L36 64 L50 54" stroke="#ff6b00" stroke-width="2" stroke-dasharray="3 2"/></svg>'},
+  {id:'flat-seal',name:'平粘盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="32" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="22" x2="26" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="22" x2="46" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="10" x2="46" y2="10" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="18" y1="54" x2="54" y2="54" stroke="#ff6b00" stroke-width="2.5"/></svg>'},
+  {id:'mailer',name:'飞机盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="10" y="26" width="52" height="24" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M10 26 L24 14 L48 14 L62 26" stroke="#ff6b00" stroke-width="2"/><line x1="24" y1="14" x2="24" y2="26" stroke="#ff6b00" stroke-width="1.5"/><line x1="48" y1="14" x2="48" y2="26" stroke="#ff6b00" stroke-width="1.5"/><line x1="36" y1="14" x2="36" y2="26" stroke="#ff6b00" stroke-width="1" stroke-dasharray="3 2"/></svg>'},
+  {id:'sleeve',name:'封套盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="8" y="18" width="56" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#333"/><rect x="16" y="22" width="40" height="28" rx="1" stroke="#ff6b00" stroke-width="1.5" fill="#252525"/></svg>'},
+  {id:'lid',name:'天盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="26" width="48" height="24" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><rect x="14" y="14" width="44" height="14" rx="2" stroke="#ff6b00" stroke-width="2" fill="#333"/></svg>'},
+  {id:'base',name:'地盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="20" width="48" height="32" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="20" x2="12" y2="52" stroke="#ff6b00" stroke-width="3"/><line x1="60" y1="20" x2="60" y2="52" stroke="#ff6b00" stroke-width="3"/></svg>'},
+  {id:'auto-lock',name:'自动锁底盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><path d="M18 54 L36 66 L54 54" stroke="#ff6b00" stroke-width="2"/><circle cx="36" cy="60" r="3" fill="#ff6b00"/></svg>'},
+  {id:'hook-tuck',name:'双插挂钩盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="34" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="22" x2="26" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="22" x2="46" y2="10" stroke="#ff6b00" stroke-width="2"/><rect x="30" y="2" width="12" height="8" rx="2" stroke="#ff6b00" stroke-width="1.5" fill="#333"/><circle cx="36" cy="6" r="2" stroke="#ff6b00" stroke-width="1" fill="#333"/></svg>'},
+  {id:'bag',name:'手提袋',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="14" y="28" width="44" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M24 28 Q24 12 36 12 Q48 12 48 28" stroke="#ff6b00" stroke-width="2" fill="none"/></svg>'},
+  {id:'hook-lock',name:'扣底挂钩盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="34" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M18 56 L36 66 L54 56" stroke="#ff6b00" stroke-width="2" stroke-dasharray="3 2"/><rect x="30" y="2" width="12" height="8" rx="2" stroke="#ff6b00" stroke-width="1.5" fill="#333"/><circle cx="36" cy="6" r="2" stroke="#ff6b00" stroke-width="1" fill="#333"/></svg>'}
+];
+let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:200,width:150,height:80,quantity:1000};
+function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')"><div class="box-icon">'+b.icon+'</div><h3>'+b.name+'</h3></div>';}).join('');}
+function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
+function setupOG(gid,sk){document.getElementById(gid).addEventListener('click',function(e){var i=e.target.closest('.option-item');if(!i||i.classList.contains('disabled'))return;i.parentElement.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active')});i.classList.add('active');S[sk]=i.dataset.value;calcPrice();});}
+function setupCG(){document.querySelectorAll('.check-group input[type="checkbox"]').forEach(function(cb){cb.addEventListener('change',function(){cb.closest('.check-item').classList.toggle('active',cb.checked);calcPrice();});});}
+function setupIn(){['length','width','height','quantity'].forEach(function(id){document.getElementById(id).addEventListener('input',function(e){S[id]=parseInt(e.target.value)||0;calcPrice();});});}
+
+// 展开尺寸计算公式（从俊茂丰 http://www.zsmaofeng.com/ API 获取）
+// 公式来源于 API: exLengthFormula / exWidthFormula
+// L=长, W=宽, H=高，单位 mm
+function getUnfoldedSize(id, L, W, H) {
+  switch (id) {
+    case 'double-tuck':   // 双插盒: (长+宽)×2+12 | 宽×2+30+高
+      return { width: Math.round((L+W)*2+12), height: Math.round(W*2+30+H) };
+    case 'lock-bottom':   // 扣底盒: (长+宽)×2+15 | 高+宽+15+(宽/2)+15
+      return { width: Math.round((L+W)*2+15), height: Math.round(H+W+W/2+30) };
+    case 'flat-seal':     // 平粘盒: (长+宽)×2+15 | 宽×2+高
+      return { width: Math.round((L+W)*2+15), height: Math.round(W*2+H) };
+    case 'mailer':        // 飞机盒: 长+高×4+20 | 宽×2+高×3
+      return { width: Math.round(L+H*4+20), height: Math.round(W*2+H*3) };
+    case 'sleeve':        // 封套盒: (长+宽)×2+15 | 高
+      return { width: Math.round((L+W)*2+15), height: Math.round(H) };
+    case 'lid':           // 天盒: 长+高×4+30 | 宽+高×4+30
+      return { width: Math.round(L+H*4+30), height: Math.round(W+H*4+30) };
+    case 'base':          // 地盒: 长+高×4+折骨×2+30 | 宽+高×4+折骨×2+30
+      return { width: Math.round(L+H*4+50), height: Math.round(W+H*4+50) };
+    case 'auto-lock':     // 自动锁底盒: (长+宽)×2+15 | 高+宽+宽/2+40
+      return { width: Math.round((L+W)*2+15), height: Math.round(H+W+W/2+40) };
+    case 'hook-tuck':     // 双插挂钩盒: (长+宽)×2+15 | 高+宽×2+30
+      return { width: Math.round((L+W)*2+15), height: Math.round(H+W*2+30) };
+    case 'bag':           // 手提袋: (长+宽)×2+20 | 高+40(顶高)+宽/2+20(底高)
+      return { width: Math.round((L+W)*2+20), height: Math.round(H+40+W/2+20) };
+    case 'hook-lock':     // 扣底挂钩盒: (长+宽)×2+15 | 高+宽+宽/2+15+15
+      return { width: Math.round((L+W)*2+15), height: Math.round(H+W+W/2+30) };
+    default:
+      return null;
+  }
+}
+
+// 费率查找函数（基于俊茂丰API实测数据校准）
+// 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
+// 盒型：双插盒 白卡350g 过哑膜 四色，费率R(q)仅与数量相关
+// R(q)单位：¥/m²（展开面积）
+// q≤500：基于俊茂丰合版定价实测（www.zsmaofeng.com）
+// q≥1000：参考拼一拼盒微信小程序定价
+//   小程序数据：1000个¥1138, 2000个¥2160, 3000个¥3065, 5000个¥4233, 10000个¥7882
+//   中间数量线性插值
+function getRateFromQty(qty) {
+  var pts = [
+    [100, 20.9080], [200, 13.5936], [500, 6.9182],
+    [1000, 3.8820], [2000, 3.6841], [3000, 3.4851],
+    [5000, 2.8720], [10000, 2.6887]
+  ];
+  if (qty <= pts[0][0]) return pts[0][1];
+  if (qty >= pts[pts.length-1][0]) return pts[pts.length-1][1];
+  for (var i = 0; i < pts.length-1; i++) {
+    if (qty >= pts[i][0] && qty < pts[i+1][0]) {
+      var t = (qty - pts[i][0]) / (pts[i+1][0] - pts[i][0]);
+      return pts[i][1] + t * (pts[i+1][1] - pts[i][1]);
+    }
+  }
+  return pts[pts.length-1][1];
+}
+
+function calcPrice(){
+  var b=boxTypes.find(function(x){return x.id===S.boxType});if(!b)return;
+  var L=S.length,W=S.width,H=S.height,q=S.quantity;
+
+  // ── 展开面积（m²）──
+  // 数据来源：http://www.zsmaofeng.com:20001/api/box/manager/list
+  // 双插盒面积公式：((BL+BW)*2+15)*(BW*2+30+BH)/1000000
+  // 间隔位(intervalPosition=3mm)适用于大多数盒型
+  // 已在俊茂丰API上验证：双插盒(11)、扣底盒(12)、平粘盒(15)、
+  // 飞机盒(16)、封套盒(17)、天盒(18) 均需3mm间隔
+  // 地盒(26) 的+50公式已含间隔，不加3mm
+  var u=getUnfoldedSize(b.id,L,W,H);
+  var hasInterval=b.id!=='base';  // 地盒例外
+  var eaw=u.width+(hasInterval?3:0);
+  var area=eaw*u.height/1000000;      // 单盒展开面积 m²
+
+  // 纸张单价（元/kg），参考行业白卡纸市场价（2025-2026年）
+  // 白卡纸约5500-6500元/吨，银卡纸约9000-12000元/吨
+  var pp={'白卡纸':{240:6.5,300:6.0,350:5.7,375:6.0,400:6.3,600:8.0},'瓦楞纸(300g白卡+A4E黄坑)':{300:7.5,350:7.8,400:8.5},'瓦楞纸(300g白卡+W4E白坑)':{300:8.0,350:8.3,400:9.0},'银卡纸':{300:9.5,350:10.5,400:11.5},'F坑内托':{300:5.0,350:5.5,400:6.0}};
+  var ppg=(pp[S.material]&&pp[S.material][S.weight])||5.7;
+
+  // 材料费 = 展开面积(m²) × 克重(g/m²) / 1000 × 数量 × 纸价(元/kg)
+  var pw=area*S.weight/1000;  // 单盒纸张重量(kg)
+  var mc=pw*q*ppg;
+
+  // ── 印刷费 ──
+  // 合版四色印刷：按展开面积计费，含版费分摊
+  var pc=S.print==='四色'?area*q*0.13:0;
+
+  // ── 表面处理费（按面积计费 元/m²）──
+  // 过膜约0.80-1.20元/m²
+  var su={'不处理':0,'过光膜':0.90,'过哑膜':0.90,'白+UV逆向':2.50};
+  var surfaceUnit=su[S.surface]||0;
+  var sc=surfaceUnit*area*q;
+
+  // ── 工艺费 ──
+  // q≤500：使用俊茂丰实测总价（data-cost-xxx，已有固定开机费），
+  // q=1000~2000：使用拼一拼盒小程序实测总价（data-cost-1000/2000），中间插值
+  // q>2000：按小程序1000→2000的斜率外推
+  // 无小程序数据的工艺(q≥1000)：回退到data-cost单价×数量
+  function getProcessTotalCost(cb,qty){
+    var c100=cb.dataset['cost-100']!==undefined?parseFloat(cb.dataset['cost-100']):null;
+    var c200=cb.dataset['cost-200']!==undefined?parseFloat(cb.dataset['cost-200']):null;
+    var c500=cb.dataset['cost-500']!==undefined?parseFloat(cb.dataset['cost-500']):null;
+    var c1000=cb.dataset['cost-1000']!==undefined?parseFloat(cb.dataset['cost-1000']):null;
+    var c2000=cb.dataset['cost-2000']!==undefined?parseFloat(cb.dataset['cost-2000']):null;
+    var cu=parseFloat(cb.dataset.cost);
+    var cu1000=cu*1000;
+    if(qty<=100)return c100!==null?c100:cu1000;
+    if(qty<=200){var lo=c100!==null?c100:cu1000,hi=c200!==null?c200:cu1000;return lo+(hi-lo)*(qty-100)/100;}
+    if(qty<=500){var lo=c200!==null?c200:cu1000,hi=c500!==null?c500:cu1000;return lo+(hi-lo)*(qty-200)/300;}
+    if(qty<=1000){var lo=c500!==null?c500:cu1000,hi=c1000!==null?c1000:cu1000;return lo+(hi-lo)*(qty-500)/500;}
+    if(c2000!==null){
+      // 有小程序数据：1000→2000插值，>2000按同斜率外推
+      var lo=c1000!==null?c1000:cu1000;
+      if(qty<=2000)return lo+(c2000-lo)*(qty-1000)/1000;
+      var rate=(c2000-lo)/1000;
+      return c2000+rate*(qty-2000);
+    }
+    // 无小程序数据：使用data-cost单价（线性的合版/小程序定价）
+    return cu*qty;
+  }
+  var ap=0;
+  document.querySelectorAll('#processGroup input:checked').forEach(function(c){
+    ap+=getProcessTotalCost(c,q);
+  });
+  var ax=0;document.querySelectorAll('#accessoryGroup input:checked').forEach(function(c){
+    ax+=parseFloat(c.dataset.cost)*q;
+  });
+  var sv=0;document.querySelectorAll('#serviceGroup input:checked').forEach(function(c){
+    sv+=parseFloat(c.dataset.cost)*q;
+  });
+
+  // ── API校准总价（基于俊茂丰合版定价实测数据）──
+  // 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
+  var rate = getRateFromQty(q);
+
+  // 参照配置成本（白卡350g 过哑膜 四色，固定不变，用于计算校准系数）
+  var refMc = area * 350 / 1000 * q * 5.7;
+  var refPc = area * q * 0.13;
+  var refSc = area * q * 0.90;
+  var refBase = refMc + refPc + refSc;
+
+  // 校准系数 = API真实总价 / 参照配置的估算成本
+  var refTotal = rate * area * q;
+  var ratio = refBase > 0 ? refTotal / refBase : 1;
+
+  // 实际配置总价 = (材料+印刷+表面) × 校准系数 + 工艺/配件/服务
+  // 工艺费不含校准系数（data-cost已是含税最终价），q≤500用俊茂丰实测总价，q≥1000用data-cost单价×数量
+  var total = (mc + pc + sc) * ratio + ap + ax + sv;
+
+  var displayMC = mc * ratio;
+  var displayPC = pc * ratio;
+  var displayProcess = sc * ratio + ap + ax + sv;
+
+  var u = q > 0 ? total / q : 0;
+
+  document.getElementById('priceLabel').textContent = b.name + ' 报价信息';
+  document.getElementById('totalPrice').textContent = total.toFixed(2);
+  document.getElementById('priceUnit').textContent = '总价（' + q.toLocaleString() + '个 · 合版印刷）';
+  document.getElementById('materialCost').textContent = '¥' + displayMC.toFixed(0);
+  document.getElementById('processCost').textContent = '¥' + displayProcess.toFixed(0);
+  document.getElementById('unitPrice').textContent = '¥' + u.toFixed(0);
+
+  document.getElementById('printCost').textContent = '¥' + displayPC.toFixed(0);
+
+  // 更新展开尺寸
+  var unfolded = getUnfoldedSize(b.id, S.length, S.width, S.height);
+  var el = document.getElementById('unfoldedSize');
+  if (unfolded) {
+    el.innerHTML = '<strong>'+unfolded.width+'</strong> &times; <strong>'+unfolded.height+'</strong> mm';
+  } else {
+    el.textContent = '该盒型暂无展开公式，需按实际刀模图计算';
+  }
+}
+
+// ---- 粒子背景动画 ----
+(function(){
+  var c = document.getElementById('particleCanvas');
+  if (!c) return;
+  var ctx = c.getContext('2d');
+  var particles = [], W, H;
+  function resize(){ W=c.width=window.innerWidth; H=c.height=window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
+
+  var COUNT = 45;
+  for (var i = 0; i < COUNT; i++) {
+    particles.push({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 - 0.12,
+      r: Math.random() * 2 + 1, a: Math.random() * 0.35 + 0.08
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.y > H + 10) p.y = -10;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,107,0,' + p.a + ')';
+      ctx.fill();
+    }
+    // 近距离粒子连线
+    for (var i = 0; i < particles.length; i++) {
+      for (var j = i + 1; j < particles.length; j++) {
+        var dx = particles[i].x - particles[j].x;
+        var dy = particles[i].y - particles[j].y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 140) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(255,107,0,' + (0.05 * (1 - dist / 140)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ---- 价格数字跳动动画 ----
+var _lastTotal = 0;
+function animatePrice(newVal) {
+  var el = document.getElementById('totalPrice');
+  if (!el) return;
+  var start = _lastTotal || 0;
+  var duration = 400, startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    var p = Math.min((ts - startTime) / duration, 1);
+    p = 1 - Math.pow(1 - p, 3); // easeOutCubic
+    el.textContent = (start + (newVal - start) * p).toFixed(2);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  _lastTotal = newVal;
+  requestAnimationFrame(step);
+}
+
+// 改写 calcPrice 使总价跳动
+var _origCp = calcPrice;
+calcPrice = function() {
+  _origCp();
+  var t = document.getElementById('totalPrice').textContent;
+  if (parseFloat(t) > 0) {
+    var finalT = parseFloat(t);
+    setTimeout(function(){ animatePrice(finalT); }, 30);
+  }
+};
+
+renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();calcPrice();
+</script>
+</body>
+</html>

@@ -1,0 +1,478 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic "Ctrl[Command] + M" [ref=e5] [cursor=pointer]:
+        - generic [ref=e6]: 
+      - text:               
+      - generic [ref=e69]:
+        - generic "Click to stop record" [ref=e70] [cursor=pointer]:
+          - generic [ref=e71]: 
+          - text: Record
+        - text:   
+      - generic [ref=e9] [cursor=pointer]:
+        - generic [ref=e10]: 
+        - text: Import
+      - generic [ref=e11] [cursor=pointer]:
+        - generic [ref=e12]: 
+        - text: Export
+      - generic "Ctrl[Command] + X" [ref=e72] [cursor=pointer]:
+        - generic [ref=e73]: 
+        - text: Clear
+      - text:  + 
+      - generic [ref=e74]:
+        - generic [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]: 
+          - text: Replay
+        - text: 
+      - generic [ref=e77] [cursor=pointer]:
+        - generic [ref=e78]: 
+        - text: Edit
+      - text: 
+      - generic [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: 
+        - text: Settings
+      - generic [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: 
+          - text: Weinre
+        - text: 
+      - generic [ref=e26] [cursor=pointer]:
+        - generic [ref=e27]: 
+        - text: HTTPS
+      - generic [ref=e28]:
+        - link " Help" [ref=e29] [cursor=pointer]:
+          - /url: https://github.com/avwo/whistle#whistle
+          - generic [ref=e30]: 
+          - text: Help
+        - text:    
+      - generic [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: 
+        - text: Online
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: 
+          - generic [ref=e37]: Network
+        - generic [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]: 
+          - generic [ref=e40]: Rules
+        - generic [ref=e41] [cursor=pointer]:
+          - generic [ref=e42]: 
+          - generic [ref=e43]: Values
+        - generic [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]: 
+          - generic [ref=e46]: Plugins
+      - text:  
+      - generic [ref=e80]:
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - table [ref=e85]:
+              - rowgroup [ref=e86]:
+                - row "# APP   Result   Method   Protocol   ServerIP   Host   URL   Type   Time  " [ref=e87]:
+                  - columnheader "#" [ref=e88] [cursor=pointer]
+                  - columnheader "APP  " [ref=e89] [cursor=pointer]:
+                    - text: APP
+                    - generic [ref=e90]:
+                      - generic [ref=e91]: 
+                      - generic [ref=e92]: 
+                  - columnheader "Result  " [ref=e93] [cursor=pointer]:
+                    - text: Result
+                    - generic [ref=e94]:
+                      - generic [ref=e95]: 
+                      - generic [ref=e96]: 
+                  - columnheader "Method  " [ref=e97] [cursor=pointer]:
+                    - text: Method
+                    - generic [ref=e98]:
+                      - generic [ref=e99]: 
+                      - generic [ref=e100]: 
+                  - columnheader "Protocol  " [ref=e101] [cursor=pointer]:
+                    - text: Protocol
+                    - generic [ref=e102]:
+                      - generic [ref=e103]: 
+                      - generic [ref=e104]: 
+                  - columnheader "ServerIP  " [ref=e105] [cursor=pointer]:
+                    - text: ServerIP
+                    - generic [ref=e106]:
+                      - generic [ref=e107]: 
+                      - generic [ref=e108]: 
+                  - columnheader "Host  " [ref=e109] [cursor=pointer]:
+                    - text: Host
+                    - generic [ref=e110]:
+                      - generic [ref=e111]: 
+                      - generic [ref=e112]: 
+                  - columnheader "URL  " [ref=e113] [cursor=pointer]:
+                    - text: URL
+                    - generic [ref=e114]:
+                      - generic [ref=e115]: 
+                      - generic [ref=e116]: 
+                  - columnheader "Type  " [ref=e117] [cursor=pointer]:
+                    - text: Type
+                    - generic [ref=e118]:
+                      - generic [ref=e119]: 
+                      - generic [ref=e120]: 
+                  - columnheader "Time  " [ref=e121] [cursor=pointer]:
+                    - text: Time
+                    - generic [ref=e122]:
+                      - generic [ref=e123]: 
+                      - generic [ref=e124]: 
+            - grid "grid" [ref=e126]:
+              - rowgroup [ref=e127]:
+                - table [ref=e825]:
+                  - rowgroup [ref=e826]:
+                    - row "10057 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 21ms" [ref=e827]:
+                      - rowheader "10057" [ref=e828]
+                      - cell "Chrome" [ref=e829]:
+                        - img "Chrome" [ref=e830]
+                      - cell "captureError" [ref=e831]
+                      - cell "CONNECT" [ref=e832]
+                      - cell "HTTP" [ref=e833]
+                      - cell [ref=e834]
+                      - cell "Tunnel to" [ref=e835]
+                      - cell "mp.weixin.qq.com:443" [ref=e836]
+                      - cell [ref=e837]
+                      - cell "21ms" [ref=e838]
+                - table [ref=e839]:
+                  - rowgroup [ref=e840]:
+                    - row "10058 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 23ms" [ref=e841]:
+                      - rowheader "10058" [ref=e842]
+                      - cell "Chrome" [ref=e843]:
+                        - img "Chrome" [ref=e844]
+                      - cell "captureError" [ref=e845]
+                      - cell "CONNECT" [ref=e846]
+                      - cell "HTTP" [ref=e847]
+                      - cell [ref=e848]
+                      - cell "Tunnel to" [ref=e849]
+                      - cell "mp.weixin.qq.com:443" [ref=e850]
+                      - cell [ref=e851]
+                      - cell "23ms" [ref=e852]
+                - table [ref=e853]:
+                  - rowgroup [ref=e854]:
+                    - row "10059 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 27ms" [ref=e855]:
+                      - rowheader "10059" [ref=e856]
+                      - cell "Chrome" [ref=e857]:
+                        - img "Chrome" [ref=e858]
+                      - cell "captureError" [ref=e859]
+                      - cell "CONNECT" [ref=e860]
+                      - cell "HTTP" [ref=e861]
+                      - cell [ref=e862]
+                      - cell "Tunnel to" [ref=e863]
+                      - cell "mp.weixin.qq.com:443" [ref=e864]
+                      - cell [ref=e865]
+                      - cell "27ms" [ref=e866]
+                - table [ref=e867]:
+                  - rowgroup [ref=e868]:
+                    - row "10060 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 28ms" [ref=e869]:
+                      - rowheader "10060" [ref=e870]
+                      - cell "Chrome" [ref=e871]:
+                        - img "Chrome" [ref=e872]
+                      - cell "captureError" [ref=e873]
+                      - cell "CONNECT" [ref=e874]
+                      - cell "HTTP" [ref=e875]
+                      - cell [ref=e876]
+                      - cell "Tunnel to" [ref=e877]
+                      - cell "mp.weixin.qq.com:443" [ref=e878]
+                      - cell [ref=e879]
+                      - cell "28ms" [ref=e880]
+                - table [ref=e881]:
+                  - rowgroup [ref=e882]:
+                    - row "10061 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 29ms" [ref=e883]:
+                      - rowheader "10061" [ref=e884]
+                      - cell "Chrome" [ref=e885]:
+                        - img "Chrome" [ref=e886]
+                      - cell "captureError" [ref=e887]
+                      - cell "CONNECT" [ref=e888]
+                      - cell "HTTP" [ref=e889]
+                      - cell [ref=e890]
+                      - cell "Tunnel to" [ref=e891]
+                      - cell "mp.weixin.qq.com:443" [ref=e892]
+                      - cell [ref=e893]
+                      - cell "29ms" [ref=e894]
+                - table [ref=e895]:
+                  - rowgroup [ref=e896]:
+                    - row "10062 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 17ms" [ref=e897]:
+                      - rowheader "10062" [ref=e898]
+                      - cell "Chrome" [ref=e899]:
+                        - img "Chrome" [ref=e900]
+                      - cell "captureError" [ref=e901]
+                      - cell "CONNECT" [ref=e902]
+                      - cell "HTTP" [ref=e903]
+                      - cell [ref=e904]
+                      - cell "Tunnel to" [ref=e905]
+                      - cell "mp.weixin.qq.com:443" [ref=e906]
+                      - cell [ref=e907]
+                      - cell "17ms" [ref=e908]
+                - table [ref=e909]:
+                  - rowgroup [ref=e910]:
+                    - row "10063 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 23ms" [ref=e911]:
+                      - rowheader "10063" [ref=e912]
+                      - cell "Chrome" [ref=e913]:
+                        - img "Chrome" [ref=e914]
+                      - cell "captureError" [ref=e915]
+                      - cell "CONNECT" [ref=e916]
+                      - cell "HTTP" [ref=e917]
+                      - cell [ref=e918]
+                      - cell "Tunnel to" [ref=e919]
+                      - cell "mp.weixin.qq.com:443" [ref=e920]
+                      - cell [ref=e921]
+                      - cell "23ms" [ref=e922]
+                - table [ref=e923]:
+                  - rowgroup [ref=e924]:
+                    - row "10064 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 26ms" [ref=e925]:
+                      - rowheader "10064" [ref=e926]
+                      - cell "Chrome" [ref=e927]:
+                        - img "Chrome" [ref=e928]
+                      - cell "captureError" [ref=e929]
+                      - cell "CONNECT" [ref=e930]
+                      - cell "HTTP" [ref=e931]
+                      - cell [ref=e932]
+                      - cell "Tunnel to" [ref=e933]
+                      - cell "mp.weixin.qq.com:443" [ref=e934]
+                      - cell [ref=e935]
+                      - cell "26ms" [ref=e936]
+                - table [ref=e937]:
+                  - rowgroup [ref=e938]:
+                    - row "10065 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 25ms" [ref=e939]:
+                      - rowheader "10065" [ref=e940]
+                      - cell "Chrome" [ref=e941]:
+                        - img "Chrome" [ref=e942]
+                      - cell "captureError" [ref=e943]
+                      - cell "CONNECT" [ref=e944]
+                      - cell "HTTP" [ref=e945]
+                      - cell [ref=e946]
+                      - cell "Tunnel to" [ref=e947]
+                      - cell "mp.weixin.qq.com:443" [ref=e948]
+                      - cell [ref=e949]
+                      - cell "25ms" [ref=e950]
+                - table [ref=e951]:
+                  - rowgroup [ref=e952]:
+                    - row "10066 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 27ms" [ref=e953]:
+                      - rowheader "10066" [ref=e954]
+                      - cell "Chrome" [ref=e955]:
+                        - img "Chrome" [ref=e956]
+                      - cell "captureError" [ref=e957]
+                      - cell "CONNECT" [ref=e958]
+                      - cell "HTTP" [ref=e959]
+                      - cell [ref=e960]
+                      - cell "Tunnel to" [ref=e961]
+                      - cell "mp.weixin.qq.com:443" [ref=e962]
+                      - cell [ref=e963]
+                      - cell "27ms" [ref=e964]
+                - table [ref=e965]:
+                  - rowgroup [ref=e966]:
+                    - row "10067 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 31ms" [ref=e967]:
+                      - rowheader "10067" [ref=e968]
+                      - cell "Chrome" [ref=e969]:
+                        - img "Chrome" [ref=e970]
+                      - cell "captureError" [ref=e971]
+                      - cell "CONNECT" [ref=e972]
+                      - cell "HTTP" [ref=e973]
+                      - cell [ref=e974]
+                      - cell "Tunnel to" [ref=e975]
+                      - cell "mp.weixin.qq.com:443" [ref=e976]
+                      - cell [ref=e977]
+                      - cell "31ms" [ref=e978]
+                - table [ref=e979]:
+                  - rowgroup [ref=e980]:
+                    - row "10068 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 32ms" [ref=e981]:
+                      - rowheader "10068" [ref=e982]
+                      - cell "Chrome" [ref=e983]:
+                        - img "Chrome" [ref=e984]
+                      - cell "captureError" [ref=e985]
+                      - cell "CONNECT" [ref=e986]
+                      - cell "HTTP" [ref=e987]
+                      - cell [ref=e988]
+                      - cell "Tunnel to" [ref=e989]
+                      - cell "mp.weixin.qq.com:443" [ref=e990]
+                      - cell [ref=e991]
+                      - cell "32ms" [ref=e992]
+                - table [ref=e993]:
+                  - rowgroup [ref=e994]:
+                    - row "10069 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 19ms" [ref=e995]:
+                      - rowheader "10069" [ref=e996]
+                      - cell "Chrome" [ref=e997]:
+                        - img "Chrome" [ref=e998]
+                      - cell "captureError" [ref=e999]
+                      - cell "CONNECT" [ref=e1000]
+                      - cell "HTTP" [ref=e1001]
+                      - cell [ref=e1002]
+                      - cell "Tunnel to" [ref=e1003]
+                      - cell "mp.weixin.qq.com:443" [ref=e1004]
+                      - cell [ref=e1005]
+                      - cell "19ms" [ref=e1006]
+                - table [ref=e1007]:
+                  - rowgroup [ref=e1008]:
+                    - row "10070 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 28ms" [ref=e1009]:
+                      - rowheader "10070" [ref=e1010]
+                      - cell "Chrome" [ref=e1011]:
+                        - img "Chrome" [ref=e1012]
+                      - cell "captureError" [ref=e1013]
+                      - cell "CONNECT" [ref=e1014]
+                      - cell "HTTP" [ref=e1015]
+                      - cell [ref=e1016]
+                      - cell "Tunnel to" [ref=e1017]
+                      - cell "mp.weixin.qq.com:443" [ref=e1018]
+                      - cell [ref=e1019]
+                      - cell "28ms" [ref=e1020]
+                - table [ref=e1021]:
+                  - rowgroup [ref=e1022]:
+                    - row "10071 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 20ms" [ref=e1023]:
+                      - rowheader "10071" [ref=e1024]
+                      - cell "Chrome" [ref=e1025]:
+                        - img "Chrome" [ref=e1026]
+                      - cell "captureError" [ref=e1027]
+                      - cell "CONNECT" [ref=e1028]
+                      - cell "HTTP" [ref=e1029]
+                      - cell [ref=e1030]
+                      - cell "Tunnel to" [ref=e1031]
+                      - cell "mp.weixin.qq.com:443" [ref=e1032]
+                      - cell [ref=e1033]
+                      - cell "20ms" [ref=e1034]
+                - table [ref=e1035]:
+                  - rowgroup [ref=e1036]:
+                    - row "10072 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 28ms" [ref=e1037]:
+                      - rowheader "10072" [ref=e1038]
+                      - cell "Chrome" [ref=e1039]:
+                        - img "Chrome" [ref=e1040]
+                      - cell "captureError" [ref=e1041]
+                      - cell "CONNECT" [ref=e1042]
+                      - cell "HTTP" [ref=e1043]
+                      - cell [ref=e1044]
+                      - cell "Tunnel to" [ref=e1045]
+                      - cell "mp.weixin.qq.com:443" [ref=e1046]
+                      - cell [ref=e1047]
+                      - cell "28ms" [ref=e1048]
+                - table [ref=e1049]:
+                  - rowgroup [ref=e1050]:
+                    - row "10073 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 29ms" [ref=e1051]:
+                      - rowheader "10073" [ref=e1052]
+                      - cell "Chrome" [ref=e1053]:
+                        - img "Chrome" [ref=e1054]
+                      - cell "captureError" [ref=e1055]
+                      - cell "CONNECT" [ref=e1056]
+                      - cell "HTTP" [ref=e1057]
+                      - cell [ref=e1058]
+                      - cell "Tunnel to" [ref=e1059]
+                      - cell "mp.weixin.qq.com:443" [ref=e1060]
+                      - cell [ref=e1061]
+                      - cell "29ms" [ref=e1062]
+                - table [ref=e1063]:
+                  - rowgroup [ref=e1064]:
+                    - row "10074 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 31ms" [ref=e1065]:
+                      - rowheader "10074" [ref=e1066]
+                      - cell "Chrome" [ref=e1067]:
+                        - img "Chrome" [ref=e1068]
+                      - cell "captureError" [ref=e1069]
+                      - cell "CONNECT" [ref=e1070]
+                      - cell "HTTP" [ref=e1071]
+                      - cell [ref=e1072]
+                      - cell "Tunnel to" [ref=e1073]
+                      - cell "mp.weixin.qq.com:443" [ref=e1074]
+                      - cell [ref=e1075]
+                      - cell "31ms" [ref=e1076]
+                - table [ref=e1077]:
+                  - rowgroup [ref=e1078]:
+                    - row "10075 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 18ms" [ref=e1079]:
+                      - rowheader "10075" [ref=e1080]
+                      - cell "Chrome" [ref=e1081]:
+                        - img "Chrome" [ref=e1082]
+                      - cell "captureError" [ref=e1083]
+                      - cell "CONNECT" [ref=e1084]
+                      - cell "HTTP" [ref=e1085]
+                      - cell [ref=e1086]
+                      - cell "Tunnel to" [ref=e1087]
+                      - cell "mp.weixin.qq.com:443" [ref=e1088]
+                      - cell [ref=e1089]
+                      - cell "18ms" [ref=e1090]
+                - table [ref=e1091]:
+                  - rowgroup [ref=e1092]:
+                    - row "10076 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 16ms" [ref=e1093]:
+                      - rowheader "10076" [ref=e1094]
+                      - cell "Chrome" [ref=e1095]:
+                        - img "Chrome" [ref=e1096]
+                      - cell "captureError" [ref=e1097]
+                      - cell "CONNECT" [ref=e1098]
+                      - cell "HTTP" [ref=e1099]
+                      - cell [ref=e1100]
+                      - cell "Tunnel to" [ref=e1101]
+                      - cell "mp.weixin.qq.com:443" [ref=e1102]
+                      - cell [ref=e1103]
+                      - cell "16ms" [ref=e1104]
+                - table [ref=e1105]:
+                  - rowgroup [ref=e1106]:
+                    - row "10077 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 23ms" [ref=e1107]:
+                      - rowheader "10077" [ref=e1108]
+                      - cell "Chrome" [ref=e1109]:
+                        - img "Chrome" [ref=e1110]
+                      - cell "captureError" [ref=e1111]
+                      - cell "CONNECT" [ref=e1112]
+                      - cell "HTTP" [ref=e1113]
+                      - cell [ref=e1114]
+                      - cell "Tunnel to" [ref=e1115]
+                      - cell "mp.weixin.qq.com:443" [ref=e1116]
+                      - cell [ref=e1117]
+                      - cell "23ms" [ref=e1118]
+                - table [ref=e1119]:
+                  - rowgroup [ref=e1120]:
+                    - row "10078 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 31ms" [ref=e1121]:
+                      - rowheader "10078" [ref=e1122]
+                      - cell "Chrome" [ref=e1123]:
+                        - img "Chrome" [ref=e1124]
+                      - cell "captureError" [ref=e1125]
+                      - cell "CONNECT" [ref=e1126]
+                      - cell "HTTP" [ref=e1127]
+                      - cell [ref=e1128]
+                      - cell "Tunnel to" [ref=e1129]
+                      - cell "mp.weixin.qq.com:443" [ref=e1130]
+                      - cell [ref=e1131]
+                      - cell "31ms" [ref=e1132]
+          - text: 
+          - generic [ref=e422]:
+            - text: 
+            - generic [ref=e423]:
+              - generic [ref=e424]: All
+              - generic "Show only json requests" [ref=e425]: JSON
+              - generic "Show only html requests" [ref=e426]: HTML
+              - generic "Show only css requests" [ref=e427]: CSS
+              - generic "Show only javascript requests" [ref=e428]: JS
+              - generic "Show only font requests" [ref=e429]: Font
+              - generic "Show only image requests" [ref=e430]: Img
+              - generic "Show only media requests" [ref=e431]: Media
+              - generic "Show only websocket requests" [ref=e432]: WS
+              - generic "Show only tunnel requests" [ref=e433]: Tunnel
+              - generic "Show only webassembly requests" [ref=e434]: Wasm
+              - generic "Show only mock requests" [ref=e435]: Mock
+              - generic "Show requests matching the rules" [ref=e436]: Rules
+              - generic "Show import sessions" [ref=e437]: Import
+              - generic "Show only composer requests" [ref=e438]: Composer
+              - generic "Show only error requests" [ref=e439]: Error
+              - generic "Show only other requests" [ref=e440]: Other
+            - textbox "Type filter text" [ref=e441]
+        - generic [ref=e445]:
+          - button " Overview" [ref=e446] [cursor=pointer]:
+            - generic [ref=e447]: 
+            - text: Overview
+          - button " Inspectors" [ref=e448] [cursor=pointer]:
+            - generic [ref=e449]: 
+            - text: Inspectors
+          - button " Timeline" [ref=e450] [cursor=pointer]:
+            - generic [ref=e451]: 
+            - text: Timeline
+          - button " Composer" [ref=e452] [cursor=pointer]:
+            - generic [ref=e453]: 
+            - text: Composer
+          - button " Tools" [ref=e454] [cursor=pointer]:
+            - generic [ref=e455]: 
+            - text: Tools
+          - button " Saved" [ref=e456] [cursor=pointer]:
+            - generic [ref=e457]: 
+            - text: Saved
+          - button "" [ref=e458] [cursor=pointer]:
+            - generic [ref=e459]: 
+  - text:                
+  - text:     +     + +              + −  + −  + +    + − +      + −  + +    + −          + −   
+  - text:  
+  - text:  
+  - text:  
+  - text:  
+  - text:    +      
+  - text: 
