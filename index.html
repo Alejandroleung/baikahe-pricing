@@ -371,8 +371,8 @@
         <label class="check-item"><input type="checkbox" data-cost="0.165" data-cost-100="110" data-cost-200="110" data-cost-500="150" data-cost-1000="120" data-cost-2000="160"> 烫金</label>
         <label class="check-item"><input type="checkbox" data-cost="0.165" data-cost-100="110" data-cost-200="110" data-cost-500="150"> 烫银</label>
         <label class="check-item"><input type="checkbox" data-cost="0.28" data-cost-100="200" data-cost-200="200" data-cost-500="250"> 4色印底不覆膜</label>
-        <label class="check-item"><input type="checkbox" data-cost="0.20" data-cost-100="150" data-cost-200="180" data-cost-500="200"> 白卡1专色</label>
-        <label class="check-item"><input type="checkbox" data-cost="0.40" data-cost-100="260" data-cost-200="260" data-cost-500="320"> 银卡1专色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.20" data-cost-100="150" data-cost-200="180" data-cost-500="200" data-cost-1000="305" data-cost-2000="380"> 白卡1专色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.40" data-cost-100="260" data-cost-200="260" data-cost-500="320" data-cost-1000="1301" data-cost-2000="1620"> 银卡1专色</label>
       </div>
     </div>
     <div class="form-row">
@@ -509,8 +509,9 @@ function calcPrice(){
   // 地盒(26) 的+50公式已含间隔，不加3mm
   var u=getUnfoldedSize(b.id,L,W,H);
   var hasInterval=b.id!=='base';  // 地盒例外
-  var eaw=u.width+(hasInterval?3:0);
-  var area=eaw*u.height/1000000;      // 单盒展开面积 m²
+  var eaw=u.width+(hasInterval?3:0)+(q>=1000?6:0);    // 原有间隔 + 大货加6mm出血
+  var eah=u.height+(q>=1000?6:0);                      // 大货高度加6mm出血
+  var area=eaw*eah/1000000;                          // 单盒展开面积 m²
 
   // 纸张单价（元/kg），参考行业白卡纸市场价（2025-2026年）
   // 白卡纸约5500-6500元/吨，银卡纸约9000-12000元/吨
