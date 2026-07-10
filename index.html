@@ -491,8 +491,13 @@ function setupIn(){
     var v=parseInt(e.target.value)||0;
     if(v===0)return;
     var valid=false;
-    if(v<1000)valid=(v===100||v===200||v===500);
-    else valid=(v%1000===0);
+    if(S.material==='银卡纸'){
+      valid=(v>=1000&&v%1000===0);
+    }else if(v<1000){
+      valid=(v===100||v===200||v===500);
+    }else{
+      valid=(v%1000===0);
+    }
     if(!valid){
       alert('拼版不支持该数量');
       e.target.value=lastValidQty||'';
