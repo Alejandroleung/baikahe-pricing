@@ -548,12 +548,8 @@ function getUnfoldedSize(id, L, W, H) {
 // q≥1000：参考拼一拼盒微信小程序定价
 //   小程序数据：1000个¥1138, 2000个¥2160, 3000个¥3065, 5000个¥4233, 10000个¥7882
 //   中间数量线性插值
-function getRateFromQty(qty) {
-  var pts = [
-    [100, 20.9080], [200, 13.5936], [500, 6.9182],
-    [1000, 3.8820], [2000, 3.6841], [3000, 3.4851],
-    [5000, 2.8720], [10000, 2.6887]
-  ];
+// 通用线性插值费率查找
+function lookupRate(pts, qty) {
   if (qty <= pts[0][0]) return pts[0][1];
   if (qty >= pts[pts.length-1][0]) return pts[pts.length-1][1];
   for (var i = 0; i < pts.length-1; i++) {
@@ -563,6 +559,30 @@ function getRateFromQty(qty) {
     }
   }
   return pts[pts.length-1][1];
+}
+function getRateFromQty(qty, material, weight) {
+  // 银卡纸375g：使用小程序实测费率
+  if(material==='银卡纸'&&weight===375){
+    var ratio375=5.9146/3.882; // 银卡/白卡费率比(1000个)
+    return lookupRate([
+      [100,20.9080*ratio375],[200,13.5936*ratio375],[500,6.9182*ratio375],
+      [1000,5.9146],[2000,5.0577],[3000,4.1998],[5000,3.3427]
+    ], qty);
+  }
+  // 银卡纸425g：按纸价比例缩放375g的费率
+  if(material==='银卡纸'&&weight===425){
+    var scale=12.0/11.0; // 425g纸价/375g纸价
+    return lookupRate([
+      [100,20.9080*5.9146/3.882*scale],[200,13.5936*5.9146/3.882*scale],[500,6.9182*5.9146/3.882*scale],
+      [1000,5.9146*scale],[2000,5.0577*scale],[3000,4.1998*scale],[5000,3.3427*scale]
+    ], qty);
+  }
+  // 默认白卡纸费率
+  return lookupRate([
+    [100,20.9080],[200,13.5936],[500,6.9182],
+    [1000,3.8820],[2000,3.6841],[3000,3.4851],
+    [5000,2.8720],[10000,2.6887]
+  ], qty);
 }
 
 function calcPrice(){
@@ -641,7 +661,7 @@ function calcPrice(){
 
   // ── API校准总价（基于俊茂丰合版定价实测数据）──
   // 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
-  var rate = getRateFromQty(q);
+  var rate = getRateFromQty(q, S.material, S.weight);
 
   // 参照配置成本（白卡350g 过哑膜 四色，固定不变，用于计算校准系数）
   var refMc = area * 350 / 1000 * q * 5.7;
@@ -653,13 +673,27 @@ function calcPrice(){
   var refTotal = rate * area * q;
   var ratio = refBase > 0 ? refTotal / refBase : 1;
 
-  // 实际配置总价 = (材料+印刷+表面) × 校准系数 + 工艺/配件/服务
+  // 实际配置总价
   // 工艺费不含校准系数（data-cost已是含税最终价），q≤500用俊茂丰实测总价，q≥1000用data-cost单价×数量
-  var total = (mc + pc + sc) * ratio + ap + ax + sv;
-
-  var displayMC = mc * ratio;
-  var displayPC = pc * ratio;
-  var displayProcess = sc * ratio + ap + ax + sv;
+  var total, displayMC, displayPC, displayProcess;
+  if (S.material === '银卡纸') {
+    // 银卡纸：费率已含材料+印刷+表面总价，直接使用（避免校准系数放大高纸价）
+    var silverBase = rate * area * q;
+    var silverCost = mc + pc + sc;
+    var mcShare = silverCost > 0 ? mc / silverCost : 0;
+    var pcShare = silverCost > 0 ? pc / silverCost : 0;
+    var scShare = silverCost > 0 ? sc / silverCost : 0;
+    displayMC = silverBase * mcShare;
+    displayPC = silverBase * pcShare;
+    displayProcess = silverBase * scShare + ap + ax + sv;
+    total = silverBase + ap + ax + sv;
+  } else {
+    // 白卡纸/瓦楞纸：用校准系数 = API总价 / 参照成本
+    total = (mc + pc + sc) * ratio + ap + ax + sv;
+    displayMC = mc * ratio;
+    displayPC = pc * ratio;
+    displayProcess = sc * ratio + ap + ax + sv;
+  }
 
   var u = q > 0 ? total / q : 0;
 
