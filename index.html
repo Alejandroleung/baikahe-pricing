@@ -341,6 +341,7 @@
         <div class="option-item active" data-value="350">350g</div>
         <div class="option-item disabled" data-value="375">375g</div>
         <div class="option-item" data-value="400">400g</div>
+        <div class="option-item disabled" data-value="425">425g</div>
         <div class="option-item disabled" data-value="600">600g</div>
       </div>
     </div>
@@ -435,7 +436,39 @@ const boxTypes=[
 let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0};
 function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')"><div class="box-icon">'+b.icon+'</div><h3>'+b.name+'</h3></div>';}).join('');}
 function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
-function setupOG(gid,sk){document.getElementById(gid).addEventListener('click',function(e){var i=e.target.closest('.option-item');if(!i||i.classList.contains('disabled'))return;i.parentElement.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active')});i.classList.add('active');S[sk]=i.dataset.value;calcPrice();});}
+function updateForMaterial(material){
+  var wg=document.getElementById('weightGroup');
+  var sg=document.getElementById('surfaceGroup');
+  // 先恢复所有选项
+  wg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
+  sg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
+  if(material==='银卡纸'){
+    // 银卡纸仅支持375g和425g
+    wg.querySelectorAll('.option-item').forEach(function(el){
+      if(el.dataset.value!=='375'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
+    });
+    wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    wg.querySelector('[data-value="375"]').classList.add('active');S.weight=375;
+    sg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    sg.querySelector('[data-value="白+UV逆向"]').classList.add('active');S.surface='白+UV逆向';
+  }else{
+    // 非银卡纸：还原默认
+    wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    wg.querySelector('[data-value="350"]').classList.add('active');S.weight=350;
+    sg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    sg.querySelector('[data-value="过哑膜"]').classList.add('active');S.surface='过哑膜';
+  }
+}
+function setupOG(gid,sk){
+  document.getElementById(gid).addEventListener('click',function(e){
+    var i=e.target.closest('.option-item');
+    if(!i||i.classList.contains('disabled'))return;
+    i.parentElement.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    i.classList.add('active');S[sk]=i.dataset.value;
+    if(sk==='material')updateForMaterial(S.material);
+    calcPrice();
+  });
+}
 function setupCG(){document.querySelectorAll('.check-group input[type="checkbox"]').forEach(function(cb){cb.addEventListener('change',function(){cb.closest('.check-item').classList.toggle('active',cb.checked);calcPrice();});});}
 function setupIn(){
   ['length','width','height'].forEach(function(id){
@@ -540,7 +573,7 @@ function calcPrice(){
 
   // 纸张单价（元/kg），参考行业白卡纸市场价（2025-2026年）
   // 白卡纸约5500-6500元/吨，银卡纸约9000-12000元/吨
-  var pp={'白卡纸':{240:6.5,300:6.0,350:5.7,375:6.0,400:6.3,600:8.0},'瓦楞纸(300g白卡+A4E黄坑)':{300:7.5,350:7.8,400:8.5},'瓦楞纸(300g白卡+W4E白坑)':{300:8.0,350:8.3,400:9.0},'银卡纸':{300:9.5,350:10.5,400:11.5},'F坑内托':{300:5.0,350:5.5,400:6.0}};
+  var pp={'白卡纸':{240:6.5,300:6.0,350:5.7,375:6.0,400:6.3,600:8.0},'瓦楞纸(300g白卡+A4E黄坑)':{300:7.5,350:7.8,400:8.5},'瓦楞纸(300g白卡+W4E白坑)':{300:8.0,350:8.3,400:9.0},'银卡纸':{300:9.5,350:10.5,375:11.0,400:11.5,425:12.0},'F坑内托':{300:5.0,350:5.5,400:6.0}};
   var ppg=(pp[S.material]&&pp[S.material][S.weight])||5.7;
 
   // 材料费 = 展开面积(m²) × 克重(g/m²) / 1000 × 数量 × 纸价(元/kg)
@@ -735,7 +768,7 @@ calcPrice = function() {
   }
 };
 
-renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();calcPrice();
+renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();updateForMaterial(S.material);calcPrice();
 </script>
 </body>
 </html>
