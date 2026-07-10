@@ -702,7 +702,7 @@ function calcPrice(){
   document.getElementById('priceUnit').textContent = '总价（' + q.toLocaleString() + '个 · 合版印刷）';
   document.getElementById('materialCost').textContent = '¥' + displayMC.toFixed(0);
   document.getElementById('processCost').textContent = '¥' + displayProcess.toFixed(0);
-  document.getElementById('unitPrice').textContent = '¥' + u.toFixed(0);
+  document.getElementById('unitPrice').textContent = '¥' + u.toFixed(2);
 
   document.getElementById('printCost').textContent = '¥' + displayPC.toFixed(0);
 
