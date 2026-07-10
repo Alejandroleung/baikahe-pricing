@@ -473,7 +473,7 @@ function setupOG(gid,sk){
     var i=e.target.closest('.option-item');
     if(!i||i.classList.contains('disabled'))return;
     i.parentElement.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
-    i.classList.add('active');S[sk]=i.dataset.value;
+    i.classList.add('active');S[sk]=sk==='weight'?parseInt(i.dataset.value):i.dataset.value;
     if(sk==='material')syncOptions();
     calcPrice();
   });
