@@ -444,21 +444,23 @@ function setupIn(){
   var qtyEl=document.getElementById('quantity');
   var lastValidQty=0;
   qtyEl.addEventListener('input',function(e){
+    S.quantity=parseInt(e.target.value)||0;
+    calcPrice();
+  });
+  qtyEl.addEventListener('blur',function(e){
     var v=parseInt(e.target.value)||0;
-    // 数量校验：<1000只能是100/200/500，≥1000只能是1000的倍数
+    if(v===0)return;
     var valid=false;
-    if(v===0)valid=true;
-    else if(v<1000)valid=(v===100||v===200||v===500);
+    if(v<1000)valid=(v===100||v===200||v===500);
     else valid=(v%1000===0);
-    if(valid){
-      lastValidQty=v;
-      S.quantity=v;
-    }else{
+    if(!valid){
       alert('拼版不支持该数量');
       e.target.value=lastValidQty||'';
       S.quantity=lastValidQty;
+      calcPrice();
+    }else{
+      lastValidQty=v;
     }
-    calcPrice();
   });
 }
 
