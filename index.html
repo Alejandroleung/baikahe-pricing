@@ -434,6 +434,12 @@ let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜'
 function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')"><div class="box-icon">'+b.icon+'</div><h3>'+b.name+'</h3></div>';}).join('');}
 function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
 function syncOptions(){
+  // 银卡纸数量校验
+  if(S.material==='银卡纸'&&S.quantity>0&&(S.quantity<1000||S.quantity%1000!==0)){
+    alert('拼版不支持该数量');
+    document.getElementById('quantity').value=lastValidQty||'';
+    S.quantity=lastValidQty;
+  }
   var wg=document.getElementById('weightGroup');
   var sg=document.getElementById('surfaceGroup');
   wg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
@@ -476,12 +482,12 @@ function setupOG(gid,sk){
   });
 }
 function setupCG(){document.querySelectorAll('.check-group input[type="checkbox"]').forEach(function(cb){cb.addEventListener('change',function(){cb.closest('.check-item').classList.toggle('active',cb.checked);calcPrice();});});}
+var lastValidQty=0;
 function setupIn(){
   ['length','width','height'].forEach(function(id){
     document.getElementById(id).addEventListener('input',function(e){S[id]=parseInt(e.target.value)||0;calcPrice();});
   });
   var qtyEl=document.getElementById('quantity');
-  var lastValidQty=0;
   qtyEl.addEventListener('input',function(e){
     S.quantity=parseInt(e.target.value)||0;
     syncOptions();
