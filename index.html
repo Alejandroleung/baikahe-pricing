@@ -698,9 +698,10 @@ function calcPrice(){
   var u = q > 0 ? total / q : 0;
 
   document.getElementById('priceLabel').textContent = b.name + ' 报价信息';
-  document.getElementById('totalPrice').textContent = total.toFixed(2);
-  document.getElementById('priceUnit').textContent = '总价（' + q.toLocaleString() + '个 · 合版印刷）';
-  document.getElementById('unitPrice').textContent = '¥' + u.toFixed(2);
+  var hidePrice = S.material === '银卡纸' && q < 1000;
+  document.getElementById('totalPrice').textContent = hidePrice ? '—' : total.toFixed(2);
+  document.getElementById('priceUnit').textContent = hidePrice ? '' : '总价（' + q.toLocaleString() + '个 · 合版印刷）';
+  document.getElementById('unitPrice').textContent = hidePrice ? '' : '¥' + u.toFixed(2);
 
   // 重量估算
   var singleG = pw * 1000;
