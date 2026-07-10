@@ -436,25 +436,34 @@ const boxTypes=[
 let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0};
 function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')"><div class="box-icon">'+b.icon+'</div><h3>'+b.name+'</h3></div>';}).join('');}
 function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
-function updateForMaterial(material){
+function syncOptions(){
   var wg=document.getElementById('weightGroup');
   var sg=document.getElementById('surfaceGroup');
-  // 先恢复所有选项
   wg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
   sg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
-  if(material==='银卡纸'){
-    // 银卡纸仅支持375g和425g
+  // ── 克重限制 ──
+  if(S.material==='银卡纸'){
     wg.querySelectorAll('.option-item').forEach(function(el){
       if(el.dataset.value!=='375'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
     });
     wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
     wg.querySelector('[data-value="375"]').classList.add('active');S.weight=375;
+  }else if(S.material==='白卡纸'&&S.quantity>0){
+    var allowed=S.quantity<1000?['240','350','400']:['350','400'];
+    wg.querySelectorAll('.option-item').forEach(function(el){
+      if(allowed.indexOf(el.dataset.value)===-1){el.classList.add('disabled');}
+    });
+    var activeEl=wg.querySelector('.option-item.active');
+    if(!activeEl||activeEl.classList.contains('disabled')){
+      wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+      wg.querySelector('[data-value="350"]').classList.add('active');S.weight=350;
+    }
+  }
+  // ── 表面处理限制 ──
+  if(S.material==='银卡纸'){
     sg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
     sg.querySelector('[data-value="白+UV逆向"]').classList.add('active');S.surface='白+UV逆向';
-  }else{
-    // 非银卡纸：还原默认
-    wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
-    wg.querySelector('[data-value="350"]').classList.add('active');S.weight=350;
+  }else if(S.surface==='白+UV逆向'){
     sg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
     sg.querySelector('[data-value="过哑膜"]').classList.add('active');S.surface='过哑膜';
   }
@@ -465,7 +474,7 @@ function setupOG(gid,sk){
     if(!i||i.classList.contains('disabled'))return;
     i.parentElement.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
     i.classList.add('active');S[sk]=i.dataset.value;
-    if(sk==='material')updateForMaterial(S.material);
+    if(sk==='material')syncOptions();
     calcPrice();
   });
 }
@@ -478,6 +487,7 @@ function setupIn(){
   var lastValidQty=0;
   qtyEl.addEventListener('input',function(e){
     S.quantity=parseInt(e.target.value)||0;
+    syncOptions();
     calcPrice();
   });
   qtyEl.addEventListener('blur',function(e){
@@ -490,6 +500,7 @@ function setupIn(){
       alert('拼版不支持该数量');
       e.target.value=lastValidQty||'';
       S.quantity=lastValidQty;
+      syncOptions();
       calcPrice();
     }else{
       lastValidQty=v;
@@ -768,7 +779,7 @@ calcPrice = function() {
   }
 };
 
-renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();updateForMaterial(S.material);calcPrice();
+renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();syncOptions();calcPrice();
 </script>
 </body>
 </html>
