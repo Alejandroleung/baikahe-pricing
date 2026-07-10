@@ -437,7 +437,30 @@ function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.
 function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
 function setupOG(gid,sk){document.getElementById(gid).addEventListener('click',function(e){var i=e.target.closest('.option-item');if(!i||i.classList.contains('disabled'))return;i.parentElement.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active')});i.classList.add('active');S[sk]=i.dataset.value;calcPrice();});}
 function setupCG(){document.querySelectorAll('.check-group input[type="checkbox"]').forEach(function(cb){cb.addEventListener('change',function(){cb.closest('.check-item').classList.toggle('active',cb.checked);calcPrice();});});}
-function setupIn(){['length','width','height','quantity'].forEach(function(id){document.getElementById(id).addEventListener('input',function(e){S[id]=parseInt(e.target.value)||0;calcPrice();});});}
+function setupIn(){
+  ['length','width','height'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',function(e){S[id]=parseInt(e.target.value)||0;calcPrice();});
+  });
+  var qtyEl=document.getElementById('quantity');
+  var lastValidQty=0;
+  qtyEl.addEventListener('input',function(e){
+    var v=parseInt(e.target.value)||0;
+    // 数量校验：<1000只能是100/200/500，≥1000只能是1000的倍数
+    var valid=false;
+    if(v===0)valid=true;
+    else if(v<1000)valid=(v===100||v===200||v===500);
+    else valid=(v%1000===0);
+    if(valid){
+      lastValidQty=v;
+      S.quantity=v;
+    }else{
+      alert('拼版不支持该数量');
+      e.target.value=lastValidQty||'';
+      S.quantity=lastValidQty;
+    }
+    calcPrice();
+  });
+}
 
 // 展开尺寸计算公式（从俊茂丰 http://www.zsmaofeng.com/ API 获取）
 // 公式来源于 API: exLengthFormula / exWidthFormula
