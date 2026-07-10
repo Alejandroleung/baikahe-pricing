@@ -10,7 +10,7 @@ echo.
 
 git add -A
 git commit -m "auto update %date% %time%"
-git push
+git push --set-upstream origin main
 
 echo.
 echo ========================================
