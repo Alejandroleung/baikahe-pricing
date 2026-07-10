@@ -399,9 +399,6 @@
     <div class="price"><small>¥</small><span id="totalPrice">0.00</span></div>
     <div class="unit" id="priceUnit">总价（1,000个 · 合版印刷）</div>
     <div class="breakdown">
-      <div class="breakdown-item"><div class="val" id="materialCost">¥0</div><div class="lbl">材料费</div></div>
-      <div class="breakdown-item"><div class="val" id="printCost">¥0</div><div class="lbl">印刷费</div></div>
-      <div class="breakdown-item"><div class="val" id="processCost">¥0</div><div class="lbl">工艺费</div></div>
       <div class="breakdown-item"><div class="val" id="unitPrice">¥0</div><div class="lbl">单价/个</div></div>
     </div>
     <div class="weight-info">
@@ -675,24 +672,14 @@ function calcPrice(){
 
   // 实际配置总价
   // 工艺费不含校准系数（data-cost已是含税最终价），q≤500用俊茂丰实测总价，q≥1000用data-cost单价×数量
-  var total, displayMC, displayPC, displayProcess;
+  var total;
   if (S.material === '银卡纸') {
     // 银卡纸：费率已含材料+印刷+表面总价，直接使用（避免校准系数放大高纸价）
     var silverBase = rate * area * q;
-    var silverCost = mc + pc + sc;
-    var mcShare = silverCost > 0 ? mc / silverCost : 0;
-    var pcShare = silverCost > 0 ? pc / silverCost : 0;
-    var scShare = silverCost > 0 ? sc / silverCost : 0;
-    displayMC = silverBase * mcShare;
-    displayPC = silverBase * pcShare;
-    displayProcess = silverBase * scShare + ap + ax + sv;
     total = silverBase + ap + ax + sv;
   } else {
     // 白卡纸/瓦楞纸：用校准系数 = API总价 / 参照成本
     total = (mc + pc + sc) * ratio + ap + ax + sv;
-    displayMC = mc * ratio;
-    displayPC = pc * ratio;
-    displayProcess = sc * ratio + ap + ax + sv;
   }
 
   var u = q > 0 ? total / q : 0;
@@ -700,11 +687,7 @@ function calcPrice(){
   document.getElementById('priceLabel').textContent = b.name + ' 报价信息';
   document.getElementById('totalPrice').textContent = total.toFixed(2);
   document.getElementById('priceUnit').textContent = '总价（' + q.toLocaleString() + '个 · 合版印刷）';
-  document.getElementById('materialCost').textContent = '¥' + displayMC.toFixed(0);
-  document.getElementById('processCost').textContent = '¥' + displayProcess.toFixed(0);
   document.getElementById('unitPrice').textContent = '¥' + u.toFixed(2);
-
-  document.getElementById('printCost').textContent = '¥' + displayPC.toFixed(0);
 
   // 重量估算
   var singleG = pw * 1000;
