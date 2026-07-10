@@ -215,6 +215,12 @@
     .unfolded-display .unfolded-label { font-size: 14px; font-weight: 600; color: #ccc; white-space: nowrap; }
     .unfolded-display .unfolded-value { font-size: 14px; color: #ff8c00; font-weight: 500; }
     .unfolded-display .unfolded-value strong { font-size: 18px; font-weight: 700; color: #fff; }
+    /* ---- Address Section ---- */
+    .address-section { margin-bottom: 12px !important; }
+    .address-section select { color-scheme: dark; }
+    .address-section select option { background: #1a1a1a; color: #fff; }
+    .freight-item .val { font-size: 15px !important; }
+    .freight-item .lbl { font-size: 11px !important; }
     /* ---- Price Result ---- */
     .price-result {
       background: linear-gradient(135deg, #0d0d0d 0%, #1a0a00 100%);
@@ -394,12 +400,22 @@
       </div>
     </div>
   </div>
+  <div class="form-section address-section anim-fade-up">
+    <div class="form-row">
+      <div class="form-label">*收货地</div>
+      <div class="dim-group" style="flex:1;flex-wrap:wrap;">
+        <select id="provinceSelect" class="qty-input" style="flex:1;min-width:120px;"><option value="">— 请选择省份 —</option></select>
+        <select id="citySelect" class="qty-input" style="flex:1;min-width:120px;"><option value="">— 请选择城市 —</option></select>
+      </div>
+    </div>
+  </div>
   <div class="price-result anim-fade-up">
     <div class="label" id="priceLabel">双插盒 报价信息</div>
     <div class="price"><small>¥</small><span id="totalPrice">0.00</span></div>
     <div class="unit" id="priceUnit">总价（1,000个 · 合版印刷）</div>
     <div class="breakdown">
       <div class="breakdown-item"><div class="val" id="unitPrice">¥0</div><div class="lbl">单价/个</div></div>
+      <div class="breakdown-item freight-item" style="display:none;"><div class="val" id="freightPrice">¥0</div><div class="lbl" id="freightLabel">运费</div></div>
     </div>
     <div class="weight-info">
       <span>单盒纸重: <strong id="singleWeight">0g</strong></span>
@@ -516,6 +532,102 @@ function setupIn(){
       lastValidQty=v;
     }
   });
+}
+
+// ── 运费计算 ──
+// 发货地：佛山（广东）
+// 加运美（省内）：广东省内按城市分区，首重+续重
+// 中通快运（省外）：按省份分区，首重+续重
+var freightZones={
+  // 加运美 ❰ 广东省内 ❱ 费率
+  jym:{
+    name:'加运美',
+    zone:[
+      {name:'珠三角',cities:['广州','深圳','东莞','中山','珠海','佛山','惠州','江门','肇庆'],first:8,add:2},
+      {name:'广东其他',cities:['汕头','汕尾','潮州','揭阳','梅州','河源','韶关','清远','云浮','阳江','茂名','湛江'],first:10,add:3}
+    ]
+  },
+  // 中通快运 ❰ 省外 ❱ 费率（从佛山/广东发货）
+  zto:{
+    name:'中通快运',
+    zone:[
+      {name:'Zone1-邻省',provinces:['福建','江西','湖南','广西','海南'],first:10,add:4},
+      {name:'Zone2-华东华中',provinces:['浙江','江苏','上海','安徽','湖北','河南','山东'],first:12,add:5},
+      {name:'Zone3-华北东北',provinces:['北京','天津','河北','山西','陕西','辽宁','吉林','黑龙江'],first:15,add:7},
+      {name:'Zone4-西南西北',provinces:['四川','重庆','贵州','云南','甘肃','宁夏','青海','内蒙古'],first:15,add:10},
+      {name:'Zone5-偏远',provinces:['新疆','西藏'],first:20,add:15}
+    ]
+  }
+};
+// 省份→城市数据
+var provinceCities={
+  '广东':['广州','深圳','东莞','中山','珠海','佛山','惠州','江门','肇庆','汕头','汕尾','潮州','揭阳','梅州','河源','韶关','清远','云浮','阳江','茂名','湛江'],
+  '福建':['福州','厦门','泉州','漳州','莆田','宁德','南平','三明','龙岩'],
+  '江西':['南昌','赣州','九江','宜春','吉安','上饶','抚州','景德镇','萍乡','新余','鹰潭'],
+  '湖南':['长沙','株洲','湘潭','衡阳','岳阳','常德','邵阳','郴州','益阳','娄底','永州','怀化','湘西'],
+  '广西':['南宁','柳州','桂林','玉林','梧州','北海','防城港','钦州','贵港','百色','河池','贺州','来宾','崇左'],
+  '海南':['海口','三亚','儋州','琼海','文昌','万宁','东方'],
+  '浙江':['杭州','宁波','温州','嘉兴','湖州','绍兴','金华','台州','衢州','丽水','舟山'],
+  '江苏':['南京','苏州','无锡','常州','南通','徐州','扬州','盐城','淮安','连云港','镇江','泰州','宿迁'],
+  '上海':['上海'],
+  '安徽':['合肥','芜湖','蚌埠','马鞍山','安庆','滁州','阜阳','六安','宿州','亳州','淮南','宣城','黄山','铜陵','池州','淮北'],
+  '湖北':['武汉','襄阳','宜昌','荆州','黄冈','十堰','孝感','荆门','鄂州','黄石','咸宁','随州','恩施'],
+  '河南':['郑州','洛阳','南阳','新乡','开封','安阳','许昌','平顶山','焦作','周口','商丘','驻马店','信阳','漯河','濮阳','鹤壁','三门峡','济源'],
+  '山东':['济南','青岛','烟台','潍坊','临沂','济宁','淄博','泰安','聊城','德州','威海','枣庄','日照','滨州','菏泽','东营'],
+  '北京':['北京'],
+  '天津':['天津'],
+  '河北':['石家庄','唐山','保定','邯郸','沧州','廊坊','邢台','秦皇岛','张家口','承德','衡水'],
+  '山西':['太原','大同','长治','临汾','晋中','运城','晋城','忻州','阳泉','吕梁','朔州'],
+  '陕西':['西安','咸阳','宝鸡','渭南','汉中','延安','安康','榆林','商洛','铜川'],
+  '辽宁':['沈阳','大连','鞍山','抚顺','锦州','营口','盘锦','丹东','辽阳','朝阳','本溪','阜新','铁岭','葫芦岛'],
+  '吉林':['长春','吉林','四平','延边','通化','松原','辽源','白城','白山'],
+  '黑龙江':['哈尔滨','大庆','齐齐哈尔','牡丹江','佳木斯','绥化','鸡西','黑河','双鸭山','鹤岗','伊春','七台河','大兴安岭'],
+  '四川':['成都','绵阳','宜宾','南充','泸州','德阳','达州','乐山','凉山','内江','自贡','眉山','广安','遂宁','广元','巴中','攀枝花','资阳','雅安','阿坝','甘孜'],
+  '重庆':['重庆'],
+  '贵州':['贵阳','遵义','黔东南','黔南','毕节','六盘水','铜仁','安顺','黔西南'],
+  '云南':['昆明','大理','红河','曲靖','玉溪','楚雄','文山','保山','昭通','普洱','丽江','临沧','西双版纳','德宏','怒江','迪庆'],
+  '甘肃':['兰州','天水','酒泉','庆阳','武威','白银','张掖','定西','陇南','平凉','嘉峪关','金昌','临夏'],
+  '宁夏':['银川','吴忠','固原','中卫','石嘴山'],
+  '青海':['西宁','海东','海西','海北','海南','黄南','果洛','玉树'],
+  '内蒙古':['呼和浩特','包头','鄂尔多斯','赤峰','通辽','呼伦贝尔','巴彦淖尔','乌兰察布','锡林郭勒','兴安','阿拉善','乌海'],
+  '新疆':['乌鲁木齐','昌吉','巴音郭楞','伊犁','阿克苏','喀什','克拉玛依','石河子','吐鲁番','哈密','博尔塔拉','和田','塔城','阿勒泰','克孜勒苏'],
+  '西藏':['拉萨','日喀则','昌都','林芝','山南','那曲','阿里']
+};
+// 初始化地址选择器
+function initAddress(){
+  var ps=document.getElementById('provinceSelect');
+  var cs=document.getElementById('citySelect');
+  Object.keys(provinceCities).sort().forEach(function(p){
+    var o=document.createElement('option');o.value=p;o.textContent=p;ps.appendChild(o);
+  });
+  ps.addEventListener('change',function(){
+    cs.innerHTML='<option value="">— 请选择城市 —</option>';
+    var cities=provinceCities[this.value];
+    if(cities) cities.forEach(function(c){
+      var o=document.createElement('option');o.value=c;o.textContent=c;cs.appendChild(o);
+    });
+    calcPrice();
+  });
+  cs.addEventListener('change',calcPrice);
+}
+function getFreight(province,city,totalKg){
+  if(!province||!city||totalKg<=0) return 0;
+  if(province==='广东'){
+    for(var i=0;i<freightZones.jym.zone.length;i++){
+      if(freightZones.jym.zone[i].cities.indexOf(city)!==-1){
+        var z=freightZones.jym.zone[i];
+        return totalKg<=1?z.first:z.first+Math.ceil(totalKg-1)*z.add;
+      }
+    }
+    return 0;
+  }
+  for(var i=0;i<freightZones.zto.zone.length;i++){
+    if(freightZones.zto.zone[i].provinces.indexOf(province)!==-1){
+      var z=freightZones.zto.zone[i];
+      return totalKg<=1?z.first:z.first+Math.ceil(totalKg-1)*z.add;
+    }
+  }
+  return 0;
 }
 
 // 展开尺寸计算公式（从俊茂丰 http://www.zsmaofeng.com/ API 获取）
@@ -695,6 +807,26 @@ function calcPrice(){
     total = (mc + pc + sc) * ratio + ap + ax + sv;
   }
 
+  // 重量估算
+  var singleG = pw * 1000;
+  var totalKg = pw * q;
+
+  // ── 运费 ──
+  var freightProvince=document.getElementById('provinceSelect').value;
+  var freightCity=document.getElementById('citySelect').value;
+  var freight=getFreight(freightProvince,freightCity,totalKg);
+  var freightEl=document.getElementById('freightPrice');
+  var freightItem=freightEl&&freightEl.closest('.freight-item');
+  if(freightEl) freightEl.textContent='¥'+freight.toFixed(2);
+  if(freightItem){
+    freightItem.style.display=freight>0?'block':'none';
+    document.getElementById('freightLabel').textContent=
+      freightProvince==='广东'?'加运美运费':'中通快运运费';
+  }
+
+  // 总价=产品总价+运费
+  total+=freight;
+
   var u = q > 0 ? total / q : 0;
 
   document.getElementById('priceLabel').textContent = b.name + ' 报价信息';
@@ -702,10 +834,6 @@ function calcPrice(){
   document.getElementById('totalPrice').textContent = hidePrice ? '—' : total.toFixed(2);
   document.getElementById('priceUnit').textContent = hidePrice ? '' : '总价（' + q.toLocaleString() + '个 · 合版印刷）';
   document.getElementById('unitPrice').textContent = hidePrice ? '' : '¥' + u.toFixed(2);
-
-  // 重量估算
-  var singleG = pw * 1000;
-  var totalKg = pw * q;
   var swEl = document.getElementById('singleWeight');
   var twEl = document.getElementById('totalWeight');
   if (S.length > 0 && S.width > 0 && S.height > 0 && q > 0) {
@@ -810,7 +938,7 @@ calcPrice = function() {
   }
 };
 
-renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();syncOptions();calcPrice();
+renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();syncOptions();initAddress();calcPrice();
 </script>
 </body>
 </html>
