@@ -724,9 +724,13 @@ function getRateFromQty(qty, material, weight, area) {
   ], qty);
 }
 
-// 小盒型（面积<0.04m²）固定基价：不区分盒型，按数量查表
-// 数据来源：35x23x114mm双插盒/扣底盒/平粘盒/自动锁底盒实测
-var smallBoxBase = {pts:[[1000,160],[2000,260],[3000,350],[5000,550]]};
+// 小盒型（面积<0.04m²）固定基价：按数量查表，不同材质独立定价
+// 数据来源：35x23x114mm 实测总价
+var smallBoxBase = {
+  white:         {pts:[[1000,160],[2000,260],[3000,350],[5000,550]]},
+  '银卡纸_375':  {pts:[[1000,350],[2000,560],[3000,750],[5000,950]]},
+  '银卡纸_425':  {pts:[[1000,500],[2000,680],[3000,888],[5000,1280]]}
+};
 
 function calcPrice(){
   var b=boxTypes.find(function(x){return x.id===S.boxType});if(!b)return;
@@ -827,8 +831,10 @@ function calcPrice(){
   var total;
   if (area > 0 && area < 0.04) {
     // 小盒型（<0.04m²）：按数量固定基价，不区分盒型
+    // 不同材质使用独立定价表（银卡纸材料/印刷/表面成本更高）
     // 工艺费/配件/服务等累加在基价之上
-    var baseMin = lookupRate(smallBoxBase.pts, q);
+    var baseKey = S.material==='银卡纸' ? '银卡纸_'+S.weight : 'white';
+    var baseMin = lookupRate((smallBoxBase[baseKey]||smallBoxBase.white).pts, q);
     total = baseMin + ap + ax + sv;
   } else if (S.material === '银卡纸') {
     // 银卡纸：费率已含材料+印刷+表面总价，直接使用（避免校准系数放大高纸价）
