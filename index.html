@@ -725,6 +725,10 @@ function getRateFromQty(qty, material, weight, area) {
   ], qty);
 }
 
+// 小盒型（面积<0.05m²）固定基价：不区分盒型，按数量查表
+// 数据来源：35x23x114mm双插盒/扣底盒/平粘盒/自动锁底盒实测
+var smallBoxBase = {pts:[[1000,160],[2000,260],[3000,350],[5000,550]]};
+
 function calcPrice(){
   var b=boxTypes.find(function(x){return x.id===S.boxType});if(!b)return;
   var L=S.length,W=S.width,H=S.height,q=S.quantity;
@@ -816,7 +820,12 @@ function calcPrice(){
   // 实际配置总价
   // 工艺费不含校准系数（data-cost已是含税最终价），q≤500用俊茂丰实测总价，q≥1000用data-cost单价×数量
   var total;
-  if (S.material === '银卡纸') {
+  if (area > 0 && area < 0.05) {
+    // 小盒型（<0.05m²）：按数量固定基价，不区分盒型
+    // 工艺费/配件/服务等累加在基价之上
+    var baseMin = lookupRate(smallBoxBase.pts, q);
+    total = baseMin + ap + ax + sv;
+  } else if (S.material === '银卡纸') {
     // 银卡纸：费率已含材料+印刷+表面总价，直接使用（避免校准系数放大高纸价）
     var silverBase = rate * area * q;
     total = silverBase + ap + ax + sv;
@@ -824,6 +833,9 @@ function calcPrice(){
     // 白卡纸/瓦楞纸：用校准系数 = API总价 / 参照成本
     total = (mc + pc + sc) * ratio + ap + ax + sv;
   }
+
+  // 1000个统一最低¥160
+  if(q===1000 && total<160) total=160;
 
   // 重量估算
   var singleG = pw * 1000;
