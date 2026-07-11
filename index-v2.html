@@ -683,10 +683,10 @@ function lookupRate(pts, qty) {
   return pts[pts.length-1][1];
 }
 function getRateFromQty(qty, material, weight, area) {
-  // 小盒型（展开面积<0.05m²）：使用独立费率表
+  // 小盒型（展开面积<0.04m²）：使用独立费率表（0.04-0.05由校准系数处理）
   // 数据来源：35x23x114mm双插盒在拼一拼盒小程序实测总价
   // 小盒固定成本占比高，纯面积计价偏差大
-  var isSmallBox = area !== undefined && area > 0 && area < 0.05;
+  var isSmallBox = area !== undefined && area > 0 && area < 0.04;
   if(material==='银卡纸'&&weight===375){
     return lookupRate([
       [100,20.9080],[200,13.5936],[500,6.9182],
@@ -724,7 +724,7 @@ function getRateFromQty(qty, material, weight, area) {
   ], qty);
 }
 
-// 小盒型（面积<0.05m²）固定基价：不区分盒型，按数量查表
+// 小盒型（面积<0.04m²）固定基价：不区分盒型，按数量查表
 // 数据来源：35x23x114mm双插盒/扣底盒/平粘盒/自动锁底盒实测
 var smallBoxBase = {pts:[[1000,160],[2000,260],[3000,350],[5000,550]]};
 
@@ -808,7 +808,7 @@ function calcPrice(){
 
   // 面积校正：小/中盒型固定成本占比高，费率适当上浮
   // 参考盒型面积0.30m²(200×150×80)，k=0.022(根据85×40×170mm实测校准)
-  if (area >= 0.05) {
+  if (area >= 0.04) {
     rate *= 1 + 0.022 * (0.30 - area) / 0.30;
   }
 
@@ -825,8 +825,8 @@ function calcPrice(){
   // 实际配置总价
   // 工艺费不含校准系数（data-cost已是含税最终价），q≤500用俊茂丰实测总价，q≥1000用data-cost单价×数量
   var total;
-  if (area > 0 && area < 0.05) {
-    // 小盒型（<0.05m²）：按数量固定基价，不区分盒型
+  if (area > 0 && area < 0.04) {
+    // 小盒型（<0.04m²）：按数量固定基价，不区分盒型
     // 工艺费/配件/服务等累加在基价之上
     var baseMin = lookupRate(smallBoxBase.pts, q);
     total = baseMin + ap + ax + sv;
