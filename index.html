@@ -682,28 +682,46 @@ function lookupRate(pts, qty) {
   }
   return pts[pts.length-1][1];
 }
-function getRateFromQty(qty, material, weight) {
-  // 银卡纸375g：使用小程序实测费率
+function getRateFromQty(qty, material, weight, area) {
+  // 小盒型（展开面积<0.05m²）：使用独立费率表
+  // 数据来源：35x23x114mm双插盒在拼一拼盒小程序实测总价
+  // 小盒固定成本占比高，纯面积计价偏差大
+  var isSmallBox = area !== undefined && area > 0 && area < 0.05;
   if(material==='银卡纸'&&weight===375){
-    var ratio375=6.8715/3.882; // 银卡/白卡费率比(1000个)
+    var sR = isSmallBox ? 5.9586/3.7941 : 1; // 小盒费率放大系数(1000个为基准)
     return lookupRate([
-      [100,20.9080*ratio375],[200,13.5936*ratio375],[500,6.9182*ratio375],
-      [1000,6.8715],[2000,5.8763],[3000,4.8799],[5000,3.8835]
+      [100,20.9080],[200,13.5936],[500,6.9182],
+      [1000,isSmallBox?5.9586:6.8715],
+      [2000,isSmallBox?4.8414:5.8763],
+      [3000,isSmallBox?4.3448:4.8799],
+      [5000,isSmallBox?4.0965:3.8835]
     ], qty);
   }
-  // 银卡纸425g：使用小程序实测费率
   if(material==='银卡纸'&&weight===425){
-    var ratio425=7.2682/3.882; // 银卡425g/白卡费率比(1000个)
     return lookupRate([
-      [100,20.9080*ratio425],[200,13.5936*ratio425],[500,6.9182*ratio425],
-      [1000,7.2682],[2000,6.1747],[3000,5.2778],[5000,4.2822]
+      [100,20.9080],[200,13.5936],[500,6.9182],
+      [1000,isSmallBox?5.9586:7.2682],
+      [2000,isSmallBox?4.8414:6.1747],
+      [3000,isSmallBox?4.3448:5.2778],
+      [5000,isSmallBox?4.0965:4.2822]
     ], qty);
   }
-  // 默认白卡纸费率
+  // 白卡纸/瓦楞纸基础费率（已用含出血面积校准）
+  // 校准数据：200x150x80mm双插盒 白卡350g 过哑膜 四色
+  // 小程序总价：1000=¥1138,2000=¥2160,3000=¥3065,5000=¥4233,10000=¥7882
+  if(isSmallBox){
+    // 小盒型独立费率（35x23x114mm实测）
+    return lookupRate([
+      [100,20.9080],[200,13.5936],[500,6.9182],
+      [1000,5.9586],[2000,4.8414],[3000,4.3448],
+      [5000,4.0965]
+    ], qty);
+  }
+  // 标准费率（含出血校准）
   return lookupRate([
     [100,20.9080],[200,13.5936],[500,6.9182],
-    [1000,3.8820],[2000,3.6841],[3000,3.4851],
-    [5000,2.8720],[10000,2.6887]
+    [1000,3.7941],[2000,3.6008],[3000,3.4063],
+    [5000,2.8226],[10000,2.6279]
   ], qty);
 }
 
@@ -783,7 +801,7 @@ function calcPrice(){
 
   // ── API校准总价（基于俊茂丰合版定价实测数据）──
   // 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
-  var rate = getRateFromQty(q, S.material, S.weight);
+  var rate = getRateFromQty(q, S.material, S.weight, area);
 
   // 参照配置成本（白卡350g 过哑膜 四色，固定不变，用于计算校准系数）
   var refMc = area * 350 / 1000 * q * 5.7;
@@ -824,9 +842,7 @@ function calcPrice(){
       freightProvince==='广东'?'加运美运费':'中通快运运费';
   }
 
-  // 总价=产品总价+运费
-  total+=freight;
-
+  // 运费单独展示，不加在产品总价上
   var u = q > 0 ? total / q : 0;
 
   document.getElementById('priceLabel').textContent = b.name + ' 报价信息';
