@@ -807,6 +807,12 @@ function calcPrice(){
   // 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
   var rate = getRateFromQty(q, S.material, S.weight, area);
 
+  // 面积校正：小/中盒型固定成本占比高，费率适当上浮
+  // 参考盒型面积0.30m²(200×150×80)，k=0.022(根据85×40×170mm实测校准)
+  if (area >= 0.05) {
+    rate *= 1 + 0.022 * (0.30 - area) / 0.30;
+  }
+
   // 参照配置成本（白卡350g 过哑膜 四色，固定不变，用于计算校准系数）
   var refMc = area * 350 / 1000 * q * 5.7;
   var refPc = area * q * 0.13;
