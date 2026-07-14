@@ -508,9 +508,14 @@ function setupIn(){
   var qtyEl=document.getElementById('quantity');
   qtyEl.addEventListener('input',function(e){
     S.quantity=parseInt(e.target.value)||0;
-    // 数量≥1000时步进1000
-    if(S.quantity>=1000) qtyEl.step=1000;
-    else qtyEl.step=1;
+    // 数量≥1000时步进1000，并对齐到1000的倍数
+    if(S.quantity>=1000){
+      qtyEl.step=1000;
+      S.quantity=Math.round(S.quantity/1000)*1000;
+      e.target.value=S.quantity;
+    }else{
+      qtyEl.step=1;
+    }
     syncOptions();
     calcPrice();
   });
