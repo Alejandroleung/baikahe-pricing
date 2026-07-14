@@ -325,7 +325,7 @@
     <div class="form-row">
       <div class="form-label">*印刷数量</div>
       <div style="flex:1;">
-        <input type="number" class="qty-input" id="quantity" min="100">
+        <input type="number" class="qty-input" id="quantity" min="0" step="1000" value="100">
         <span style="font-size:14px;color:#999;margin-left:8px;">个</span>
       </div>
     </div>
@@ -506,27 +506,28 @@ function setupIn(){
     document.getElementById(id).addEventListener('input',function(e){S[id]=parseInt(e.target.value)||0;calcPrice();});
   });
   var qtyEl=document.getElementById('quantity');
-  qtyEl.addEventListener('focus',function(){
-    // 聚焦时预设步进值，确保步进器第一次点击就正确
-    this.step=parseInt(this.value)>=1000?1000:1;
-  });
+  // 键盘方向键：手动步进
   qtyEl.addEventListener('keydown',function(e){
     if(e.key==='ArrowUp'||e.key==='ArrowDown'){
       e.preventDefault();
       var cur=parseInt(this.value)||0;
+      // <1000 时按预设档位跳转，≥1000 时按1000步进
       if(e.key==='ArrowUp'){
-        this.value=cur<1000?1000:cur+1000;
+        if(cur<100) this.value=100;
+        else if(cur<200) this.value=200;
+        else if(cur<500) this.value=500;
+        else if(cur<1000) this.value=1000;
+        else this.value=cur+1000;
       }else{
-        this.value=Math.max(100,cur<=1000?100:cur-1000);
+        if(cur<=100){this.value=100;return;}
+        this.value=cur<=500?100:(cur<=1000?500:((cur-1000)%1000===0?cur-1000:Math.floor(cur/1000)*1000));
       }
       this.dispatchEvent(new Event('input',{bubbles:true}));
     }
   });
+  // 输入、步进器点击 → 同步状态
   qtyEl.addEventListener('input',function(e){
     S.quantity=parseInt(e.target.value)||0;
-    // 数量≥1000时步进1000
-    if(S.quantity>=1000) qtyEl.step=1000;
-    else qtyEl.step=1;
     syncOptions();
     calcPrice();
   });
