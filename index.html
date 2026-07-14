@@ -845,8 +845,9 @@ function calcPrice(){
     total = (mc + pc + sc) * ratio + ap + ax + sv;
   }
 
-  // 1000个统一最低¥160
+  // 1000个最低价：白卡¥160，银卡375g¥350
   if(q===1000 && total<160) total=160;
+  if(q===1000 && S.material==='银卡纸' && S.weight===375 && total<350) total=350;
 
   // 重量估算
   var singleG = pw * 1000;
