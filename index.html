@@ -508,6 +508,9 @@ function setupIn(){
   var qtyEl=document.getElementById('quantity');
   qtyEl.addEventListener('input',function(e){
     S.quantity=parseInt(e.target.value)||0;
+    // 数量≥1000时步进1000
+    if(S.quantity>=1000) qtyEl.step=1000;
+    else qtyEl.step=1;
     syncOptions();
     calcPrice();
   });
