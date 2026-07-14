@@ -506,16 +506,27 @@ function setupIn(){
     document.getElementById(id).addEventListener('input',function(e){S[id]=parseInt(e.target.value)||0;calcPrice();});
   });
   var qtyEl=document.getElementById('quantity');
+  qtyEl.addEventListener('focus',function(){
+    // 聚焦时预设步进值，确保步进器第一次点击就正确
+    this.step=parseInt(this.value)>=1000?1000:1;
+  });
+  qtyEl.addEventListener('keydown',function(e){
+    if(e.key==='ArrowUp'||e.key==='ArrowDown'){
+      e.preventDefault();
+      var cur=parseInt(this.value)||0;
+      if(e.key==='ArrowUp'){
+        this.value=cur<1000?1000:cur+1000;
+      }else{
+        this.value=Math.max(100,cur<=1000?100:cur-1000);
+      }
+      this.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+  });
   qtyEl.addEventListener('input',function(e){
     S.quantity=parseInt(e.target.value)||0;
-    // 数量≥1000时步进1000，并对齐到1000的倍数
-    if(S.quantity>=1000){
-      qtyEl.step=1000;
-      S.quantity=Math.round(S.quantity/1000)*1000;
-      e.target.value=S.quantity;
-    }else{
-      qtyEl.step=1;
-    }
+    // 数量≥1000时步进1000
+    if(S.quantity>=1000) qtyEl.step=1000;
+    else qtyEl.step=1;
     syncOptions();
     calcPrice();
   });
