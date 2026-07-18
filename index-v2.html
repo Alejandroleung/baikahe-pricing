@@ -238,7 +238,7 @@
     <div class="form-row">
       <div class="form-label">*印刷数量</div>
       <div style="flex:1;">
-        <input type="number" class="qty-input" id="quantity" min="0" step="1000" value="100">
+        <input type="number" class="qty-input" id="quantity" min="0" step="1" value="100">
         <span style="font-size:14px;color:#999;margin-left:8px;">个</span>
       </div>
     </div>
@@ -432,7 +432,7 @@ function setupIn(){
         else if(cur<1000) this.value=1000;
         else this.value=cur+1000;
       }else{
-        if(cur<=100){this.value=100;return;}
+        if(cur<=100){this.value=100;}else
         this.value=cur<=500?100:(cur<=1000?500:((cur-1000)%1000===0?cur-1000:Math.floor(cur/1000)*1000));
       }
       this.dispatchEvent(new Event('input',{bubbles:true}));
