@@ -98,8 +98,8 @@
     .box-card.active h3 { color: var(--primary); }
     .preview-tooltip {
       position: fixed; z-index: 9999; pointer-events: none;
-      width: 220px; height: 220px; border-radius: 12px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4); opacity: 0;
+      width: 360px; height: 360px; border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0;
       transform: scale(0.85); transition: opacity 0.2s, transform 0.25s;
       overflow: hidden; border: 2px solid rgba(255,255,255,0.15);
       backdrop-filter: blur(4px); background: rgba(0,0,0,0.5);
@@ -896,9 +896,9 @@ function showPreview(el,url){
     img.src=url;
     var r=el.getBoundingClientRect();
     var left=r.right+16,top=r.top-30;
-    if(left+230>window.innerWidth){left=r.left-230;}
+    if(left+370>window.innerWidth){left=r.left-370;}
     if(top<10){top=10;}
-    if(top+230>window.innerHeight){top=window.innerHeight-240;}
+    if(top+370>window.innerHeight){top=window.innerHeight-380;}
     t.style.left=left+'px';t.style.top=top+'px';
     t.classList.add('show');
   },300);
