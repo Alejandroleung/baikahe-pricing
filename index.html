@@ -92,13 +92,20 @@
       align-items: center; justify-content: center; font-weight: 700;
     }
     .box-icon { width: 56px; height: 56px; margin: 0 auto 6px; }
-    .box-icon svg { width: 100%; height: 100%; }
-    .box-icon svg rect, .box-icon svg path, .box-icon svg line, .box-icon svg circle { stroke: var(--primary) !important; }
-    .box-icon svg rect[fill="#252525"], .box-icon svg rect[fill="#333"] { fill: rgba(37,99,235,0.04) !important; }
-    .box-icon svg circle[fill="#333"] { fill: rgba(37,99,235,0.04) !important; }
-    .box-icon svg circle[fill="#ff6b00"] { fill: var(--primary) !important; }
+    .box-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 4px; }
+    .box-card { position: relative; }
     .box-card h3 { font-size: 13px; font-weight: 600; color: var(--text2); }
     .box-card.active h3 { color: var(--primary); }
+    .preview-tooltip {
+      position: fixed; z-index: 9999; pointer-events: none;
+      width: 220px; height: 220px; border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4); opacity: 0;
+      transform: scale(0.85); transition: opacity 0.2s, transform 0.25s;
+      overflow: hidden; border: 2px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px); background: rgba(0,0,0,0.5);
+    }
+    .preview-tooltip.show { opacity: 1; transform: scale(1); }
+    .preview-tooltip img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .form-section {
       background: var(--card-bg); backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -340,20 +347,20 @@
 const boxTypes=[
   // 数据来源：http://www.zsmaofeng.com:20001/api/box/manager/list
   // 各盒型的粘位(socket/gluing)、间隔(intervalPosition)、废边(offcut)等参数来自API响应
-  {id:'double-tuck',name:'双插盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="6" x2="46" y2="6" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="12" y1="54" x2="26" y2="66" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="54" x2="46" y2="66" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="66" x2="46" y2="66" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/></svg>'},
-  {id:'lock-bottom',name:'扣底盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="6" x2="46" y2="6" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M22 54 L36 64 L50 54" stroke="#ff6b00" stroke-width="2" stroke-dasharray="3 2"/></svg>'},
-  {id:'flat-seal',name:'平粘盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="32" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="22" x2="26" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="22" x2="46" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="10" x2="46" y2="10" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="18" y1="54" x2="54" y2="54" stroke="#ff6b00" stroke-width="2.5"/></svg>'},
-  {id:'mailer',name:'飞机盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="10" y="26" width="52" height="24" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M10 26 L24 14 L48 14 L62 26" stroke="#ff6b00" stroke-width="2"/><line x1="24" y1="14" x2="24" y2="26" stroke="#ff6b00" stroke-width="1.5"/><line x1="48" y1="14" x2="48" y2="26" stroke="#ff6b00" stroke-width="1.5"/><line x1="36" y1="14" x2="36" y2="26" stroke="#ff6b00" stroke-width="1" stroke-dasharray="3 2"/></svg>'},
-  {id:'sleeve',name:'封套盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="8" y="18" width="56" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#333"/><rect x="16" y="22" width="40" height="28" rx="1" stroke="#ff6b00" stroke-width="1.5" fill="#252525"/></svg>'},
-  {id:'lid',name:'天盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="26" width="48" height="24" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><rect x="14" y="14" width="44" height="14" rx="2" stroke="#ff6b00" stroke-width="2" fill="#333"/></svg>'},
-  {id:'base',name:'地盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="20" width="48" height="32" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="20" x2="12" y2="52" stroke="#ff6b00" stroke-width="3"/><line x1="60" y1="20" x2="60" y2="52" stroke="#ff6b00" stroke-width="3"/></svg>'},
-  {id:'auto-lock',name:'自动锁底盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><path d="M18 54 L36 66 L54 54" stroke="#ff6b00" stroke-width="2"/><circle cx="36" cy="60" r="3" fill="#ff6b00"/></svg>'},
-  {id:'hook-tuck',name:'双插挂钩盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="34" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="22" x2="26" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="22" x2="46" y2="10" stroke="#ff6b00" stroke-width="2"/><rect x="30" y="2" width="12" height="8" rx="2" stroke="#ff6b00" stroke-width="1.5" fill="#333"/><circle cx="36" cy="6" r="2" stroke="#ff6b00" stroke-width="1" fill="#333"/></svg>'},
-  {id:'bag',name:'手提袋',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="14" y="28" width="44" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M24 28 Q24 12 36 12 Q48 12 48 28" stroke="#ff6b00" stroke-width="2" fill="none"/></svg>'},
-  {id:'hook-lock',name:'扣底挂钩盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="34" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M18 56 L36 66 L54 56" stroke="#ff6b00" stroke-width="2" stroke-dasharray="3 2"/><rect x="30" y="2" width="12" height="8" rx="2" stroke="#ff6b00" stroke-width="1.5" fill="#333"/><circle cx="36" cy="6" r="2" stroke="#ff6b00" stroke-width="1" fill="#333"/></svg>'}
+  {id:'double-tuck',name:'双插盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/20/7de92e1857eb4f9197930fd33ffd8408clqfcmlgn5.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/29/0095db28e56f4ab887dedc9775abcf9fov6d4u21vc.jpg'},
+  {id:'lock-bottom',name:'扣底盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/08/03/7f48617f448a4daca068bcb91caf403cfswp4bgnmm.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/ee569123a7204377b8fb03fcc2708805co0vpuhh5u.jpg'},
+  {id:'flat-seal',name:'平粘盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/08/03/2ab6b4f3bbe44fdf8b74729fd62fcde4n56tgmo5dp.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/4e9128bcc25241ca903c587f42c9ae003jlk9onjsx.jpg'},
+  {id:'mailer',name:'飞机盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/08/03/be220014eb454c2baf8879c313f1da4dexhu79iz46.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/ef22f38cdd1446c8b73909aa012453e9hv2cbbkx0n.jpg'},
+  {id:'sleeve',name:'封套盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/23/ebf644ce27a14aae9d4e012785303beaqb31ll8058.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/9668052933e143d38e272265eb2515dfwmpuguonpw.jpg'},
+  {id:'lid',name:'天盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/08/03/a4beb956867f40ac9831c54c55c5b5c4581caw9cxr.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/b244b334c6fe49b0ae42a25b7b07d46a1avb167t6x.jpg'},
+  {id:'base',name:'地盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/08/03/17e673427aae462c9a235576e1e16f7aps330o8eno.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/b244b334c6fe49b0ae42a25b7b07d46a1avb167t6x.jpg'},
+  {id:'auto-lock',name:'自动锁底盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/08/03/7f48617f448a4daca068bcb91caf403cfswp4bgnmm.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/0ca1c556fbe64cbbacd03ae9db9ca00ca3wuylmrwz.jpg'},
+  {id:'hook-tuck',name:'双插挂钩盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/6d749561c73a41a2930880fd7ec8da1ft659l085pw.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/6aa2ddba6bdb460e8fcfe95cd9af6deex2veohpive.jpg'},
+  {id:'bag',name:'手提袋',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/06/ee4413afdc6f4f918972ad8ed23ede1bins8jasoww.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/c2320b2bfc4a4092a86be7b65674e4e9rhni4hnmjg.jpg'},
+  {id:'hook-lock',name:'扣底挂钩盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/769e77a3eaf64b1f95d06f62201e7ea15i5r5eo22q.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/769e77a3eaf64b1f95d06f62201e7ea15i5r5eo22q.png'}
 ];
 let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0};
-function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')"><div class="box-icon">'+b.icon+'</div><h3>'+b.name+'</h3></div>';}).join('');}
+function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')" onmouseenter="showPreview(this,\''+b.preview+'\')" onmouseleave="hidePreview()"><div class="box-icon"><img src="'+b.thumb+'" alt="'+b.name+'" loading="lazy"></div><h3>'+b.name+'</h3></div>';}).join('');}
 function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
 function syncOptions(){
   var wg=document.getElementById('weightGroup');
@@ -877,6 +884,27 @@ function calcPrice(){
 
 // ---- 价格数字跳动动画 ----
 var _lastTotal = 0;
+var _previewTimer=null;
+function showPreview(el,url){
+  clearTimeout(_previewTimer);
+  _previewTimer=setTimeout(function(){
+    var t=document.getElementById('previewTooltip');
+    var img=document.getElementById('previewImg');
+    img.src=url;
+    var r=el.getBoundingClientRect();
+    var left=r.right+16,top=r.top-30;
+    // 如果右侧空间不够则显示在左侧
+    if(left+230>window.innerWidth){left=r.left-230;}
+    if(top<10){top=10;}
+    if(top+230>window.innerHeight){top=window.innerHeight-240;}
+    t.style.left=left+'px';t.style.top=top+'px';
+    t.classList.add('show');
+  },300);
+}
+function hidePreview(){
+  clearTimeout(_previewTimer);
+  document.getElementById('previewTooltip').classList.remove('show');
+}
 function animatePrice(newVal) {
   var el = document.getElementById('totalPrice');
   if (!el) return;
@@ -906,5 +934,6 @@ calcPrice = function() {
 
 renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();syncOptions();initAddress();calcPrice();
 </script>
+<div class="preview-tooltip" id="previewTooltip"><img id="previewImg" src="" alt="预览"></div>
 </body>
 </html>
