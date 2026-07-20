@@ -624,7 +624,7 @@ function lookupRate(pts, qty) {
   }
   return pts[pts.length-1][1];
 }
-function getRateFromQty(qty, material, weight, area) {
+function getRateFromQty(qty, material, weight, area, boxType) {
   // 小盒型（展开面积<0.04m²）：使用独立费率表（0.04-0.05由校准系数处理）
   // 数据来源：35x23x114mm双插盒在拼一拼盒小程序实测总价
   // 小盒固定成本占比高，纯面积计价偏差大
@@ -648,15 +648,21 @@ function getRateFromQty(qty, material, weight, area) {
     ], qty);
   }
   // 白卡纸400g独立费率（2026-07-20 基于俊茂丰合版实测校准）
-  // 数据源：http://www.zsmaofeng.com 实测11个盒型 200×150×80mm 400g白卡 500个
-  // 校准方法：350g费率×0.9365（基于平粘盒200×150×80mm实测总价¥1,039反算）
-  // 经验证：扣底盒¥916偏差+0.27%，飞机盒¥1,115偏差+0.02%
+  // 数据源：http://www.zsmaofeng.com 实测11个盒型 100×100×100mm 400g白卡 500个
+  // 基础费率以双插盒为参考盒型校准，各盒型差异通过 boxRate400g 系数修正
   if(material==='白卡纸'&&weight===400){
-    return lookupRate([
-      [100,19.5800],[200,12.7300],[500,6.4800],
-      [1000,3.5800],[2000,3.3900],[3000,3.2100],
-      [5000,2.6600]
+    var baseRate = lookupRate([
+      [100,19.3200],[200,12.5600],[500,6.3950],
+      [1000,3.5300],[2000,3.3500],[3000,3.1700],
+      [5000,2.6300]
     ], qty);
+    // 盒型差异系数：基于100×100×100mm 500个实测数据反算
+    var boxRate400g = {
+      'double-tuck':1.000,'lock-bottom':0.997,'flat-seal':0.999,
+      'mailer':1.011,'sleeve':2.190,'lid':1.011,'base':1.019,
+      'auto-lock':0.998,'hook-tuck':1.001,'hook-lock':0.997
+    };
+    return baseRate * (boxRate400g[boxType]||1.0);
   }
   // 白卡纸/瓦楞纸基础费率（已用含出血面积校准）
   // 校准数据：200x150x80mm双插盒 白卡350g 过哑膜 四色
@@ -763,7 +769,7 @@ function calcPrice(){
 
   // ── API校准总价（基于俊茂丰合版定价实测数据）──
   // 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
-  var rate = getRateFromQty(q, S.material, S.weight, area);
+  var rate = getRateFromQty(q, S.material, S.weight, area, S.boxType);
 
   // 面积校正：小/中盒型固定成本占比高，费率适当上浮
   // 参考盒型面积0.30m²(200×150×80)，k=0.022(根据85×40×170mm实测校准)
