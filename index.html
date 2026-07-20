@@ -385,6 +385,11 @@ function syncOptions(){
       wg.querySelector('[data-value="350"]').classList.add('active');S.weight=350;
     }
   }
+  // 400g白卡纸：低于1000个只能选500个
+  if(S.material==='白卡纸'&&S.weight===400&&S.quantity>0&&S.quantity<1000&&S.quantity!==500){
+    var qtyEl=document.getElementById('quantity');
+    qtyEl.value=500;S.quantity=500;lastValidQty=500;
+  }
   // ── 表面处理限制 ──
   if(S.material==='银卡纸'){
     sg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
@@ -408,6 +413,8 @@ function setupOG(gid,sk){
         document.getElementById('quantity').value=lastValidQty||'';
         S.quantity=lastValidQty;
       }
+    }else if(sk==='weight'){
+      syncOptions();
     }
     calcPrice();
   });
@@ -432,7 +439,7 @@ function setupIn(){
         else if(cur<1000) this.value=1000;
         else this.value=cur+1000;
       }else{
-        if(cur<=100){this.value=100;}else
+        if(cur<=100||(S.material==='白卡纸'&&S.weight===400&&cur<=500)){this.value=100;}else
         this.value=cur<=500?100:(cur<=1000?500:((cur-1000)%1000===0?cur-1000:Math.floor(cur/1000)*1000));
       }
       this.dispatchEvent(new Event('input',{bubbles:true}));
@@ -450,6 +457,8 @@ function setupIn(){
     var valid=false;
     if(S.material==='银卡纸'){
       valid=(v>=1000&&v%1000===0);
+    }else if(S.material==='白卡纸'&&S.weight===400&&v<1000){
+      valid=(v===500);
     }else if(v<1000){
       valid=(v===100||v===200||v===500);
     }else{
@@ -636,6 +645,17 @@ function getRateFromQty(qty, material, weight, area) {
       [2000,isSmallBox?4.8414:6.035],
       [3000,isSmallBox?4.3448:5.158],
       [5000,isSmallBox?4.0965:4.185]
+    ], qty);
+  }
+  // 白卡纸400g独立费率（2026-07-20 基于俊茂丰合版实测校准）
+  // 数据源：http://www.zsmaofeng.com 实测11个盒型 200×150×80mm 400g白卡 500个
+  // 校准方法：350g费率×0.9365（基于平粘盒200×150×80mm实测总价¥1,039反算）
+  // 经验证：扣底盒¥916偏差+0.27%，飞机盒¥1,115偏差+0.02%
+  if(material==='白卡纸'&&weight===400){
+    return lookupRate([
+      [100,19.5800],[200,12.7300],[500,6.4800],
+      [1000,3.5800],[2000,3.3900],[3000,3.2100],
+      [5000,2.6600]
     ], qty);
   }
   // 白卡纸/瓦楞纸基础费率（已用含出血面积校准）
