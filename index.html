@@ -291,7 +291,14 @@
         <label class="check-item"><input type="checkbox" data-cost="0.165" data-cost-100="110" data-cost-200="110" data-cost-500="150" data-cost-1000="120" data-cost-2000="160"> 烫金</label>
         <label class="check-item"><input type="checkbox" data-cost="0.165" data-cost-100="110" data-cost-200="110" data-cost-500="150"> 烫银</label>
         <label class="check-item"><input type="checkbox" data-cost="0.28" data-cost-100="200" data-cost-200="200" data-cost-500="250"> 4色印底不覆膜</label>
-        <label class="check-item"><input type="checkbox" data-cost="0.20" data-cost-100="150" data-cost-200="180" data-cost-500="200" data-cost-1000="305" data-cost-2000="380"> 白卡1专色</label>
+        <label class="check-item" style="padding:4px 8px;gap:4px">
+          <span>专色</span>
+          <select id="spotColorCount" onchange="onSpotColorChange()" style="padding:2px 6px;border:1px solid #bbb;border-radius:4px;font-size:13px">
+            <option value="0">无</option>
+            <option value="1">1个</option>
+            <option value="2">2个</option>
+          </select>
+        </label>
         <label class="check-item"><input type="checkbox" data-cost="0.40" data-cost-100="260" data-cost-200="260" data-cost-500="320" data-cost-1000="1301" data-cost-2000="1620"> 银卡1专色</label>
       </div>
     </div>
@@ -359,7 +366,7 @@ const boxTypes=[
   {id:'bag',name:'手提袋',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/06/ee4413afdc6f4f918972ad8ed23ede1bins8jasoww.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/c2320b2bfc4a4092a86be7b65674e4e9rhni4hnmjg.jpg'},
   {id:'hook-lock',name:'扣底挂钩盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/769e77a3eaf64b1f95d06f62201e7ea15i5r5eo22q.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/769e77a3eaf64b1f95d06f62201e7ea15i5r5eo22q.png'}
 ];
-let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0};
+let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0,spotColor:0};
 function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')" onmouseenter="showPreview(this,\''+b.preview+'\')" onmouseleave="hidePreview()"><div class="box-icon"><img src="'+b.thumb+'" alt="'+b.name+'" loading="lazy"></div><h3>'+b.name+'</h3></div>';}).join('');}
 function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
 function syncOptions(){
@@ -398,6 +405,22 @@ function syncOptions(){
     sg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
     sg.querySelector('[data-value="过哑膜"]').classList.add('active');S.surface='过哑膜';
   }
+  // ── 专色限制：q<1000时强制为1个 ──
+  if(S.quantity>0 && S.quantity<1000 && S.spotColor===2){
+    document.getElementById('spotColorCount').value='1';
+    S.spotColor=1;
+  }
+}
+function onSpotColorChange(){
+  var el=document.getElementById('spotColorCount');
+  var v=parseInt(el.value);
+  if(v===2 && S.quantity>0 && S.quantity<1000){
+    alert('数量太少了');
+    el.value='1';
+    v=1;
+  }
+  S.spotColor=v;
+  calcPrice();
 }
 function setupOG(gid,sk){
   document.getElementById(gid).addEventListener('click',function(e){
@@ -805,6 +828,17 @@ function calcPrice(){
   } else {
     // 白卡纸/瓦楞纸：用校准系数 = API总价 / 参照成本
     total = (mc + pc + sc) * ratio + ap + ax + sv;
+  }
+
+  // ── 专色费用（在印刷价格基础上增加）──
+  if(S.spotColor>0){
+    if(q<1000){
+      total += 200;
+    }else if(S.spotColor===1){
+      total += 300;
+    }else if(S.spotColor===2){
+      total += 600;
+    }
   }
 
   // 1000个最低价：白卡¥160，银卡375g¥350

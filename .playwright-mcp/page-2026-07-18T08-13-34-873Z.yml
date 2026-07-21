@@ -1,0 +1,209 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]: Alejandro
+    - heading "白卡纸卡盒报价系统" [level=1] [ref=e5]
+    - paragraph [ref=e6]: 专业卡纸盒合版印刷报价 · 支持多种盒型 · 即时出价
+    - generic [ref=e7]: 合版印刷 · 价格更优 · 交期更快
+  - generic [ref=e8]:
+    - generic [ref=e9]: ① 选择盒型
+    - generic [ref=e10]:
+      - generic [ref=e11] [cursor=pointer]:
+        - img "双插盒" [ref=e13]
+        - heading "双插盒" [level=3] [ref=e14]
+        - text: ✓
+      - generic [ref=e15] [cursor=pointer]:
+        - img "扣底盒" [ref=e17]
+        - heading "扣底盒" [level=3] [ref=e18]
+      - generic [ref=e19] [cursor=pointer]:
+        - img "平粘盒" [ref=e21]
+        - heading "平粘盒" [level=3] [ref=e22]
+      - generic [ref=e23] [cursor=pointer]:
+        - img "飞机盒" [ref=e25]
+        - heading "飞机盒" [level=3] [ref=e26]
+      - generic [ref=e27] [cursor=pointer]:
+        - img "封套盒" [ref=e29]
+        - heading "封套盒" [level=3] [ref=e30]
+      - generic [ref=e31] [cursor=pointer]:
+        - img "天盒" [ref=e33]
+        - heading "天盒" [level=3] [ref=e34]
+      - generic [ref=e35] [cursor=pointer]:
+        - img "地盒" [ref=e37]
+        - heading "地盒" [level=3] [ref=e38]
+      - generic [ref=e39] [cursor=pointer]:
+        - img "自动锁底盒" [ref=e41]
+        - heading "自动锁底盒" [level=3] [ref=e42]
+      - generic [ref=e43] [cursor=pointer]:
+        - img "双插挂钩盒" [ref=e45]
+        - heading "双插挂钩盒" [level=3] [ref=e46]
+      - generic [ref=e47] [cursor=pointer]:
+        - img "手提袋" [ref=e49]
+        - heading "手提袋" [level=3] [ref=e50]
+      - generic [ref=e51] [cursor=pointer]:
+        - img "扣底挂钩盒" [ref=e53]
+        - heading "扣底挂钩盒" [level=3] [ref=e54]
+    - generic [ref=e55]: ② 报价参数
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - generic [ref=e59]: "*成品尺寸"
+          - generic [ref=e60]:
+            - spinbutton "长" [ref=e61]
+            - generic [ref=e62]: x
+            - spinbutton "宽" [ref=e63]
+            - generic [ref=e64]: x
+            - spinbutton "高" [ref=e65]
+            - generic [ref=e66]: mm
+        - generic [ref=e67]:
+          - generic [ref=e68]: 展开尺寸：
+          - generic [ref=e69]: 选择盒型并输入尺寸后自动计算
+        - generic [ref=e70]:
+          - generic [ref=e71]: "*印刷数量"
+          - generic [ref=e72]:
+            - spinbutton [ref=e73]: "100"
+            - text: 个
+        - generic [ref=e74]:
+          - generic [ref=e75]: "*纸张材质"
+          - generic [ref=e76]:
+            - generic [ref=e77] [cursor=pointer]: 白卡纸
+            - generic [ref=e78] [cursor=pointer]: 瓦楞纸(300g白卡+A4E黄坑)
+            - generic [ref=e79] [cursor=pointer]: 瓦楞纸(300g白卡+W4E白坑)
+            - generic [ref=e80] [cursor=pointer]: 银卡纸
+            - generic [ref=e81] [cursor=pointer]: F坑内托
+        - generic [ref=e82]:
+          - generic [ref=e83]: "*纸张克度"
+          - generic [ref=e84]:
+            - generic [ref=e85] [cursor=pointer]: 240g
+            - generic [ref=e86] [cursor=pointer]: 300g
+            - generic [ref=e87] [cursor=pointer]: 350g
+            - generic [ref=e88] [cursor=pointer]: 375g
+            - generic [ref=e89] [cursor=pointer]: 400g
+            - generic [ref=e90] [cursor=pointer]: 425g
+            - generic [ref=e91] [cursor=pointer]: 600g
+        - generic [ref=e92]:
+          - generic [ref=e93]: "*表面处理"
+          - generic [ref=e94]:
+            - generic [ref=e95] [cursor=pointer]: 不处理
+            - generic [ref=e96] [cursor=pointer]: 过光膜
+            - generic [ref=e97] [cursor=pointer]: 过哑膜
+            - generic [ref=e98] [cursor=pointer]: 白+UV逆向
+        - generic [ref=e99]:
+          - generic [ref=e100]: "*印刷颜色"
+          - generic [ref=e101]:
+            - generic [ref=e102] [cursor=pointer]: 不印刷
+            - generic [ref=e103] [cursor=pointer]: 四色
+        - generic [ref=e104]:
+          - generic [ref=e105]: "*增加工艺"
+          - generic [ref=e106]:
+            - generic [ref=e107] [cursor=pointer]:
+              - checkbox "击凹" [ref=e108]
+              - text: 击凹
+            - generic [ref=e109] [cursor=pointer]:
+              - checkbox "局部UV" [ref=e110]
+              - text: 局部UV
+            - generic [ref=e111] [cursor=pointer]:
+              - checkbox "击凸" [ref=e112]
+              - text: 击凸
+            - generic [ref=e113] [cursor=pointer]:
+              - checkbox "缕空" [ref=e114]
+              - text: 缕空
+            - generic [ref=e115] [cursor=pointer]:
+              - checkbox "贴PVC" [ref=e116]
+              - text: 贴PVC
+            - generic [ref=e117] [cursor=pointer]:
+              - checkbox "烫金" [ref=e118]
+              - text: 烫金
+            - generic [ref=e119] [cursor=pointer]:
+              - checkbox "烫银" [ref=e120]
+              - text: 烫银
+            - generic [ref=e121] [cursor=pointer]:
+              - checkbox "4色印底不覆膜" [ref=e122]
+              - text: 4色印底不覆膜
+            - generic [ref=e123] [cursor=pointer]:
+              - checkbox "白卡1专色" [ref=e124]
+              - text: 白卡1专色
+            - generic [ref=e125] [cursor=pointer]:
+              - checkbox "银卡1专色" [ref=e126]
+              - text: 银卡1专色
+        - generic [ref=e127]:
+          - generic [ref=e128]: "*配件"
+          - generic [ref=e129]:
+            - generic [ref=e130] [cursor=pointer]:
+              - checkbox "塑料手提" [ref=e131]
+              - text: 塑料手提
+            - generic [ref=e132] [cursor=pointer]:
+              - checkbox "手提绳" [ref=e133]
+              - text: 手提绳
+        - generic [ref=e134]:
+          - generic [ref=e135]: "*服务"
+          - generic [ref=e136]:
+            - generic [ref=e137] [cursor=pointer]:
+              - checkbox "来样跟色" [ref=e138]
+              - text: 来样跟色
+            - generic [ref=e139] [cursor=pointer]:
+              - checkbox "屏幕跟色" [ref=e140]
+              - text: 屏幕跟色
+            - generic [ref=e141] [cursor=pointer]:
+              - checkbox "色稿跟色" [ref=e142]
+              - text: 色稿跟色
+            - generic [ref=e143] [cursor=pointer]:
+              - checkbox "适配" [ref=e144]
+              - text: 适配
+            - generic [ref=e145] [cursor=pointer]:
+              - checkbox "橡皮筋打包" [ref=e146]
+              - text: 橡皮筋打包
+      - generic [ref=e148]:
+        - generic [ref=e149]: "*收货地"
+        - generic [ref=e150]:
+          - combobox [ref=e151]:
+            - option "— 请选择省份 —" [selected]
+            - option "上海"
+            - option "云南"
+            - option "内蒙古"
+            - option "北京"
+            - option "吉林"
+            - option "四川"
+            - option "天津"
+            - option "宁夏"
+            - option "安徽"
+            - option "山东"
+            - option "山西"
+            - option "广东"
+            - option "广西"
+            - option "新疆"
+            - option "江苏"
+            - option "江西"
+            - option "河北"
+            - option "河南"
+            - option "浙江"
+            - option "海南"
+            - option "湖北"
+            - option "湖南"
+            - option "甘肃"
+            - option "福建"
+            - option "西藏"
+            - option "贵州"
+            - option "辽宁"
+            - option "重庆"
+            - option "陕西"
+            - option "青海"
+            - option "黑龙江"
+          - combobox [ref=e152]:
+            - option "— 请选择城市 —" [selected]
+      - generic [ref=e153]:
+        - generic [ref=e154]: 双插盒 报价信息
+        - generic [ref=e155]: ¥116.41
+        - generic [ref=e156]: 总价（0个 · 合版印刷）
+        - generic [ref=e158]:
+          - generic [ref=e159]: ¥0.00
+          - generic [ref=e160]: 单价/个
+        - generic [ref=e161]:
+          - generic [ref=e162]:
+            - text: "单盒纸重:"
+            - strong [ref=e163]: 0g
+          - generic [ref=e165]:
+            - text: "总纸重:"
+            - strong [ref=e166]: 0kg
+      - button "立即购买" [ref=e168] [cursor=pointer]
+      - paragraph [ref=e170]: 价格仅供参考，以实际下单为准
+    - generic:
+      - img "预览"
