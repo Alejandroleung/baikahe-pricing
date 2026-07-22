@@ -125,12 +125,30 @@
     .dim-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); background: rgba(255,255,255,0.8); }
     .dim-group span { font-size: 13px; color: var(--text3); }
     .qty-input {
-      width: 120px; padding: 9px 14px; background: rgba(255,255,255,0.5);
-      border: 1px solid rgba(37,99,235,0.1); border-radius: var(--radius-sm);
-      font-size: 14px; color: var(--text); transition: all 0.2s;
-      font-family: 'Inter', sans-serif; backdrop-filter: blur(4px);
+      width: 100px; padding: 9px 0; background: rgba(255,255,255,0.5);
+      border: none; font-size: 14px; color: var(--text); text-align: center;
+      font-family: 'Inter', sans-serif;
     }
-    .qty-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); background: rgba(255,255,255,0.8); }
+    .qty-input:focus { outline: none; }
+    /* 隐藏浏览器原生步进器 */
+    .qty-stepper input[type="number"]::-webkit-inner-spin-button,
+    .qty-stepper input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .qty-stepper input[type="number"] { -moz-appearance: textfield; }
+    /* 自定义步进按钮 */
+    .qty-stepper {
+      display: inline-flex; align-items: stretch;
+      border: 1px solid rgba(37,99,235,0.1); border-radius: var(--radius-sm);
+      overflow: hidden; background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(4px);
+    }
+    .qty-stepper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); background: rgba(255,255,255,0.8); }
+    .step-btn {
+      background: transparent; border: none; padding: 0 14px;
+      font-size: 18px; font-weight: 500; color: var(--text2); cursor: pointer;
+      user-select: none; line-height: 1;
+    }
+    .step-btn:hover { background: rgba(37,99,235,0.06); color: var(--primary); }
+    .step-btn:active { background: rgba(37,99,235,0.12); }
     .option-group { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
     .option-item {
       padding: 7px 14px; border: 1px solid rgba(37,99,235,0.08); border-radius: 8px;
@@ -238,7 +256,11 @@
     <div class="form-row">
       <div class="form-label">*印刷数量</div>
       <div style="flex:1;">
-        <input type="number" class="qty-input" id="quantity" min="0" step="1" value="100">
+        <div class="qty-stepper">
+          <button type="button" class="step-btn" id="qtyDown">−</button>
+          <input type="number" class="qty-input" id="quantity" min="0" step="1" value="100">
+          <button type="button" class="step-btn" id="qtyUp">+</button>
+        </div>
         <span style="font-size:14px;color:#999;margin-left:8px;">个</span>
       </div>
     </div>
@@ -453,21 +475,26 @@ function setupIn(){
   qtyEl.addEventListener('keydown',function(e){
     if(e.key==='ArrowUp'||e.key==='ArrowDown'){
       e.preventDefault();
-      var cur=parseInt(this.value)||0;
-      // <1000 时按预设档位跳转，≥1000 时按1000步进
-      if(e.key==='ArrowUp'){
-        if(cur<100) this.value=100;
-        else if(cur<200) this.value=200;
-        else if(cur<500) this.value=500;
-        else if(cur<1000) this.value=1000;
-        else this.value=cur+1000;
-      }else{
-        if(cur<=100||(S.material==='白卡纸'&&S.weight===400&&cur<=500)){this.value=100;}else
-        this.value=cur<=500?100:(cur<=1000?500:((cur-1000)%1000===0?cur-1000:Math.floor(cur/1000)*1000));
-      }
-      this.dispatchEvent(new Event('input',{bubbles:true}));
+      stepQty(e.key==='ArrowUp'?1:-1);
     }
   });
+  // 步进按钮
+  document.getElementById('qtyUp').addEventListener('click',function(){stepQty(1);});
+  document.getElementById('qtyDown').addEventListener('click',function(){stepQty(-1);});
+  function stepQty(dir){
+    var cur = parseInt(qtyEl.value)||0;
+    if(dir>0){
+      if(cur<100) qtyEl.value=100;
+      else if(cur<200) qtyEl.value=200;
+      else if(cur<500) qtyEl.value=500;
+      else if(cur<1000) qtyEl.value=1000;
+      else qtyEl.value=cur+1000;
+    }else{
+      if(cur<=100||(S.material==='白卡纸'&&S.weight===400&&cur<=500)){qtyEl.value=100;}else
+      qtyEl.value=cur<=500?100:(cur<=1000?500:((cur-1000)%1000===0?cur-1000:Math.floor(cur/1000)*1000));
+    }
+    qtyEl.dispatchEvent(new Event('input',{bubbles:true}));
+  }
   // 输入、步进器点击 → 同步状态
   qtyEl.addEventListener('input',function(e){
     S.quantity=parseInt(e.target.value)||0;
