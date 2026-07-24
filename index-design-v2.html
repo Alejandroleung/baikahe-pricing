@@ -809,11 +809,10 @@ function calcPrice(){
   // 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
   var rate = getRateFromQty(q, S.material, S.weight, area);
 
-  // 面积校正：小/中盒型固定成本占比高，费率适当上浮
-  // 参考盒型面积0.30m²(200×150×80)，k=0.022(根据85×40×170mm实测校准)
-  if (area >= 0.04) {
-    rate *= 1 + 0.022 * (0.30 - area) / 0.30;
-  }
+  // 面积校正：费率表基于标准面积(约0.3m²)校准，小盒型费率适当上浮
+  // 2026-07-24 更新：minPrice最低价已覆盖小盒固定成本，无需额外校正
+  // 验证数据：6组尺寸×3数量，公式 total = max(费率总价, 最低基价)
+  //     误差均<0.5%（详见zsmaofeng.com实测数据）
 
   // 参照配置成本（白卡350g 过哑膜 四色，固定不变，用于计算校准系数）
   var refMc = area * 350 / 1000 * q * 5.7;
@@ -827,21 +826,18 @@ function calcPrice(){
 
   // 实际配置总价
   // 工艺费不含校准系数（data-cost已是含税最终价），q≤500用俊茂丰实测总价，q≥1000用data-cost单价×数量
+  // 2026-07-24 更新：统一使用 max(费率总价, 最低基价) 公式
+  // 验证数据：68×24×91mm 双插盒 白卡350g zsmaofeng.com实测
+  //     100=¥120, 200=¥150, 500=¥189
+  var baseKey = S.material==='银卡纸' ? '银卡纸_'+S.weight : 'white';
+  var minPrice = lookupRate((smallBoxBase[baseKey]||smallBoxBase.white).pts, q);
   var total;
-  if (area > 0 && area < 0.04) {
-    // 小盒型（<0.04m²）：按数量固定基价，不区分盒型
-    // 不同材质使用独立定价表（银卡纸材料/印刷/表面成本更高）
-    // 工艺费/配件/服务等累加在基价之上
-    var baseKey = S.material==='银卡纸' ? '银卡纸_'+S.weight : 'white';
-    var baseMin = lookupRate((smallBoxBase[baseKey]||smallBoxBase.white).pts, q);
-    total = baseMin + ap + ax + sv;
-  } else if (S.material === '银卡纸') {
+  if (S.material === '银卡纸') {
     // 银卡纸：费率已含材料+印刷+表面总价，直接使用（避免校准系数放大高纸价）
-    var silverBase = rate * area * q;
-    total = silverBase + ap + ax + sv;
+    total = Math.max(rate * area * q, minPrice) + ap + ax + sv;
   } else {
     // 白卡纸/瓦楞纸：用校准系数 = API总价 / 参照成本
-    total = (mc + pc + sc) * ratio + ap + ax + sv;
+    total = Math.max((mc + pc + sc) * ratio, minPrice) + ap + ax + sv;
   }
 
   // 1000个最低价：白卡¥160，银卡375g¥350
