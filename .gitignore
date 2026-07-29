@@ -3,3 +3,5 @@ node_modules/
 *.log
 
 .omo/
+.playwright-mcp/
+*.png
