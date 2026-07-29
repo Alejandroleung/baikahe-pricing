@@ -198,9 +198,41 @@
     .price-result .breakdown-item .val { font-size: 16px; font-weight: 700; color: var(--accent); }
     .price-result .breakdown-item .lbl { font-size: 11px; color: var(--text3); }
     .price-result .weight-info { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(37,99,235,0.04); font-size: 12px; color: var(--text3); }
-    .price-result .weight-info strong { color: var(--primary); font-weight: 600; }
-    .price-result .weight-info .wi-dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: var(--text3); }
-    .btn-submit {
+      .price-result .weight-info strong { color: var(--primary); font-weight: 600; }
+      .price-result .weight-info .wi-dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: var(--text3); }
+      /* ── 报价倍率 ── */
+      .multiplier-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(37,99,235,0.06); }
+      .multiplier-section .ms-label { font-size: 12px; font-weight: 600; color: var(--text3); margin-bottom: 8px; letter-spacing: 0.3px; }
+      .multiplier-presets { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+      .multiplier-presets .mp-btn {
+        padding: 5px 14px; border: 1px solid rgba(37,99,235,0.1); border-radius: 8px;
+        font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        background: rgba(255,255,255,0.4); user-select: none; color: var(--text2); backdrop-filter: blur(4px);
+        font-family: 'Inter', sans-serif;
+      }
+      .multiplier-presets .mp-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(37,99,235,0.04); }
+      .multiplier-presets .mp-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+      .multiplier-custom { display: flex; align-items: center; gap: 8px; }
+      .multiplier-custom label { font-size: 12px; color: var(--text3); }
+      .multiplier-custom input {
+        width: 72px; padding: 5px 8px; background: rgba(255,255,255,0.5);
+        border: 1px solid rgba(37,99,235,0.1); border-radius: 6px; font-size: 14px;
+        text-align: center; color: var(--text); transition: all 0.2s;
+        font-family: 'Inter', sans-serif; font-weight: 600;
+      }
+      .multiplier-custom input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+      .quote-result { margin-top: 12px; padding-top: 14px; border-top: 1px solid rgba(37,99,235,0.08); }
+      .quote-result .qr-row { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+      .quote-result .qr-item { text-align: center; }
+      .quote-result .qr-item .qr-val { font-size: 24px; font-weight: 800; color: var(--accent); line-height: 1.3; }
+      .quote-result .qr-item .qr-val.profit-rate { color: #22c55e; }
+      .quote-result .qr-item .qr-val.profit-rate.high { color: var(--accent); }
+      .quote-result .qr-item .qr-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+      @media (max-width: 600px) {
+        .quote-result .qr-row { gap: 12px; }
+        .quote-result .qr-item .qr-val { font-size: 18px; }
+      }
+      .btn-submit {
       display: inline-block; background: linear-gradient(135deg, var(--primary), #1D4ED8);
       color: #fff; border: none; padding: 13px 40px; border-radius: var(--radius-sm);
       font-size: 15px; font-weight: 600; cursor: pointer;
@@ -359,6 +391,41 @@
       <div class="breakdown-item"><div class="val" id="unitPrice">¥0</div><div class="lbl">单价/个</div></div>
       <div class="breakdown-item freight-item" style="display:none;"><div class="val" id="freightPrice">¥0</div><div class="lbl" id="freightLabel">运费</div></div>
     </div>
+    <div class="multiplier-section anim-fade-up">
+      <div class="ms-label">📐 报价倍率</div>
+      <div class="multiplier-presets" id="multiplierPresets">
+        <button class="mp-btn" data-value="1.10">×1.1</button>
+        <button class="mp-btn" data-value="1.20">×1.2</button>
+        <button class="mp-btn active" data-value="1.30">×1.3</button>
+        <button class="mp-btn" data-value="1.50">×1.5</button>
+        <button class="mp-btn" data-value="2.00">×2.0</button>
+      </div>
+      <div class="multiplier-custom">
+        <label>自定义：</label>
+        <input type="number" id="multiplierInput" min="1.00" max="10.00" step="0.01" value="1.30">
+        <span style="font-size:12px;color:var(--text3);">倍</span>
+      </div>
+      <div class="quote-result" id="quoteResult">
+        <div class="qr-row">
+          <div class="qr-item">
+            <div class="qr-val" id="quotePrice">¥0.00</div>
+            <div class="qr-lbl">报价总价</div>
+          </div>
+          <div class="qr-item">
+            <div class="qr-val profit-rate" id="profitRate">0%</div>
+            <div class="qr-lbl">利润率</div>
+          </div>
+          <div class="qr-item">
+            <div class="qr-val" id="profitAmount">¥0.00</div>
+            <div class="qr-lbl">利润</div>
+          </div>
+          <div class="qr-item">
+            <div class="qr-val" id="quoteUnitPrice">¥0.00</div>
+            <div class="qr-lbl">报价单价/个</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="weight-info">
       <span>单盒纸重: <strong id="singleWeight">0g</strong></span>
       <span class="wi-dot"></span>
@@ -388,7 +455,7 @@ const boxTypes=[
   {id:'bag',name:'手提袋',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/06/ee4413afdc6f4f918972ad8ed23ede1bins8jasoww.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/c2320b2bfc4a4092a86be7b65674e4e9rhni4hnmjg.jpg'},
   {id:'hook-lock',name:'扣底挂钩盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/769e77a3eaf64b1f95d06f62201e7ea15i5r5eo22q.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/769e77a3eaf64b1f95d06f62201e7ea15i5r5eo22q.png'}
 ];
-let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0,spotColor:0};
+let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0,spotColor:0,multiplier:1.30};
 function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')" onmouseenter="showPreview(this,\''+b.preview+'\')" onmouseleave="hidePreview()"><div class="box-icon"><img src="'+b.thumb+'" alt="'+b.name+'" loading="lazy"></div><h3>'+b.name+'</h3></div>';}).join('');}
 function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
 function syncOptions(){
@@ -523,6 +590,30 @@ function setupIn(){
     }else{
       lastValidQty=v;
     }
+  });
+}
+
+function setupMultiplier(){
+  document.getElementById('multiplierPresets').addEventListener('click',function(e){
+    var btn=e.target.closest('.mp-btn');
+    if(!btn)return;
+    var v=parseFloat(btn.dataset.value);
+    S.multiplier=v;
+    document.querySelectorAll('.mp-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    document.getElementById('multiplierInput').value=v.toFixed(2);
+    calcPrice();
+  });
+  document.getElementById('multiplierInput').addEventListener('input',function(e){
+    var v=parseFloat(e.target.value)||1.00;
+    if(v<1.00)v=1.00;
+    if(v>10.00)v=10.00;
+    S.multiplier=v;
+    document.querySelectorAll('.mp-btn').forEach(function(b){
+      var bv=parseFloat(b.dataset.value);
+      b.classList.toggle('active',Math.abs(bv-v)<0.005);
+    });
+    calcPrice();
   });
 }
 
@@ -933,6 +1024,21 @@ function calcPrice(){
     twEl.textContent = '0kg';
   }
 
+  // ── 报价倍率计算 ──
+  var multiplier = S.multiplier || 1.00;
+  var costPrice = total;
+  var quotePrice = costPrice * multiplier;
+  var profit = quotePrice - costPrice;
+  var profitRate = quotePrice > 0 ? (profit / quotePrice) * 100 : 0;
+  var quoteUnit = q > 0 ? quotePrice / q : 0;
+  var hideQuote = hidePrice || !total || total <= 0;
+  document.getElementById('quotePrice').textContent = hideQuote ? '¥0.00' : '¥' + quotePrice.toFixed(2);
+  var prEl = document.getElementById('profitRate');
+  prEl.textContent = hideQuote ? '0%' : profitRate.toFixed(2) + '%';
+  prEl.className = 'qr-val profit-rate' + (profitRate >= 30 ? ' high' : '');
+  document.getElementById('profitAmount').textContent = hideQuote ? '¥0.00' : '¥' + profit.toFixed(2);
+  document.getElementById('quoteUnitPrice').textContent = hideQuote ? '¥0.00' : '¥' + quoteUnit.toFixed(2);
+
   // 更新展开尺寸
   var unfolded = getUnfoldedSize(b.id, S.length, S.width, S.height);
   var el = document.getElementById('unfoldedSize');
@@ -1048,7 +1154,7 @@ calcPrice = function() {
   }
 };
 
-renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();syncOptions();initAddress();calcPrice();
+renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();setupMultiplier();syncOptions();initAddress();calcPrice();
 </script>
 <div class="preview-tooltip" id="previewTooltip"><img id="previewImg" src="" alt="预览"></div>
 </body>
