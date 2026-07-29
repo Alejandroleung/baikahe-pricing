@@ -302,7 +302,7 @@
     <div class="form-row">
       <div class="form-label">*印刷数量</div>
       <div style="flex:1;">
-        <input type="number" class="qty-input" id="quantity" min="0" step="1000" value="100">
+        <input type="number" class="qty-input" id="quantity" min="0" step="1000" value="0">
         <span style="font-size:14px;color:#999;margin-left:8px;">个</span>
       </div>
     </div>
@@ -679,6 +679,13 @@ function lookupRate(pts, qty) {
   }
   return pts[pts.length-1][1];
 }
+function getAreaRateFactor(area) {
+  if (!area || area <= 0) return 1.0;
+  if (area < 0.08) return 0.9976;
+  if (area < 0.11) return 0.9976 + (area - 0.08) / 0.03 * 0.0024;
+  if (area < 0.26) return 1.0 + (area - 0.11) / 0.15 * 0.0018;
+  return 1.0018;
+}
 function getRateFromQty(qty, material, weight, area) {
   // 小盒型（展开面积<0.04m²）：使用独立费率表（0.04-0.05由校准系数处理）
   // 数据来源：35x23x114mm双插盒在拼一拼盒小程序实测总价
@@ -686,7 +693,7 @@ function getRateFromQty(qty, material, weight, area) {
   var isSmallBox = area !== undefined && area > 0 && area < 0.04;
   if(material==='银卡纸'&&weight===375){
     return lookupRate([
-      [100,20.9080],[200,13.5936],[500,6.9182],
+      [100,20.87],[200,13.56],[500,6.90],
       [1000,isSmallBox?5.9586:6.7160],
       [2000,isSmallBox?4.8414:5.7433],
       [3000,isSmallBox?4.3448:4.813],
@@ -695,7 +702,7 @@ function getRateFromQty(qty, material, weight, area) {
   }
   if(material==='银卡纸'&&weight===425){
     return lookupRate([
-      [100,20.9080],[200,13.5936],[500,6.9182],
+      [100,20.87],[200,13.56],[500,6.90],
       [1000,isSmallBox?5.9586:7.103],
       [2000,isSmallBox?4.8414:6.035],
       [3000,isSmallBox?4.3448:5.158],
@@ -707,18 +714,20 @@ function getRateFromQty(qty, material, weight, area) {
   // 小程序总价：1000=¥1138,2000=¥2160,3000=¥3065,5000=¥4233,10000=¥7882
   if(isSmallBox){
     // 小盒型独立费率（35x23x114mm实测）
-    return lookupRate([
-      [100,20.9080],[200,13.5936],[500,6.9182],
+    var base_s = lookupRate([
+      [100,20.87],[200,13.56],[500,6.90],
       [1000,5.9586],[2000,4.8414],[3000,4.3448],
       [5000,4.0965]
     ], qty);
+    return base_s * getAreaRateFactor(area);
   }
   // 标准费率（含出血校准）
-  return lookupRate([
-    [100,20.9080],[200,13.5936],[500,6.9182],
+  var base = lookupRate([
+    [100,20.87],[200,13.56],[500,6.90],
     [1000,3.7941],[2000,3.6008],[3000,3.4063],
     [5000,2.8226],[10000,2.6279]
   ], qty);
+  return base * getAreaRateFactor(area);
 }
 
 // 小盒型（面积<0.04m²）固定基价：按数量查表，不同材质独立定价
