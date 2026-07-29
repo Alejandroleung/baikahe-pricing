@@ -1,0 +1,510 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic "Ctrl[Command] + M" [ref=e5] [cursor=pointer]:
+        - generic [ref=e6]: 
+      - text:               
+      - generic [ref=e69]:
+        - generic "Click to stop record" [ref=e70] [cursor=pointer]:
+          - generic [ref=e71]: 
+          - text: Record
+        - text:   
+      - generic [ref=e9] [cursor=pointer]:
+        - generic [ref=e10]: 
+        - text: Import
+      - generic [ref=e11] [cursor=pointer]:
+        - generic [ref=e12]: 
+        - text: Export
+      - generic "Ctrl[Command] + X" [ref=e72] [cursor=pointer]:
+        - generic [ref=e73]: 
+        - text: Clear
+      - text:  + 
+      - generic [ref=e74]:
+        - generic [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]: 
+          - text: Replay
+        - text: 
+      - generic [ref=e77] [cursor=pointer]:
+        - generic [ref=e78]: 
+        - text: Edit
+      - text: 
+      - generic [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: 
+        - text: Settings
+      - generic [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: 
+          - text: Weinre
+        - text: 
+      - generic [ref=e26] [cursor=pointer]:
+        - generic [ref=e27]: 
+        - text: HTTPS
+      - generic [ref=e28]:
+        - link " Help" [ref=e29] [cursor=pointer]:
+          - /url: https://github.com/avwo/whistle#whistle
+          - generic [ref=e30]: 
+          - text: Help
+        - text:    
+      - generic [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: 
+        - text: Online
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: 
+          - generic [ref=e37]: Network
+        - generic [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]: 
+          - generic [ref=e40]: Rules
+        - generic [ref=e41] [cursor=pointer]:
+          - generic [ref=e42]: 
+          - generic [ref=e43]: Values
+        - generic [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]: 
+          - generic [ref=e46]: Plugins
+      - text:  
+      - generic [ref=e80]:
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - table [ref=e85]:
+              - rowgroup [ref=e86]:
+                - row "# APP   Result   Method   Protocol   ServerIP   Host   URL   Type   Time  " [ref=e87]:
+                  - columnheader "#" [ref=e88] [cursor=pointer]
+                  - columnheader "APP  " [ref=e89] [cursor=pointer]:
+                    - text: APP
+                    - generic [ref=e90]:
+                      - generic [ref=e91]: 
+                      - generic [ref=e92]: 
+                  - columnheader "Result  " [ref=e93] [cursor=pointer]:
+                    - text: Result
+                    - generic [ref=e94]:
+                      - generic [ref=e95]: 
+                      - generic [ref=e96]: 
+                  - columnheader "Method  " [ref=e97] [cursor=pointer]:
+                    - text: Method
+                    - generic [ref=e98]:
+                      - generic [ref=e99]: 
+                      - generic [ref=e100]: 
+                  - columnheader "Protocol  " [ref=e101] [cursor=pointer]:
+                    - text: Protocol
+                    - generic [ref=e102]:
+                      - generic [ref=e103]: 
+                      - generic [ref=e104]: 
+                  - columnheader "ServerIP  " [ref=e105] [cursor=pointer]:
+                    - text: ServerIP
+                    - generic [ref=e106]:
+                      - generic [ref=e107]: 
+                      - generic [ref=e108]: 
+                  - columnheader "Host  " [ref=e109] [cursor=pointer]:
+                    - text: Host
+                    - generic [ref=e110]:
+                      - generic [ref=e111]: 
+                      - generic [ref=e112]: 
+                  - columnheader "URL  " [ref=e113] [cursor=pointer]:
+                    - text: URL
+                    - generic [ref=e114]:
+                      - generic [ref=e115]: 
+                      - generic [ref=e116]: 
+                  - columnheader "Type  " [ref=e117] [cursor=pointer]:
+                    - text: Type
+                    - generic [ref=e118]:
+                      - generic [ref=e119]: 
+                      - generic [ref=e120]: 
+                  - columnheader "Time  " [ref=e121] [cursor=pointer]:
+                    - text: Time
+                    - generic [ref=e122]:
+                      - generic [ref=e123]: 
+                      - generic [ref=e124]: 
+            - grid "grid" [ref=e126]:
+              - rowgroup:
+                - table:
+                  - rowgroup:
+                    - row "38 Edge 200 CONNECT HTTP 52.98.54.130 Tunnel to substrate.office.com:443 102ms":
+                      - rowheader "38"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "52.98.54.130"
+                      - cell "Tunnel to"
+                      - cell "substrate.office.com:443"
+                      - cell
+                      - cell "102ms"
+                - table:
+                  - rowgroup:
+                    - row "39 Edge 200 CONNECT HTTP 202.89.233.100 Tunnel to www.bing.com:443 47ms":
+                      - rowheader "39"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "202.89.233.100"
+                      - cell "Tunnel to"
+                      - cell "www.bing.com:443"
+                      - cell
+                      - cell "47ms"
+                - table:
+                  - rowgroup:
+                    - row "40 Edge 200 CONNECT HTTP 202.89.233.100 Tunnel to www.bing.com:443 45ms":
+                      - rowheader "40"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "202.89.233.100"
+                      - cell "Tunnel to"
+                      - cell "www.bing.com:443"
+                      - cell
+                      - cell "45ms"
+                - table:
+                  - rowgroup:
+                    - row "41 Edge 200 CONNECT HTTP 150.171.28.11 Tunnel to edge.microsoft.com:443 57ms":
+                      - rowheader "41"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "150.171.28.11"
+                      - cell "Tunnel to"
+                      - cell "edge.microsoft.com:443"
+                      - cell
+                      - cell "57ms"
+                - table:
+                  - rowgroup:
+                    - row "42 Edge 200 CONNECT HTTP 202.89.233.100 Tunnel to www.bing.com:443 50ms":
+                      - rowheader "42"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "202.89.233.100"
+                      - cell "Tunnel to"
+                      - cell "www.bing.com:443"
+                      - cell
+                      - cell "50ms"
+                - table:
+                  - rowgroup:
+                    - row "43 Browser 200 CONNECT HTTP 20.190.144.162 Tunnel to login.live.com:443 84ms":
+                      - rowheader "43"
+                      - cell "Browser":
+                        - img "Browser"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "20.190.144.162"
+                      - cell "Tunnel to"
+                      - cell "login.live.com:443"
+                      - cell
+                      - cell "84ms"
+                - table:
+                  - rowgroup:
+                    - row "44 Edge aborted CONNECT HTTP 74.125.142.132 Tunnel to clients2.googleusercontent.com:443 406ms":
+                      - rowheader "44"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "aborted"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "74.125.142.132"
+                      - cell "Tunnel to"
+                      - cell "clients2.googleusercontent.com:443"
+                      - cell
+                      - cell "406ms"
+                - table:
+                  - rowgroup:
+                    - row "45 Edge 200 CONNECT HTTP 150.171.28.11 Tunnel to edge.microsoft.com:443 59ms":
+                      - rowheader "45"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "150.171.28.11"
+                      - cell "Tunnel to"
+                      - cell "edge.microsoft.com:443"
+                      - cell
+                      - cell "59ms"
+                - table:
+                  - rowgroup:
+                    - row "46 Chrome 200 CONNECT HTTP 183.47.108.49 Tunnel to servicewechat.com:443 15ms":
+                      - rowheader "46"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "183.47.108.49"
+                      - cell "Tunnel to"
+                      - cell "servicewechat.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "47 Edge - CONNECT HTTP 74.125.142.132 Tunnel to clients2.googleusercontent.com:443 -":
+                      - rowheader "47"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "-"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "74.125.142.132"
+                      - cell "Tunnel to"
+                      - cell "clients2.googleusercontent.com:443"
+                      - cell
+                      - cell "-"
+                - table:
+                  - rowgroup:
+                    - row "48 Edge 200 CONNECT HTTP 202.89.233.100 Tunnel to www.bing.com:443 45ms":
+                      - rowheader "48"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "202.89.233.100"
+                      - cell "Tunnel to"
+                      - cell "www.bing.com:443"
+                      - cell
+                      - cell "45ms"
+                - table:
+                  - rowgroup:
+                    - row "49 Edge 200 CONNECT HTTP 202.89.233.100 Tunnel to cn.bing.com:443 48ms":
+                      - rowheader "49"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "202.89.233.100"
+                      - cell "Tunnel to"
+                      - cell "cn.bing.com:443"
+                      - cell
+                      - cell "48ms"
+                - table:
+                  - rowgroup:
+                    - row "50 Browser 200 CONNECT HTTP 52.98.54.130 Tunnel to substrate.office.com:443 60ms":
+                      - rowheader "50"
+                      - cell "Browser":
+                        - img "Browser"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "52.98.54.130"
+                      - cell "Tunnel to"
+                      - cell "substrate.office.com:443"
+                      - cell
+                      - cell "60ms"
+                - table:
+                  - rowgroup:
+                    - row "51 Browser 200 CONNECT HTTP 52.98.54.130 Tunnel to substrate.office.com:443 56ms":
+                      - rowheader "51"
+                      - cell "Browser":
+                        - img "Browser"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "52.98.54.130"
+                      - cell "Tunnel to"
+                      - cell "substrate.office.com:443"
+                      - cell
+                      - cell "56ms"
+                - table:
+                  - rowgroup:
+                    - row "52 Chrome - CONNECT HTTP 216.239.32.223 Tunnel to safebrowsingohttpgateway.googleapis.com:443 -":
+                      - rowheader "52"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "-"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "216.239.32.223"
+                      - cell "Tunnel to"
+                      - cell "safebrowsingohttpgateway.googleapis.com:443"
+                      - cell
+                      - cell "-"
+                - table:
+                  - rowgroup:
+                    - row "53 Chrome 200 CONNECT HTTP 117.68.24.84 Tunnel to mmbizwxadevlogiccos-1258344707.cos.ap-shanghai.myqcloud.com:443 34ms":
+                      - rowheader "53"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "117.68.24.84"
+                      - cell "Tunnel to"
+                      - cell "mmbizwxadevlogiccos-1258344707.cos.ap-shanghai.myqcloud.com:443"
+                      - cell
+                      - cell "34ms"
+                - table:
+                  - rowgroup:
+                    - row "54 Chrome 200 CONNECT HTTP 101.89.49.171 Tunnel to mp.weixin.qq.com:443 30ms":
+                      - rowheader "54"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "101.89.49.171"
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "30ms"
+                - table:
+                  - rowgroup:
+                    - row "55 Chrome 200 CONNECT HTTP 183.47.108.49 Tunnel to servicewechat.com:443 26ms":
+                      - rowheader "55"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "183.47.108.49"
+                      - cell "Tunnel to"
+                      - cell "servicewechat.com:443"
+                      - cell
+                      - cell "26ms"
+                - table:
+                  - rowgroup:
+                    - row "56 Windows 502 GET HTTP 2a02:26f0:e600::48f7:9970 ipv6.msftconnecttest.com /connecttest.txt text/html 4108ms":
+                      - rowheader "56"
+                      - cell "Windows":
+                        - img "Windows"
+                      - cell "502"
+                      - cell "GET"
+                      - cell "HTTP"
+                      - cell "2a02:26f0:e600::48f7:9970"
+                      - cell "ipv6.msftconnecttest.com"
+                      - cell "/connecttest.txt"
+                      - cell "text/html"
+                      - cell "4108ms"
+                - table:
+                  - rowgroup:
+                    - row "57 Edge - CONNECT HTTP 150.171.110.133 Tunnel to edge-consumer-static.azureedge.net:443 -":
+                      - rowheader "57"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "-"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "150.171.110.133"
+                      - cell "Tunnel to"
+                      - cell "edge-consumer-static.azureedge.net:443"
+                      - cell
+                      - cell "-"
+                - table:
+                  - rowgroup:
+                    - row "58 Edge 200 CONNECT HTTP 52.98.54.130 Tunnel to substrate.office.com:443 54ms":
+                      - rowheader "58"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "52.98.54.130"
+                      - cell "Tunnel to"
+                      - cell "substrate.office.com:443"
+                      - cell
+                      - cell "54ms"
+                - table:
+                  - rowgroup:
+                    - row "59 Edge 200 CONNECT HTTP 52.98.54.130 Tunnel to substrate.office.com:443 55ms":
+                      - rowheader "59"
+                      - cell "Edge":
+                        - img "Edge"
+                      - cell "200"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell "52.98.54.130"
+                      - cell "Tunnel to"
+                      - cell "substrate.office.com:443"
+                      - cell
+                      - cell "55ms"
+          - text: 
+          - generic [ref=e422]:
+            - text: 
+            - generic [ref=e423]:
+              - generic [ref=e424]: All
+              - generic "Show only json requests" [ref=e425]: JSON
+              - generic "Show only html requests" [ref=e426]: HTML
+              - generic "Show only css requests" [ref=e427]: CSS
+              - generic "Show only javascript requests" [ref=e428]: JS
+              - generic "Show only font requests" [ref=e429]: Font
+              - generic "Show only image requests" [ref=e430]: Img
+              - generic "Show only media requests" [ref=e431]: Media
+              - generic "Show only websocket requests" [ref=e432]: WS
+              - generic "Show only tunnel requests" [ref=e433]: Tunnel
+              - generic "Show only webassembly requests" [ref=e434]: Wasm
+              - generic "Show only mock requests" [ref=e435]: Mock
+              - generic "Show requests matching the rules" [ref=e436]: Rules
+              - generic "Show import sessions" [ref=e437]: Import
+              - generic "Show only composer requests" [ref=e438]: Composer
+              - generic "Show only error requests" [ref=e439]: Error
+              - generic "Show only other requests" [ref=e440]: Other
+            - textbox "Type filter text" [ref=e441]
+        - generic [ref=e445]:
+          - button " Overview" [ref=e446] [cursor=pointer]:
+            - generic [ref=e447]: 
+            - text: Overview
+          - button " Inspectors" [ref=e448] [cursor=pointer]:
+            - generic [ref=e449]: 
+            - text: Inspectors
+          - button " Timeline" [ref=e450] [cursor=pointer]:
+            - generic [ref=e451]: 
+            - text: Timeline
+          - button " Composer" [ref=e452] [cursor=pointer]:
+            - generic [ref=e453]: 
+            - text: Composer
+          - button " Tools" [ref=e454] [cursor=pointer]:
+            - generic [ref=e455]: 
+            - text: Tools
+          - button " Saved" [ref=e456] [cursor=pointer]:
+            - generic [ref=e457]: 
+            - text: Saved
+          - button "" [ref=e458] [cursor=pointer]:
+            - generic [ref=e459]: 
+  - text:      
+  - generic [ref=e801]:
+    - generic [ref=e802]:
+      - button "×" [ref=e803] [cursor=pointer]
+      - generic [ref=e804]:
+        - generic [ref=e805] [cursor=pointer]: 
+        - link "Download RootCA" [ref=e806] [cursor=pointer]:
+          - /url: cgi-bin/rootca
+        - combobox [ref=e807]:
+          - option "rootCA.crt"
+          - option "rootCA.cer" [selected]
+          - option "rootCA.pem"
+      - generic [ref=e808]:
+        - combobox [ref=e809]:
+          - option "http://rootca.pro/ (PROXY REQUIRED)" [selected]
+          - option "http://10.0.2.15:8899/cgi-bin/rootca"
+          - option "http://127.0.0.1:8899/cgi-bin/rootca"
+        - generic "Copy Root CA URL" [ref=e810] [cursor=pointer]: 
+      - link [ref=e811] [cursor=pointer]:
+        - /url: cgi-bin/rootca
+        - img [ref=e813]
+      - generic [ref=e814]:
+        - paragraph [ref=e815]:
+          - generic [ref=e816]:
+            - checkbox "Enable HTTPS (Capture Tunnel Traffic)" [checked] [active] [ref=e817]
+            - text: Enable HTTPS (Capture Tunnel Traffic)
+        - paragraph [ref=e818]:
+          - generic [ref=e819]:
+            - checkbox "Enable HTTP/2" [checked] [ref=e820]
+            - text: Enable HTTP/2
+        - generic [ref=e821] [cursor=pointer]: Custom Certs Settings
+    - button "Close" [ref=e823] [cursor=pointer]
+  - text:        
+  - text:     +     + +              + −  + −  + +    + − +      + −  + +    + −          + −   
+  - text:  
+  - text:  
+  - text:  
+  - text:  
+  - text:    +      
+  - text: 

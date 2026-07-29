@@ -1,0 +1,650 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic "Ctrl[Command] + M" [ref=e5] [cursor=pointer]:
+        - generic [ref=e6]: 
+      - text:               
+      - generic [ref=e69]:
+        - generic "Click to stop record" [ref=e70] [cursor=pointer]:
+          - generic [ref=e71]: 
+          - text: Record
+        - text:   
+      - generic [ref=e9] [cursor=pointer]:
+        - generic [ref=e10]: 
+        - text: Import
+      - generic [ref=e11] [cursor=pointer]:
+        - generic [ref=e12]: 
+        - text: Export
+      - generic "Ctrl[Command] + X" [ref=e72] [cursor=pointer]:
+        - generic [ref=e73]: 
+        - text: Clear
+      - text:  + 
+      - generic [ref=e74]:
+        - generic [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]: 
+          - text: Replay
+        - text: 
+      - generic [ref=e77] [cursor=pointer]:
+        - generic [ref=e78]: 
+        - text: Edit
+      - text: 
+      - generic [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: 
+        - text: Settings
+      - generic [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: 
+          - text: Weinre
+        - text: 
+      - generic [ref=e26] [cursor=pointer]:
+        - generic [ref=e27]: 
+        - text: HTTPS
+      - generic [ref=e28]:
+        - link " Help" [ref=e29] [cursor=pointer]:
+          - /url: https://github.com/avwo/whistle#whistle
+          - generic [ref=e30]: 
+          - text: Help
+        - text:    
+      - generic [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: 
+        - text: Online
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: 
+          - generic [ref=e37]: Network
+        - generic [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]: 
+          - generic [ref=e40]: Rules
+        - generic [ref=e41] [cursor=pointer]:
+          - generic [ref=e42]: 
+          - generic [ref=e43]: Values
+        - generic [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]: 
+          - generic [ref=e46]: Plugins
+      - text:  
+      - generic [ref=e80]:
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - table [ref=e85]:
+              - rowgroup [ref=e86]:
+                - row "# APP   Result   Method   Protocol   ServerIP   Host   URL   Type   Time  " [ref=e87]:
+                  - columnheader "#" [ref=e88] [cursor=pointer]
+                  - columnheader "APP  " [ref=e89] [cursor=pointer]:
+                    - text: APP
+                    - generic [ref=e90]:
+                      - generic [ref=e91]: 
+                      - generic [ref=e92]: 
+                  - columnheader "Result  " [ref=e93] [cursor=pointer]:
+                    - text: Result
+                    - generic [ref=e94]:
+                      - generic [ref=e95]: 
+                      - generic [ref=e96]: 
+                  - columnheader "Method  " [ref=e97] [cursor=pointer]:
+                    - text: Method
+                    - generic [ref=e98]:
+                      - generic [ref=e99]: 
+                      - generic [ref=e100]: 
+                  - columnheader "Protocol  " [ref=e101] [cursor=pointer]:
+                    - text: Protocol
+                    - generic [ref=e102]:
+                      - generic [ref=e103]: 
+                      - generic [ref=e104]: 
+                  - columnheader "ServerIP  " [ref=e105] [cursor=pointer]:
+                    - text: ServerIP
+                    - generic [ref=e106]:
+                      - generic [ref=e107]: 
+                      - generic [ref=e108]: 
+                  - columnheader "Host  " [ref=e109] [cursor=pointer]:
+                    - text: Host
+                    - generic [ref=e110]:
+                      - generic [ref=e111]: 
+                      - generic [ref=e112]: 
+                  - columnheader "URL  " [ref=e113] [cursor=pointer]:
+                    - text: URL
+                    - generic [ref=e114]:
+                      - generic [ref=e115]: 
+                      - generic [ref=e116]: 
+                  - columnheader "Type  " [ref=e117] [cursor=pointer]:
+                    - text: Type
+                    - generic [ref=e118]:
+                      - generic [ref=e119]: 
+                      - generic [ref=e120]: 
+                  - columnheader "Time  " [ref=e121] [cursor=pointer]:
+                    - text: Time
+                    - generic [ref=e122]:
+                      - generic [ref=e123]: 
+                      - generic [ref=e124]: 
+            - grid "grid" [ref=e126]:
+              - rowgroup:
+                - table:
+                  - rowgroup:
+                    - row "1345 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1345"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "1346 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 14ms":
+                      - rowheader "1346"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "14ms"
+                - table:
+                  - rowgroup:
+                    - row "1347 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 23ms":
+                      - rowheader "1347"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "23ms"
+                - table:
+                  - rowgroup:
+                    - row "1348 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 23ms":
+                      - rowheader "1348"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "23ms"
+                - table:
+                  - rowgroup:
+                    - row "1349 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 23ms":
+                      - rowheader "1349"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "23ms"
+                - table:
+                  - rowgroup:
+                    - row "1350 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 23ms":
+                      - rowheader "1350"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "23ms"
+                - table:
+                  - rowgroup:
+                    - row "1351 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 26ms":
+                      - rowheader "1351"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "26ms"
+                - table:
+                  - rowgroup:
+                    - row "1352 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 27ms":
+                      - rowheader "1352"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "27ms"
+                - table:
+                  - rowgroup:
+                    - row "1353 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 14ms":
+                      - rowheader "1353"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "14ms"
+                - table:
+                  - rowgroup:
+                    - row "1354 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1354"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "1355 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1355"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "1356 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1356"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "1357 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1357"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "1358 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 14ms":
+                      - rowheader "1358"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "14ms"
+                - table:
+                  - rowgroup:
+                    - row "1359 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 14ms":
+                      - rowheader "1359"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "14ms"
+                - table:
+                  - rowgroup:
+                    - row "1360 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1360"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "1361 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1361"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "1362 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1362"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+                - table:
+                  - rowgroup:
+                    - row "1363 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 14ms":
+                      - rowheader "1363"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "14ms"
+                - table:
+                  - rowgroup:
+                    - row "1364 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 10ms":
+                      - rowheader "1364"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "10ms"
+                - table:
+                  - rowgroup:
+                    - row "1365 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 10ms":
+                      - rowheader "1365"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "10ms"
+                - table:
+                  - rowgroup:
+                    - row "1366 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 11ms":
+                      - rowheader "1366"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "11ms"
+                - table:
+                  - rowgroup:
+                    - row "1367 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 10ms":
+                      - rowheader "1367"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "10ms"
+                - table:
+                  - rowgroup:
+                    - row "1368 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 12ms":
+                      - rowheader "1368"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "12ms"
+                - table:
+                  - rowgroup:
+                    - row "1369 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 14ms":
+                      - rowheader "1369"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "14ms"
+                - table:
+                  - rowgroup:
+                    - row "1370 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 17ms":
+                      - rowheader "1370"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "17ms"
+                - table:
+                  - rowgroup:
+                    - row "1371 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 17ms":
+                      - rowheader "1371"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "17ms"
+                - table:
+                  - rowgroup:
+                    - row "1372 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 16ms":
+                      - rowheader "1372"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "16ms"
+                - table:
+                  - rowgroup:
+                    - row "1373 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 16ms":
+                      - rowheader "1373"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "16ms"
+                - table:
+                  - rowgroup:
+                    - row "1374 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 19ms":
+                      - rowheader "1374"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "19ms"
+                - table:
+                  - rowgroup:
+                    - row "1375 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 20ms":
+                      - rowheader "1375"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "20ms"
+                - table:
+                  - rowgroup:
+                    - row "1376 Chrome captureError CONNECT HTTP Tunnel to mp.weixin.qq.com:443 15ms":
+                      - rowheader "1376"
+                      - cell "Chrome":
+                        - img "Chrome"
+                      - cell "captureError"
+                      - cell "CONNECT"
+                      - cell "HTTP"
+                      - cell
+                      - cell "Tunnel to"
+                      - cell "mp.weixin.qq.com:443"
+                      - cell
+                      - cell "15ms"
+          - text: 
+          - generic [ref=e422]:
+            - text: 
+            - generic [ref=e423]:
+              - generic [ref=e424]: All
+              - generic "Show only json requests" [ref=e425]: JSON
+              - generic "Show only html requests" [ref=e426]: HTML
+              - generic "Show only css requests" [ref=e427]: CSS
+              - generic "Show only javascript requests" [ref=e428]: JS
+              - generic "Show only font requests" [ref=e429]: Font
+              - generic "Show only image requests" [ref=e430]: Img
+              - generic "Show only media requests" [ref=e431]: Media
+              - generic "Show only websocket requests" [ref=e432]: WS
+              - generic "Show only tunnel requests" [ref=e433]: Tunnel
+              - generic "Show only webassembly requests" [ref=e434]: Wasm
+              - generic "Show only mock requests" [ref=e435]: Mock
+              - generic "Show requests matching the rules" [ref=e436]: Rules
+              - generic "Show import sessions" [ref=e437]: Import
+              - generic "Show only composer requests" [ref=e438]: Composer
+              - generic "Show only error requests" [ref=e439]: Error
+              - generic "Show only other requests" [ref=e440]: Other
+            - textbox "Type filter text" [ref=e441]
+        - generic [ref=e445]:
+          - button " Overview" [ref=e446] [cursor=pointer]:
+            - generic [ref=e447]: 
+            - text: Overview
+          - button " Inspectors" [ref=e448] [cursor=pointer]:
+            - generic [ref=e449]: 
+            - text: Inspectors
+          - button " Timeline" [ref=e450] [cursor=pointer]:
+            - generic [ref=e451]: 
+            - text: Timeline
+          - button " Composer" [ref=e452] [cursor=pointer]:
+            - generic [ref=e453]: 
+            - text: Composer
+          - button " Tools" [ref=e454] [cursor=pointer]:
+            - generic [ref=e455]: 
+            - text: Tools
+          - button " Saved" [ref=e456] [cursor=pointer]:
+            - generic [ref=e457]: 
+            - text: Saved
+          - button "" [ref=e458] [cursor=pointer]:
+            - generic [ref=e459]: 
+  - text:      
+  - generic [ref=e801]:
+    - generic [ref=e802]:
+      - button "×" [ref=e803] [cursor=pointer]
+      - generic [ref=e804]:
+        - generic [ref=e805] [cursor=pointer]: 
+        - link "Download RootCA" [ref=e806] [cursor=pointer]:
+          - /url: cgi-bin/rootca
+        - combobox [ref=e807]:
+          - option "rootCA.crt"
+          - option "rootCA.cer" [selected]
+          - option "rootCA.pem"
+      - generic [ref=e808]:
+        - combobox [ref=e809]:
+          - option "http://rootca.pro/ (PROXY REQUIRED)" [selected]
+          - option "http://10.0.2.15:8899/cgi-bin/rootca"
+          - option "http://127.0.0.1:8899/cgi-bin/rootca"
+        - generic "Copy Root CA URL" [ref=e810] [cursor=pointer]: 
+      - link [ref=e811] [cursor=pointer]:
+        - /url: cgi-bin/rootca
+        - img [ref=e813]
+      - generic [ref=e814]:
+        - paragraph [ref=e815]:
+          - generic [ref=e816]:
+            - checkbox "Enable HTTPS (Capture Tunnel Traffic)" [checked] [active] [ref=e817]
+            - text: Enable HTTPS (Capture Tunnel Traffic)
+        - paragraph [ref=e818]:
+          - generic [ref=e819]:
+            - checkbox "Enable HTTP/2" [checked] [ref=e820]
+            - text: Enable HTTP/2
+        - generic [ref=e821] [cursor=pointer]: Custom Certs Settings
+    - button "Close" [ref=e823] [cursor=pointer]
+  - text:        
+  - text:     +     + +              + −  + −  + +    + − +      + −  + +    + −          + −   
+  - text:  
+  - text:  
+  - text:  
+  - text:  
+  - text:    +      
+  - text: 

@@ -1,0 +1,78 @@
+- generic [ref=e5]:
+  - generic [ref=e429]:
+    - generic [ref=e431] [cursor=pointer]:
+      - link "收藏本站" [ref=e432]:
+        - /url: javascript:void(0);
+        - generic [ref=e433]: 
+        - text: 收藏本站
+      - generic [ref=e434]:
+        - link "登录/注册" [ref=e435]:
+          - /url: /login
+        - link "我的订单" [ref=e436]:
+          - /url: /user/orderList?type=1
+        - link "购物车 (0)" [ref=e437]:
+          - /url: /shoppingCart
+          - generic [ref=e438]: 
+          - text: 购物车 (0)
+    - generic [ref=e441]:
+      - img [ref=e443] [cursor=pointer]
+      - generic [ref=e444]:
+        - link "自助报价" [ref=e445] [cursor=pointer]:
+          - /url: /
+        - link "下载刀模" [ref=e446] [cursor=pointer]:
+          - /url: /cutter
+        - link "领优惠券" [ref=e447] [cursor=pointer]:
+          - /url: /login
+  - generic [ref=e400]:
+    - generic [ref=e402]:
+      - img [ref=e405] [cursor=pointer]
+      - generic [ref=e406]:
+        - generic [ref=e407]:
+          - generic [ref=e408]: 
+          - text: 品种齐全
+        - generic [ref=e409]:
+          - generic [ref=e410]: 
+          - text: 低价畅选
+        - generic [ref=e411]:
+          - generic [ref=e412]: 
+          - text: 正品行货
+    - generic [ref=e414]:
+      - generic [ref=e415]: 快速登录/注册
+      - generic [ref=e416]:
+        - generic [ref=e417]: "+86"
+        - textbox "请输入手机号" [ref=e418]
+      - generic [ref=e419]:
+        - textbox "请输入验证码" [ref=e420]
+        - button "获取验证码" [ref=e421] [cursor=pointer]
+      - generic [ref=e422] [cursor=pointer]: 登录/注册
+      - generic [ref=e423] [cursor=pointer]: 账号登录
+    - generic [ref=e425]: Copyright © 2022 俊茂丰包装盒
+  - generic [ref=e448]:
+    - generic [ref=e450]:
+      - list [ref=e451]:
+        - listitem [ref=e452]:
+          - generic [ref=e454]: 
+          - generic [ref=e455]: 品种齐全，购物轻松
+        - listitem [ref=e456]:
+          - generic [ref=e458]: 
+          - generic [ref=e459]: 多仓直发，极速配送
+        - listitem [ref=e460]:
+          - generic [ref=e462]: 
+          - generic [ref=e463]: 正品行货，精致服务
+        - listitem [ref=e464]:
+          - generic [ref=e466]: 
+          - generic [ref=e467]: 天天低价，畅选无忧
+      - generic [ref=e469]:
+        - link "粤ICP备2020112547号-2" [ref=e470] [cursor=pointer]:
+          - /url: https://beian.miit.gov.cn/
+        - text: Copyright © 2022 俊茂丰包装盒
+    - generic [ref=e472] [cursor=pointer]:
+      - generic [ref=e474]:
+        - generic [ref=e475]: 
+        - generic [ref=e476]: 手机购买
+      - generic [ref=e478]:
+        - generic [ref=e479]: 
+        - generic [ref=e480]: 联系客服
+      - generic [ref=e481]:
+        - generic [ref=e482]: 
+        - generic [ref=e483]: 购物车

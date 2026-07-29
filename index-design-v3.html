@@ -1,0 +1,965 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>白卡盒算价系统 · Glass Pricing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #2563EB;
+      --primary-light: #DBEAFE;
+      --primary-glow: rgba(37,99,235,0.12);
+      --accent: #F97316;
+      --accent-light: #FB923C;
+      --bg: #F0F5FF;
+      --bg-secondary: #E8F0FE;
+      --card-bg: rgba(255,255,255,0.65);
+      --card-border: rgba(255,255,255,0.4);
+      --card-hover: rgba(255,255,255,0.8);
+      --text: #1E293B;
+      --text2: #64748B;
+      --text3: #94A3B8;
+      --border: rgba(37,99,235,0.12);
+      --shadow: 0 4px 16px rgba(37,99,235,0.06);
+      --shadow-lg: 0 20px 60px rgba(37,99,235,0.08), 0 8px 20px rgba(37,99,235,0.04);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #F0F5FF 0%, #EDF2FA 30%, #F5F0FF 70%, #FFF0F5 100%);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    #particleCanvas { display: none; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes glassShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+    .anim-fade { animation: fadeIn 0.5s ease both; }
+    .anim-fade-up { animation: fadeInUp 0.5s ease both; }
+    .anim-fade-up:nth-child(1) { animation-delay: 0.04s; }
+    .anim-fade-up:nth-child(2) { animation-delay: 0.08s; }
+    .anim-fade-up:nth-child(3) { animation-delay: 0.12s; }
+    .anim-fade-up:nth-child(4) { animation-delay: 0.16s; }
+    .anim-fade-up:nth-child(5) { animation-delay: 0.20s; }
+    .anim-fade-up:nth-child(6) { animation-delay: 0.24s; }
+    .anim-fade-up:nth-child(7) { animation-delay: 0.28s; }
+    .anim-fade-up:nth-child(8) { animation-delay: 0.32s; }
+    .anim-fade-up:nth-child(9) { animation-delay: 0.36s; }
+    .anim-fade-up:nth-child(10){ animation-delay: 0.40s; }
+    .anim-fade-up:nth-child(11){ animation-delay: 0.44s; }
+    .anim-fade-up:nth-child(12){ animation-delay: 0.48s; }
+    .header {
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.6);
+      padding: 28px 0 20px; text-align: center;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header .brand-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
+    .header .logo {
+      font-family: 'Inter', sans-serif;
+      font-size: 20px; font-weight: 800; letter-spacing: 0.5px;
+      color: var(--primary);
+    }
+    .header h1 { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+    .header p { font-size: 14px; color: var(--text2); margin-top: 2px; }
+    .header .badge {
+      display: inline-block; background: rgba(249,115,22,0.08);
+      border: 1px solid rgba(249,115,22,0.15);
+      padding: 3px 14px; border-radius: 20px; font-size: 12px; color: var(--accent);
+      margin-top: 6px; font-weight: 500;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+    .section-title {
+      font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--text);
+      padding-left: 12px; border-left: 3px solid var(--primary);
+    }
+    .box-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;
+      margin-bottom: 28px;
+    }
+    .box-card {
+      background: var(--card-bg); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius); padding: 14px 8px; text-align: center;
+      cursor: pointer; transition: all 0.3s;
+      box-shadow: var(--shadow);
+    }
+    .box-card:hover {
+      background: var(--card-hover); transform: translateY(-2px);
+      box-shadow: var(--shadow-lg); border-color: rgba(255,255,255,0.6);
+    }
+    .box-card.active {
+      background: rgba(37,99,235,0.08);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+    }
+    .box-card.active::after {
+      content: "\2713"; position: absolute; top: 6px; right: 6px;
+      background: var(--primary); color: #fff;
+      width: 20px; height: 20px; border-radius: 50%; font-size: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+    .box-icon { width: 56px; height: 56px; margin: 0 auto 6px; }
+    .box-icon svg { width: 100%; height: 100%; }
+    .box-icon svg rect, .box-icon svg path, .box-icon svg line, .box-icon svg circle { stroke: var(--primary) !important; }
+    .box-icon svg rect[fill="#252525"], .box-icon svg rect[fill="#333"] { fill: rgba(37,99,235,0.04) !important; }
+    .box-icon svg circle[fill="#333"] { fill: rgba(37,99,235,0.04) !important; }
+    .box-icon svg circle[fill="#ff6b00"] { fill: var(--primary) !important; }
+    .box-card h3 { font-size: 13px; font-weight: 600; color: var(--text2); }
+    .box-card.active h3 { color: var(--primary); }
+    .form-section {
+      background: var(--card-bg); backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 22px; margin-bottom: 18px;
+      border: 1px solid var(--card-border);
+    }
+    .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: flex-start; }
+    .form-row:last-child { margin-bottom: 0; }
+    .form-label { font-size: 13px; font-weight: 600; min-width: 76px; padding-top: 8px; color: var(--text2); }
+    .dim-group { display: flex; align-items: center; gap: 6px; flex: 1; }
+    .dim-group input {
+      width: 76px; padding: 9px 12px; background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(37,99,235,0.1); border-radius: var(--radius-sm); font-size: 14px;
+      text-align: center; color: var(--text); transition: all 0.2s;
+      font-family: 'Inter', sans-serif; backdrop-filter: blur(4px);
+    }
+    .dim-group input:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+      background: rgba(255,255,255,0.8);
+    }
+    .dim-group span { font-size: 13px; color: var(--text3); }
+    .qty-input {
+      width: 120px; padding: 9px 14px; background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(37,99,235,0.1); border-radius: var(--radius-sm); font-size: 14px; color: var(--text);
+      transition: all 0.2s; font-family: 'Inter', sans-serif; backdrop-filter: blur(4px);
+    }
+    .qty-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); background: rgba(255,255,255,0.8); }
+    .option-group { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+    .option-item {
+      padding: 7px 14px; border: 1px solid rgba(37,99,235,0.08); border-radius: 8px;
+      font-size: 12px; cursor: pointer; transition: all 0.2s;
+      background: rgba(255,255,255,0.3); user-select: none; color: var(--text2); font-weight: 500;
+      backdrop-filter: blur(4px);
+    }
+    .option-item:hover { border-color: rgba(37,99,235,0.3); color: var(--primary); background: rgba(255,255,255,0.5); }
+    .option-item.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+    .option-item.disabled { opacity: 0.3; cursor: not-allowed; }
+    .check-group { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+    .check-item {
+      display: flex; align-items: center; gap: 5px; padding: 7px 12px;
+      border: 1px solid rgba(37,99,235,0.08); border-radius: 8px; font-size: 12px;
+      cursor: pointer; transition: all 0.2s;
+      background: rgba(255,255,255,0.3); user-select: none; color: var(--text2);
+      backdrop-filter: blur(4px);
+    }
+    .check-item:hover { border-color: rgba(37,99,235,0.3); background: rgba(255,255,255,0.5); }
+    .check-item.active { border-color: var(--primary); background: rgba(37,99,235,0.06); color: var(--primary); }
+    .check-item input[type="checkbox"] { accent-color: var(--primary); width: 14px; height: 14px; }
+    .unfolded-display {
+      margin-top: 6px; margin-bottom: 2px; padding: 8px 14px;
+      background: rgba(37,99,235,0.04); border: 1px solid rgba(37,99,235,0.08);
+      border-radius: var(--radius-sm); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      backdrop-filter: blur(4px);
+    }
+    .unfolded-display .unfolded-label { font-size: 13px; font-weight: 600; color: var(--text2); }
+    .unfolded-display .unfolded-value { font-size: 13px; color: var(--primary); font-weight: 500; }
+    .unfolded-display .unfolded-value strong { font-size: 15px; font-weight: 700; color: var(--text); }
+    .address-section { margin-bottom: 10px !important; }
+    .address-section select { color-scheme: light; }
+    .address-section select option { background: #fff; color: var(--text); }
+    .freight-item .val { font-size: 14px !important; }
+    .freight-item .lbl { font-size: 11px !important; }
+    .price-result {
+      background: rgba(37,99,235,0.06); backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius); padding: 26px; color: var(--text);
+      text-align: center; margin-bottom: 22px;
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: var(--shadow-lg);
+    }
+    .price-result .label { font-size: 13px; color: var(--text3); margin-bottom: 6px; letter-spacing: 0.3px; }
+    .price-result .price {
+      font-size: 42px; font-weight: 800; line-height: 1.2;
+      color: var(--primary); letter-spacing: -1px;
+    }
+    .price-result .price small { font-size: 18px; font-weight: 400; color: var(--text3); }
+    .price-result .unit { font-size: 13px; color: var(--text3); margin-top: 6px; }
+    .price-result .breakdown {
+      display: flex; justify-content: center; gap: 24px; margin-top: 14px;
+      padding-top: 14px; border-top: 1px solid rgba(37,99,235,0.06);
+    }
+    .price-result .breakdown-item { text-align: center; }
+    .price-result .breakdown-item .val { font-size: 16px; font-weight: 700; color: var(--accent); }
+    .price-result .breakdown-item .lbl { font-size: 11px; color: var(--text3); }
+    .price-result .weight-info {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 12px; padding-top: 10px;
+      border-top: 1px solid rgba(37,99,235,0.04);
+      font-size: 12px; color: var(--text3);
+    }
+    .price-result .weight-info strong { color: var(--primary); font-weight: 600; }
+    .price-result .weight-info .wi-dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: var(--text3); }
+    .btn-submit {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), #1D4ED8);
+      color: #fff; border: none; padding: 13px 40px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: all 0.25s; font-family: 'Inter', sans-serif;
+      box-shadow: 0 8px 24px rgba(37,99,235,0.2);
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(37,99,235,0.3);
+    }
+    .btn-submit:active { transform: translateY(0); }
+    .footer { text-align: center; padding: 20px; color: var(--text3); font-size: 12px; border-top: 1px solid rgba(37,99,235,0.06); margin-top: 28px; }
+    @media (max-width: 600px) {
+      .header h1 { font-size: 18px; }
+      .header .logo { font-size: 18px; }
+      .box-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .box-card { padding: 8px 4px; }
+      .box-icon { width: 40px; height: 40px; }
+      .form-row { flex-direction: column; }
+      .price-result .price { font-size: 28px; }
+      .price-result .breakdown { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+<canvas id="particleCanvas"></canvas>
+<div class="header">
+  <div class="brand-wrap">
+    <div class="logo">Alejandro</div>
+  </div>
+  <h1>白卡纸卡盒报价系统</h1>
+  <p>专业卡纸盒合版印刷报价 · 支持多种盒型 · 即时出价</p>
+  <div class="badge">合版印刷 · 价格更优 · 交期更快</div>
+</div>
+<div class="container">
+  <div class="section-title">① 选择盒型</div>
+  <div class="box-grid anim-fade-up" id="boxGrid"></div>
+  <div class="section-title">② 报价参数</div>
+  <div class="form-section anim-fade-up">
+    <div class="form-row">
+    <div class="form-row">
+      <div class="form-label">*成品尺寸</div>
+      <div class="dim-group">
+        <input type="number" id="length" min="50" max="800" placeholder="长">
+        <span>x</span>
+        <input type="number" id="width" min="50" max="600" placeholder="宽">
+        <span>x</span>
+        <input type="number" id="height" min="20" max="400" placeholder="高">
+        <span>mm</span>
+      </div>
+    </div>
+    <div class="unfolded-display">
+      <span class="unfolded-label">展开尺寸：</span>
+      <span class="unfolded-value" id="unfoldedSize">选择盒型并输入尺寸后自动计算</span>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*印刷数量</div>
+      <div style="flex:1;">
+        <input type="number" class="qty-input" id="quantity" min="0" step="1000" value="0">
+        <span style="font-size:14px;color:#999;margin-left:8px;">个</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*纸张材质</div>
+      <div class="option-group" id="materialGroup">
+        <div class="option-item active" data-value="白卡纸">白卡纸</div>
+        <div class="option-item" data-value="瓦楞纸(300g白卡+A4E黄坑)">瓦楞纸(300g白卡+A4E黄坑)</div>
+        <div class="option-item" data-value="瓦楞纸(300g白卡+W4E白坑)">瓦楞纸(300g白卡+W4E白坑)</div>
+        <div class="option-item" data-value="银卡纸">银卡纸</div>
+        <div class="option-item" data-value="F坑内托">F坑内托</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*纸张克度</div>
+      <div class="option-group" id="weightGroup">
+        <div class="option-item disabled" data-value="240">240g</div>
+        <div class="option-item disabled" data-value="300">300g</div>
+        <div class="option-item active" data-value="350">350g</div>
+        <div class="option-item disabled" data-value="375">375g</div>
+        <div class="option-item" data-value="400">400g</div>
+        <div class="option-item disabled" data-value="425">425g</div>
+        <div class="option-item disabled" data-value="600">600g</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*表面处理</div>
+      <div class="option-group" id="surfaceGroup">
+        <div class="option-item disabled" data-value="不处理">不处理</div>
+        <div class="option-item" data-value="过光膜">过光膜</div>
+        <div class="option-item active" data-value="过哑膜">过哑膜</div>
+        <div class="option-item disabled" data-value="白+UV逆向">白+UV逆向</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*印刷颜色</div>
+      <div class="option-group" id="printGroup">
+        <div class="option-item" data-value="不印刷">不印刷</div>
+        <div class="option-item active" data-value="四色">四色</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*增加工艺</div>
+      <div class="check-group" id="processGroup">
+        <label class="check-item"><input type="checkbox" data-cost="0.15" data-cost-100="100" data-cost-200="100" data-cost-500="120" data-cost-1000="117" data-cost-2000="144"> 击凹</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.18" data-cost-100="200" data-cost-200="150" data-cost-500="160" data-cost-1000="120" data-cost-2000="160"> 局部UV</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.15" data-cost-100="100" data-cost-200="100" data-cost-500="120" data-cost-1000="117" data-cost-2000="144"> 击凸</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.00" data-cost-100="0" data-cost-200="0" data-cost-500="0"> 缕空</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.10" data-cost-100="35" data-cost-200="45" data-cost-500="55" data-cost-1000="163" data-cost-2000="176"> 贴PVC</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.165" data-cost-100="110" data-cost-200="110" data-cost-500="150" data-cost-1000="120" data-cost-2000="160"> 烫金</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.165" data-cost-100="110" data-cost-200="110" data-cost-500="150"> 烫银</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.28" data-cost-100="200" data-cost-200="200" data-cost-500="250"> 4色印底不覆膜</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.20" data-cost-100="150" data-cost-200="180" data-cost-500="200" data-cost-1000="305" data-cost-2000="380"> 白卡1专色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.40" data-cost-100="260" data-cost-200="260" data-cost-500="320" data-cost-1000="1301" data-cost-2000="1620"> 银卡1专色</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*配件</div>
+      <div class="check-group" id="accessoryGroup">
+        <label class="check-item"><input type="checkbox" data-cost="0.10"> 塑料手提</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.15"> 手提绳</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">*服务</div>
+      <div class="check-group" id="serviceGroup">
+        <label class="check-item"><input type="checkbox" data-cost="0.01"> 来样跟色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.00"> 屏幕跟色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.01"> 色稿跟色</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.02"> 适配</label>
+        <label class="check-item"><input type="checkbox" data-cost="0.00"> 橡皮筋打包</label>
+      </div>
+    </div>
+  </div>
+  <div class="form-section address-section anim-fade-up">
+    <div class="form-row">
+      <div class="form-label">*收货地</div>
+      <div class="dim-group" style="flex:1;flex-wrap:wrap;">
+        <select id="provinceSelect" class="qty-input" style="flex:1;min-width:120px;"><option value="">— 请选择省份 —</option></select>
+        <select id="citySelect" class="qty-input" style="flex:1;min-width:120px;"><option value="">— 请选择城市 —</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="price-result anim-fade-up">
+    <div class="label" id="priceLabel">双插盒 报价信息</div>
+    <div class="price"><small>¥</small><span id="totalPrice">0.00</span></div>
+    <div class="unit" id="priceUnit">总价（1,000个 · 合版印刷）</div>
+    <div class="breakdown">
+      <div class="breakdown-item"><div class="val" id="unitPrice">¥0</div><div class="lbl">单价/个</div></div>
+      <div class="breakdown-item freight-item" style="display:none;"><div class="val" id="freightPrice">¥0</div><div class="lbl" id="freightLabel">运费</div></div>
+    </div>
+    <div class="weight-info">
+      <span>单盒纸重: <strong id="singleWeight">0g</strong></span>
+      <span class="wi-dot"></span>
+      <span>总纸重: <strong id="totalWeight">0kg</strong></span>
+    </div>
+  </div>
+  <div style="text-align:center;">
+    <button class="btn-submit" onclick="alert('报价已生成！如需正式下单，请联系客服。')">立即购买</button>
+  </div>
+  <div class="footer">
+    <p>价格仅供参考，以实际下单为准</p>
+  </div>
+</div>
+<script>
+const boxTypes=[
+  // 数据来源：http://www.zsmaofeng.com:20001/api/box/manager/list
+  // 各盒型的粘位(socket/gluing)、间隔(intervalPosition)、废边(offcut)等参数来自API响应
+  {id:'double-tuck',name:'双插盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="6" x2="46" y2="6" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="12" y1="54" x2="26" y2="66" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="54" x2="46" y2="66" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="66" x2="46" y2="66" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/></svg>'},
+  {id:'lock-bottom',name:'扣底盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="6" x2="46" y2="6" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M22 54 L36 64 L50 54" stroke="#ff6b00" stroke-width="2" stroke-dasharray="3 2"/></svg>'},
+  {id:'flat-seal',name:'平粘盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="32" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="22" x2="26" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="22" x2="46" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="26" y1="10" x2="46" y2="10" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="18" y1="54" x2="54" y2="54" stroke="#ff6b00" stroke-width="2.5"/></svg>'},
+  {id:'mailer',name:'飞机盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="10" y="26" width="52" height="24" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M10 26 L24 14 L48 14 L62 26" stroke="#ff6b00" stroke-width="2"/><line x1="24" y1="14" x2="24" y2="26" stroke="#ff6b00" stroke-width="1.5"/><line x1="48" y1="14" x2="48" y2="26" stroke="#ff6b00" stroke-width="1.5"/><line x1="36" y1="14" x2="36" y2="26" stroke="#ff6b00" stroke-width="1" stroke-dasharray="3 2"/></svg>'},
+  {id:'sleeve',name:'封套盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="8" y="18" width="56" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#333"/><rect x="16" y="22" width="40" height="28" rx="1" stroke="#ff6b00" stroke-width="1.5" fill="#252525"/></svg>'},
+  {id:'lid',name:'天盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="26" width="48" height="24" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><rect x="14" y="14" width="44" height="14" rx="2" stroke="#ff6b00" stroke-width="2" fill="#333"/></svg>'},
+  {id:'base',name:'地盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="20" width="48" height="32" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="20" x2="12" y2="52" stroke="#ff6b00" stroke-width="3"/><line x1="60" y1="20" x2="60" y2="52" stroke="#ff6b00" stroke-width="3"/></svg>'},
+  {id:'auto-lock',name:'自动锁底盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="18" width="48" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="18" x2="26" y2="6" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="18" x2="46" y2="6" stroke="#ff6b00" stroke-width="2"/><path d="M18 54 L36 66 L54 54" stroke="#ff6b00" stroke-width="2"/><circle cx="36" cy="60" r="3" fill="#ff6b00"/></svg>'},
+  {id:'hook-tuck',name:'双插挂钩盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="34" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><line x1="12" y1="22" x2="26" y2="10" stroke="#ff6b00" stroke-width="2"/><line x1="60" y1="22" x2="46" y2="10" stroke="#ff6b00" stroke-width="2"/><rect x="30" y="2" width="12" height="8" rx="2" stroke="#ff6b00" stroke-width="1.5" fill="#333"/><circle cx="36" cy="6" r="2" stroke="#ff6b00" stroke-width="1" fill="#333"/></svg>'},
+  {id:'bag',name:'手提袋',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="14" y="28" width="44" height="36" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M24 28 Q24 12 36 12 Q48 12 48 28" stroke="#ff6b00" stroke-width="2" fill="none"/></svg>'},
+  {id:'hook-lock',name:'扣底挂钩盒',icon:'<svg viewBox="0 0 72 72" fill="none"><rect x="12" y="22" width="48" height="34" rx="2" stroke="#ff6b00" stroke-width="2" fill="#252525"/><path d="M18 56 L36 66 L54 56" stroke="#ff6b00" stroke-width="2" stroke-dasharray="3 2"/><rect x="30" y="2" width="12" height="8" rx="2" stroke="#ff6b00" stroke-width="1.5" fill="#333"/><circle cx="36" cy="6" r="2" stroke="#ff6b00" stroke-width="1" fill="#333"/></svg>'}
+];
+let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0};
+function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')"><div class="box-icon">'+b.icon+'</div><h3>'+b.name+'</h3></div>';}).join('');}
+function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
+function syncOptions(){
+  var wg=document.getElementById('weightGroup');
+  var sg=document.getElementById('surfaceGroup');
+  wg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
+  sg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
+  // ── 克重限制 ──
+  if(S.material==='银卡纸'){
+    wg.querySelectorAll('.option-item').forEach(function(el){
+      if(el.dataset.value!=='375'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
+    });
+    wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    wg.querySelector('[data-value="375"]').classList.add('active');S.weight=375;
+  }else if(S.material==='白卡纸'&&S.quantity>0){
+    var allowed=S.quantity<1000?['240','350','400']:['350','400'];
+    wg.querySelectorAll('.option-item').forEach(function(el){
+      if(allowed.indexOf(el.dataset.value)===-1){el.classList.add('disabled');}
+    });
+    var activeEl=wg.querySelector('.option-item.active');
+    if(!activeEl||activeEl.classList.contains('disabled')){
+      wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+      wg.querySelector('[data-value="350"]').classList.add('active');S.weight=350;
+    }
+  }
+  // ── 表面处理限制 ──
+  if(S.material==='银卡纸'){
+    sg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    sg.querySelector('[data-value="白+UV逆向"]').classList.add('active');S.surface='白+UV逆向';
+  }else if(S.surface==='白+UV逆向'){
+    sg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    sg.querySelector('[data-value="过哑膜"]').classList.add('active');S.surface='过哑膜';
+  }
+}
+function setupOG(gid,sk){
+  document.getElementById(gid).addEventListener('click',function(e){
+    var i=e.target.closest('.option-item');
+    if(!i||i.classList.contains('disabled'))return;
+    i.parentElement.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+    i.classList.add('active');S[sk]=sk==='weight'?parseInt(i.dataset.value):i.dataset.value;
+    if(sk==='material'){
+      syncOptions();
+      // 切换到银卡纸时校验数量
+      if(S.material==='银卡纸'&&S.quantity>0&&(S.quantity<1000||S.quantity%1000!==0)){
+        alert('拼版不支持该数量');
+        document.getElementById('quantity').value=lastValidQty||'';
+        S.quantity=lastValidQty;
+      }
+    }
+    calcPrice();
+  });
+}
+function setupCG(){document.querySelectorAll('.check-group input[type="checkbox"]').forEach(function(cb){cb.addEventListener('change',function(){cb.closest('.check-item').classList.toggle('active',cb.checked);calcPrice();});});}
+var lastValidQty=0;
+function setupIn(){
+  ['length','width','height'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',function(e){S[id]=parseInt(e.target.value)||0;calcPrice();});
+  });
+  var qtyEl=document.getElementById('quantity');
+  // 键盘方向键：手动步进
+  qtyEl.addEventListener('keydown',function(e){
+    if(e.key==='ArrowUp'||e.key==='ArrowDown'){
+      e.preventDefault();
+      var cur=parseInt(this.value)||0;
+      // <1000 时按预设档位跳转，≥1000 时按1000步进
+      if(e.key==='ArrowUp'){
+        if(cur<100) this.value=100;
+        else if(cur<200) this.value=200;
+        else if(cur<500) this.value=500;
+        else if(cur<1000) this.value=1000;
+        else this.value=cur+1000;
+      }else{
+        if(cur<=100){this.value=100;return;}
+        this.value=cur<=500?100:(cur<=1000?500:((cur-1000)%1000===0?cur-1000:Math.floor(cur/1000)*1000));
+      }
+      this.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+  });
+  // 输入、步进器点击 → 同步状态
+  qtyEl.addEventListener('input',function(e){
+    S.quantity=parseInt(e.target.value)||0;
+    syncOptions();
+    calcPrice();
+  });
+  qtyEl.addEventListener('blur',function(e){
+    var v=parseInt(e.target.value)||0;
+    if(v===0)return;
+    var valid=false;
+    if(S.material==='银卡纸'){
+      valid=(v>=1000&&v%1000===0);
+    }else if(v<1000){
+      valid=(v===100||v===200||v===500);
+    }else{
+      valid=(v%1000===0);
+    }
+    if(!valid){
+      alert('拼版不支持该数量');
+      e.target.value=lastValidQty||'';
+      S.quantity=lastValidQty;
+      syncOptions();
+      calcPrice();
+    }else{
+      lastValidQty=v;
+    }
+  });
+}
+
+// ── 运费计算 ──
+// 发货地：佛山（广东）
+// 加运美（省内）：广东省内按城市分区，首重+续重
+// 中通快运（省外）：按省份分区，首重+续重
+var freightZones={
+  // 加运美 ❰ 广东省内 ❱ 费率
+  jym:{
+    name:'加运美',
+    zone:[
+      {name:'珠三角',cities:['广州','深圳','东莞','中山','珠海','佛山','惠州','江门','肇庆'],first:8,add:2},
+      {name:'广东其他',cities:['汕头','汕尾','潮州','揭阳','梅州','河源','韶关','清远','云浮','阳江','茂名','湛江'],first:10,add:3}
+    ]
+  },
+  // 中通快运 ❰ 省外 ❱ 费率（从佛山/广东发货）
+  zto:{
+    name:'中通快运',
+    zone:[
+      {name:'Zone1-邻省',provinces:['福建','江西','湖南','广西','海南'],first:10,add:4},
+      {name:'Zone2-华东华中',provinces:['浙江','江苏','上海','安徽','湖北','河南','山东'],first:12,add:5},
+      {name:'Zone3-华北东北',provinces:['北京','天津','河北','山西','陕西','辽宁','吉林','黑龙江'],first:15,add:7},
+      {name:'Zone4-西南西北',provinces:['四川','重庆','贵州','云南','甘肃','宁夏','青海','内蒙古'],first:15,add:10},
+      {name:'Zone5-偏远',provinces:['新疆','西藏'],first:20,add:15}
+    ]
+  }
+};
+// 省份→城市数据
+var provinceCities={
+  '广东':['广州','深圳','东莞','中山','珠海','佛山','惠州','江门','肇庆','汕头','汕尾','潮州','揭阳','梅州','河源','韶关','清远','云浮','阳江','茂名','湛江'],
+  '福建':['福州','厦门','泉州','漳州','莆田','宁德','南平','三明','龙岩'],
+  '江西':['南昌','赣州','九江','宜春','吉安','上饶','抚州','景德镇','萍乡','新余','鹰潭'],
+  '湖南':['长沙','株洲','湘潭','衡阳','岳阳','常德','邵阳','郴州','益阳','娄底','永州','怀化','湘西'],
+  '广西':['南宁','柳州','桂林','玉林','梧州','北海','防城港','钦州','贵港','百色','河池','贺州','来宾','崇左'],
+  '海南':['海口','三亚','儋州','琼海','文昌','万宁','东方'],
+  '浙江':['杭州','宁波','温州','嘉兴','湖州','绍兴','金华','台州','衢州','丽水','舟山'],
+  '江苏':['南京','苏州','无锡','常州','南通','徐州','扬州','盐城','淮安','连云港','镇江','泰州','宿迁'],
+  '上海':['上海'],
+  '安徽':['合肥','芜湖','蚌埠','马鞍山','安庆','滁州','阜阳','六安','宿州','亳州','淮南','宣城','黄山','铜陵','池州','淮北'],
+  '湖北':['武汉','襄阳','宜昌','荆州','黄冈','十堰','孝感','荆门','鄂州','黄石','咸宁','随州','恩施'],
+  '河南':['郑州','洛阳','南阳','新乡','开封','安阳','许昌','平顶山','焦作','周口','商丘','驻马店','信阳','漯河','濮阳','鹤壁','三门峡','济源'],
+  '山东':['济南','青岛','烟台','潍坊','临沂','济宁','淄博','泰安','聊城','德州','威海','枣庄','日照','滨州','菏泽','东营'],
+  '北京':['北京'],
+  '天津':['天津'],
+  '河北':['石家庄','唐山','保定','邯郸','沧州','廊坊','邢台','秦皇岛','张家口','承德','衡水'],
+  '山西':['太原','大同','长治','临汾','晋中','运城','晋城','忻州','阳泉','吕梁','朔州'],
+  '陕西':['西安','咸阳','宝鸡','渭南','汉中','延安','安康','榆林','商洛','铜川'],
+  '辽宁':['沈阳','大连','鞍山','抚顺','锦州','营口','盘锦','丹东','辽阳','朝阳','本溪','阜新','铁岭','葫芦岛'],
+  '吉林':['长春','吉林','四平','延边','通化','松原','辽源','白城','白山'],
+  '黑龙江':['哈尔滨','大庆','齐齐哈尔','牡丹江','佳木斯','绥化','鸡西','黑河','双鸭山','鹤岗','伊春','七台河','大兴安岭'],
+  '四川':['成都','绵阳','宜宾','南充','泸州','德阳','达州','乐山','凉山','内江','自贡','眉山','广安','遂宁','广元','巴中','攀枝花','资阳','雅安','阿坝','甘孜'],
+  '重庆':['重庆'],
+  '贵州':['贵阳','遵义','黔东南','黔南','毕节','六盘水','铜仁','安顺','黔西南'],
+  '云南':['昆明','大理','红河','曲靖','玉溪','楚雄','文山','保山','昭通','普洱','丽江','临沧','西双版纳','德宏','怒江','迪庆'],
+  '甘肃':['兰州','天水','酒泉','庆阳','武威','白银','张掖','定西','陇南','平凉','嘉峪关','金昌','临夏'],
+  '宁夏':['银川','吴忠','固原','中卫','石嘴山'],
+  '青海':['西宁','海东','海西','海北','海南','黄南','果洛','玉树'],
+  '内蒙古':['呼和浩特','包头','鄂尔多斯','赤峰','通辽','呼伦贝尔','巴彦淖尔','乌兰察布','锡林郭勒','兴安','阿拉善','乌海'],
+  '新疆':['乌鲁木齐','昌吉','巴音郭楞','伊犁','阿克苏','喀什','克拉玛依','石河子','吐鲁番','哈密','博尔塔拉','和田','塔城','阿勒泰','克孜勒苏'],
+  '西藏':['拉萨','日喀则','昌都','林芝','山南','那曲','阿里']
+};
+// 初始化地址选择器
+function initAddress(){
+  var ps=document.getElementById('provinceSelect');
+  var cs=document.getElementById('citySelect');
+  Object.keys(provinceCities).sort().forEach(function(p){
+    var o=document.createElement('option');o.value=p;o.textContent=p;ps.appendChild(o);
+  });
+  ps.addEventListener('change',function(){
+    cs.innerHTML='<option value="">— 请选择城市 —</option>';
+    var cities=provinceCities[this.value];
+    if(cities) cities.forEach(function(c){
+      var o=document.createElement('option');o.value=c;o.textContent=c;cs.appendChild(o);
+    });
+    calcPrice();
+  });
+  cs.addEventListener('change',calcPrice);
+}
+function getFreight(province,city,totalKg){
+  if(!province||!city||totalKg<=0) return 0;
+  if(province==='广东'){
+    for(var i=0;i<freightZones.jym.zone.length;i++){
+      if(freightZones.jym.zone[i].cities.indexOf(city)!==-1){
+        var z=freightZones.jym.zone[i];
+        return totalKg<=1?z.first:z.first+Math.ceil(totalKg-1)*z.add;
+      }
+    }
+    return 0;
+  }
+  for(var i=0;i<freightZones.zto.zone.length;i++){
+    if(freightZones.zto.zone[i].provinces.indexOf(province)!==-1){
+      var z=freightZones.zto.zone[i];
+      return totalKg<=1?z.first:z.first+Math.ceil(totalKg-1)*z.add;
+    }
+  }
+  return 0;
+}
+
+// 展开尺寸计算公式（从俊茂丰 http://www.zsmaofeng.com/ API 获取）
+// 公式来源于 API: exLengthFormula / exWidthFormula
+// L=长, W=宽, H=高，单位 mm
+function getUnfoldedSize(id, L, W, H) {
+  switch (id) {
+    case 'double-tuck':   // 双插盒: (长+宽)×2+12 | 宽×2+30+高
+      return { width: Math.round((L+W)*2+12), height: Math.round(W*2+30+H) };
+    case 'lock-bottom':   // 扣底盒: (长+宽)×2+15 | 高+宽+15+(宽/2)+15
+      return { width: Math.round((L+W)*2+15), height: Math.round(H+W+W/2+30) };
+    case 'flat-seal':     // 平粘盒: (长+宽)×2+15 | 宽×2+高
+      return { width: Math.round((L+W)*2+15), height: Math.round(W*2+H) };
+    case 'mailer':        // 飞机盒: 长+高×4+20 | 宽×2+高×3
+      return { width: Math.round(L+H*4+20), height: Math.round(W*2+H*3) };
+    case 'sleeve':        // 封套盒: (长+宽)×2+15 | 高
+      return { width: Math.round((L+W)*2+15), height: Math.round(H) };
+    case 'lid':           // 天盒: 长+高×4+30 | 宽+高×4+30
+      return { width: Math.round(L+H*4+30), height: Math.round(W+H*4+30) };
+    case 'base':          // 地盒: 长+高×4+折骨×2+30 | 宽+高×4+折骨×2+30
+      return { width: Math.round(L+H*4+50), height: Math.round(W+H*4+50) };
+    case 'auto-lock':     // 自动锁底盒: (长+宽)×2+15 | 高+宽+宽/2+40
+      return { width: Math.round((L+W)*2+15), height: Math.round(H+W+W/2+40) };
+    case 'hook-tuck':     // 双插挂钩盒: (长+宽)×2+15 | 高+宽×2+30
+      return { width: Math.round((L+W)*2+15), height: Math.round(H+W*2+30) };
+    case 'bag':           // 手提袋: (长+宽)×2+20 | 高+40(顶高)+宽/2+20(底高)
+      return { width: Math.round((L+W)*2+20), height: Math.round(H+40+W/2+20) };
+    case 'hook-lock':     // 扣底挂钩盒: (长+宽)×2+15 | 高+宽+宽/2+15+15
+      return { width: Math.round((L+W)*2+15), height: Math.round(H+W+W/2+30) };
+    default:
+      return null;
+  }
+}
+
+// 费率查找函数（基于俊茂丰API实测数据校准）
+// 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
+// 盒型：双插盒 白卡350g 过哑膜 四色，费率R(q)仅与数量相关
+// R(q)单位：¥/m²（展开面积）
+// q≤500：基于俊茂丰合版定价实测（www.zsmaofeng.com）
+// q≥1000：参考拼一拼盒微信小程序定价
+//   小程序数据：1000个¥1138, 2000个¥2160, 3000个¥3065, 5000个¥4233, 10000个¥7882
+//   中间数量线性插值
+// 通用线性插值费率查找
+function lookupRate(pts, qty) {
+  if (qty <= pts[0][0]) return pts[0][1];
+  if (qty >= pts[pts.length-1][0]) return pts[pts.length-1][1];
+  for (var i = 0; i < pts.length-1; i++) {
+    if (qty >= pts[i][0] && qty < pts[i+1][0]) {
+      var t = (qty - pts[i][0]) / (pts[i+1][0] - pts[i][0]);
+      return pts[i][1] + t * (pts[i+1][1] - pts[i][1]);
+    }
+  }
+  return pts[pts.length-1][1];
+}
+function getAreaRateFactor(area) {
+  if (!area || area <= 0) return 1.0;
+  if (area < 0.08) return 0.9976;
+  if (area < 0.11) return 0.9976 + (area - 0.08) / 0.03 * 0.0024;
+  if (area < 0.26) return 1.0 + (area - 0.11) / 0.15 * 0.0018;
+  return 1.0018;
+}
+function getRateFromQty(qty, material, weight, area) {
+  // 小盒型（展开面积<0.04m²）：使用独立费率表（0.04-0.05由校准系数处理）
+  // 数据来源：35x23x114mm双插盒在拼一拼盒小程序实测总价
+  // 小盒固定成本占比高，纯面积计价偏差大
+  var isSmallBox = area !== undefined && area > 0 && area < 0.04;
+  if(material==='银卡纸'&&weight===375){
+    return lookupRate([
+      [100,20.87],[200,13.56],[500,6.90],
+      [1000,isSmallBox?5.9586:6.7160],
+      [2000,isSmallBox?4.8414:5.7433],
+      [3000,isSmallBox?4.3448:4.813],
+      [5000,isSmallBox?4.0965:3.7956]
+    ], qty);
+  }
+  if(material==='银卡纸'&&weight===425){
+    return lookupRate([
+      [100,20.87],[200,13.56],[500,6.90],
+      [1000,isSmallBox?5.9586:7.103],
+      [2000,isSmallBox?4.8414:6.035],
+      [3000,isSmallBox?4.3448:5.158],
+      [5000,isSmallBox?4.0965:4.185]
+    ], qty);
+  }
+  // 白卡纸/瓦楞纸基础费率（已用含出血面积校准）
+  // 校准数据：200x150x80mm双插盒 白卡350g 过哑膜 四色
+  // 小程序总价：1000=¥1138,2000=¥2160,3000=¥3065,5000=¥4233,10000=¥7882
+  if(isSmallBox){
+    // 小盒型独立费率（35x23x114mm实测）
+    var base_s = lookupRate([
+      [100,20.87],[200,13.56],[500,6.90],
+      [1000,5.9586],[2000,4.8414],[3000,4.3448],
+      [5000,4.0965]
+    ], qty);
+    return base_s * getAreaRateFactor(area);
+  }
+  // 标准费率（含出血校准）
+  var base = lookupRate([
+    [100,20.87],[200,13.56],[500,6.90],
+    [1000,3.7941],[2000,3.6008],[3000,3.4063],
+    [5000,2.8226],[10000,2.6279]
+  ], qty);
+  return base * getAreaRateFactor(area);
+}
+
+// 小盒型（面积<0.04m²）固定基价：按数量查表，不同材质独立定价
+// 68×24×91mm双插盒 白卡350g 实测总价 (zsmaofeng.com 2026-07-24)
+//   100=¥120, 200=¥150, 500=¥189
+// q≥1000数据来源：35x23x114mm 实测总价
+var smallBoxBase = {
+  white:         {pts:[[100,120],[200,150],[500,189],[1000,160],[2000,260],[3000,350],[5000,550]]},
+  '银卡纸_375':  {pts:[[1000,350],[2000,560],[3000,750],[5000,950]]},
+  '银卡纸_425':  {pts:[[1000,500],[2000,680],[3000,888],[5000,1280]]}
+};
+
+function calcPrice(){
+  var b=boxTypes.find(function(x){return x.id===S.boxType});if(!b)return;
+  var L=S.length,W=S.width,H=S.height,q=S.quantity;
+
+  // ── 展开面积（m²）──
+  // 数据来源：http://www.zsmaofeng.com:20001/api/box/manager/list
+  // 双插盒面积公式：((BL+BW)*2+15)*(BW*2+30+BH)/1000000
+  // 间隔位(intervalPosition=3mm)适用于大多数盒型
+  // 已在俊茂丰API上验证：双插盒(11)、扣底盒(12)、平粘盒(15)、
+  // 飞机盒(16)、封套盒(17)、天盒(18) 均需3mm间隔
+  // 地盒(26) 的+50公式已含间隔，不加3mm
+  var u=getUnfoldedSize(b.id,L,W,H);
+  var hasInterval=b.id!=='base';  // 地盒例外
+  var eaw=u.width+(hasInterval?3:0)+(q>=1000?6:0);    // 原有间隔 + 大货加6mm出血
+  var eah=u.height+(q>=1000?6:0);                      // 大货高度加6mm出血
+  var area=eaw*eah/1000000;                          // 单盒展开面积 m²
+
+  // 纸张单价（元/kg），参考行业白卡纸市场价（2025-2026年）
+  // 白卡纸约5500-6500元/吨，银卡纸约9000-12000元/吨
+  var pp={'白卡纸':{240:6.5,300:6.0,350:5.7,375:6.0,400:6.3,600:8.0},'瓦楞纸(300g白卡+A4E黄坑)':{300:7.5,350:7.8,400:8.5},'瓦楞纸(300g白卡+W4E白坑)':{300:8.0,350:8.3,400:9.0},'银卡纸':{300:9.5,350:10.5,375:11.0,400:11.5,425:12.0},'F坑内托':{300:5.0,350:5.5,400:6.0}};
+  var ppg=(pp[S.material]&&pp[S.material][S.weight])||5.7;
+
+  // 材料费 = 展开面积(m²) × 克重(g/m²) / 1000 × 数量 × 纸价(元/kg)
+  var pw=area*S.weight/1000;  // 单盒纸张重量(kg)
+  var mc=pw*q*ppg;
+
+  // ── 印刷费 ──
+  // 合版四色印刷：按展开面积计费，含版费分摊
+  var pc=S.print==='四色'?area*q*0.13:0;
+
+  // ── 表面处理费（按面积计费 元/m²）──
+  // 过膜约0.80-1.20元/m²
+  var su={'不处理':0,'过光膜':0.90,'过哑膜':0.90,'白+UV逆向':2.50};
+  var surfaceUnit=su[S.surface]||0;
+  var sc=surfaceUnit*area*q;
+
+  // ── 工艺费 ──
+  // q≤500：使用俊茂丰实测总价（data-cost-xxx，已有固定开机费），
+  // q=1000~2000：使用拼一拼盒小程序实测总价（data-cost-1000/2000），中间插值
+  // q>2000：按小程序1000→2000的斜率外推
+  // 无小程序数据的工艺(q≥1000)：回退到data-cost单价×数量
+  function getProcessTotalCost(cb,qty){
+    var c100=cb.dataset['cost-100']!==undefined?parseFloat(cb.dataset['cost-100']):null;
+    var c200=cb.dataset['cost-200']!==undefined?parseFloat(cb.dataset['cost-200']):null;
+    var c500=cb.dataset['cost-500']!==undefined?parseFloat(cb.dataset['cost-500']):null;
+    var c1000=cb.dataset['cost-1000']!==undefined?parseFloat(cb.dataset['cost-1000']):null;
+    var c2000=cb.dataset['cost-2000']!==undefined?parseFloat(cb.dataset['cost-2000']):null;
+    var cu=parseFloat(cb.dataset.cost);
+    var cu1000=cu*1000;
+    if(qty<=100)return c100!==null?c100:cu1000;
+    if(qty<=200){var lo=c100!==null?c100:cu1000,hi=c200!==null?c200:cu1000;return lo+(hi-lo)*(qty-100)/100;}
+    if(qty<=500){var lo=c200!==null?c200:cu1000,hi=c500!==null?c500:cu1000;return lo+(hi-lo)*(qty-200)/300;}
+    if(qty<=1000){var lo=c500!==null?c500:cu1000,hi=c1000!==null?c1000:cu1000;return lo+(hi-lo)*(qty-500)/500;}
+    if(c2000!==null){
+      // 有小程序数据：1000→2000插值，>2000按同斜率外推
+      var lo=c1000!==null?c1000:cu1000;
+      if(qty<=2000)return lo+(c2000-lo)*(qty-1000)/1000;
+      var rate=(c2000-lo)/1000;
+      return c2000+rate*(qty-2000);
+    }
+    // 无小程序数据：使用data-cost单价（线性的合版/小程序定价）
+    return cu*qty;
+  }
+  var ap=0;
+  document.querySelectorAll('#processGroup input:checked').forEach(function(c){
+    ap+=getProcessTotalCost(c,q);
+  });
+  var ax=0;document.querySelectorAll('#accessoryGroup input:checked').forEach(function(c){
+    ax+=parseFloat(c.dataset.cost)*q;
+  });
+  var sv=0;document.querySelectorAll('#serviceGroup input:checked').forEach(function(c){
+    sv+=parseFloat(c.dataset.cost)*q;
+  });
+
+  // ── API校准总价（基于俊茂丰合版定价实测数据）──
+  // 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
+  var rate = getRateFromQty(q, S.material, S.weight, area);
+
+  // 面积校正：费率表基于标准面积(约0.3m²)校准，小盒型费率适当上浮
+  // 2026-07-24 更新：minPrice最低价已覆盖小盒固定成本，无需额外校正
+  // 验证数据：6组尺寸×3数量，公式 total = max(费率总价, 最低基价)
+  //     误差均<0.5%（详见zsmaofeng.com实测数据）
+
+  // 参照配置成本（白卡350g 过哑膜 四色，固定不变，用于计算校准系数）
+  var refMc = area * 350 / 1000 * q * 5.7;
+  var refPc = area * q * 0.13;
+  var refSc = area * q * 0.90;
+  var refBase = refMc + refPc + refSc;
+
+  // 校准系数 = API真实总价 / 参照配置的估算成本
+  var refTotal = rate * area * q;
+  var ratio = refBase > 0 ? refTotal / refBase : 1;
+
+  // 实际配置总价
+  // 工艺费不含校准系数（data-cost已是含税最终价），q≤500用俊茂丰实测总价，q≥1000用data-cost单价×数量
+  // 2026-07-24 更新：统一使用 max(费率总价, 最低基价) 公式
+  // 验证数据：68×24×91mm 双插盒 白卡350g zsmaofeng.com实测
+  //     100=¥120, 200=¥150, 500=¥189
+  var baseKey = S.material==='银卡纸' ? '银卡纸_'+S.weight : 'white';
+  var minPrice = lookupRate((smallBoxBase[baseKey]||smallBoxBase.white).pts, q);
+  var total;
+  if (S.material === '银卡纸') {
+    // 银卡纸：费率已含材料+印刷+表面总价，直接使用（避免校准系数放大高纸价）
+    total = Math.max(rate * area * q, minPrice) + ap + ax + sv;
+  } else {
+    // 白卡纸/瓦楞纸：用校准系数 = API总价 / 参照成本
+    total = Math.max((mc + pc + sc) * ratio, minPrice) + ap + ax + sv;
+  }
+
+  // 1000个最低价：白卡¥160，银卡375g¥350
+  if(q===1000 && total<160) total=160;
+  if(q===1000 && S.material==='银卡纸' && S.weight===375 && total<350) total=350;
+
+  // 重量估算
+  var singleG = pw * 1000;
+  var totalKg = pw * q;
+
+  // ── 运费 ──
+  var freightProvince=document.getElementById('provinceSelect').value;
+  var freightCity=document.getElementById('citySelect').value;
+  var freight=getFreight(freightProvince,freightCity,totalKg);
+  var freightEl=document.getElementById('freightPrice');
+  var freightItem=freightEl&&freightEl.closest('.freight-item');
+  if(freightEl) freightEl.textContent='¥'+freight.toFixed(2);
+  if(freightItem){
+    freightItem.style.display=freight>0?'block':'none';
+    document.getElementById('freightLabel').textContent=
+      freightProvince==='广东'?'加运美运费':'中通快运运费';
+  }
+
+  // 运费单独展示，不加在产品总价上
+  var u = q > 0 ? total / q : 0;
+
+  document.getElementById('priceLabel').textContent = b.name + ' 报价信息';
+  var hidePrice = S.material === '银卡纸' && q < 1000;
+  document.getElementById('totalPrice').textContent = hidePrice ? '—' : total.toFixed(2);
+  document.getElementById('priceUnit').textContent = hidePrice ? '' : '总价（' + q.toLocaleString() + '个 · 合版印刷）';
+  document.getElementById('unitPrice').textContent = hidePrice ? '' : '¥' + u.toFixed(2);
+  var swEl = document.getElementById('singleWeight');
+  var twEl = document.getElementById('totalWeight');
+  if (S.length > 0 && S.width > 0 && S.height > 0 && q > 0) {
+    swEl.textContent = singleG.toFixed(0) + 'g';
+    twEl.textContent = totalKg.toFixed(1) + 'kg';
+  } else {
+    swEl.textContent = '0g';
+    twEl.textContent = '0kg';
+  }
+
+  // 更新展开尺寸
+  var unfolded = getUnfoldedSize(b.id, S.length, S.width, S.height);
+  var el = document.getElementById('unfoldedSize');
+  if (unfolded && S.length > 0 && S.width > 0 && S.height > 0) {
+    el.innerHTML = '<strong>'+unfolded.width+'</strong> &times; <strong>'+unfolded.height+'</strong> mm';
+  } else if (!unfolded) {
+    el.textContent = '该盒型暂无展开公式，需按实际刀模图计算';
+  } else {
+    el.textContent = '选择盒型并输入尺寸后自动计算';
+  }
+}
+
+// ---- 粒子背景动画 ----
+(function(){
+  var c = document.getElementById('particleCanvas');
+  if (!c) return;
+  var ctx = c.getContext('2d');
+  var particles = [], W, H;
+  function resize(){ W=c.width=window.innerWidth; H=c.height=window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
+
+  var COUNT = 45;
+  for (var i = 0; i < COUNT; i++) {
+    particles.push({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 - 0.12,
+      r: Math.random() * 2 + 1, a: Math.random() * 0.35 + 0.08
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.y > H + 10) p.y = -10;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,107,0,' + p.a + ')';
+      ctx.fill();
+    }
+    // 近距离粒子连线
+    for (var i = 0; i < particles.length; i++) {
+      for (var j = i + 1; j < particles.length; j++) {
+        var dx = particles[i].x - particles[j].x;
+        var dy = particles[i].y - particles[j].y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 140) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(255,107,0,' + (0.05 * (1 - dist / 140)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ---- 价格数字跳动动画 ----
+var _lastTotal = 0;
+function animatePrice(newVal) {
+  var el = document.getElementById('totalPrice');
+  if (!el) return;
+  var start = _lastTotal || 0;
+  var duration = 400, startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    var p = Math.min((ts - startTime) / duration, 1);
+    p = 1 - Math.pow(1 - p, 3); // easeOutCubic
+    el.textContent = (start + (newVal - start) * p).toFixed(2);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  _lastTotal = newVal;
+  requestAnimationFrame(step);
+}
+
+// 改写 calcPrice 使总价跳动
+var _origCp = calcPrice;
+calcPrice = function() {
+  _origCp();
+  var t = document.getElementById('totalPrice').textContent;
+  if (parseFloat(t) > 0) {
+    var finalT = parseFloat(t);
+    setTimeout(function(){ animatePrice(finalT); }, 30);
+  }
+};
+
+renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();syncOptions();initAddress();calcPrice();
+</script>
+</body>
+</html>

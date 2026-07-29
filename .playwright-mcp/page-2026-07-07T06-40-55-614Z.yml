@@ -1,0 +1,175 @@
+- generic [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - generic [ref=f4e4]: Alejandro
+    - heading "白卡纸卡盒报价系统" [level=1] [ref=f4e5]
+    - paragraph [ref=f4e6]: 专业卡纸盒合版印刷报价 · 支持多种盒型 · 即时出价
+    - generic [ref=f4e7]: 合版印刷 · 价格更优 · 交期更快
+  - generic [ref=f4e8]:
+    - generic [ref=f4e9]: ① 选择盒型
+    - generic [ref=f4e10]:
+      - generic [ref=f4e11] [cursor=pointer]:
+        - img [ref=f4e13]
+        - heading "双插盒" [level=3] [ref=f4e19]
+        - text: ✓
+      - generic [ref=f4e20] [cursor=pointer]:
+        - img [ref=f4e22]
+        - heading "扣底盒" [level=3] [ref=f4e27]
+      - generic [ref=f4e28] [cursor=pointer]:
+        - img [ref=f4e30]
+        - heading "平粘盒" [level=3] [ref=f4e34]
+      - generic [ref=f4e35] [cursor=pointer]:
+        - img [ref=f4e37]
+        - heading "飞机盒" [level=3] [ref=f4e40]
+      - generic [ref=f4e41] [cursor=pointer]:
+        - img [ref=f4e43]
+        - heading "封套盒" [level=3] [ref=f4e46]
+      - generic [ref=f4e47] [cursor=pointer]:
+        - img [ref=f4e49]
+        - heading "天盒" [level=3] [ref=f4e52]
+      - generic [ref=f4e53] [cursor=pointer]:
+        - img [ref=f4e55]
+        - heading "地盒" [level=3] [ref=f4e57]
+      - generic [ref=f4e58] [cursor=pointer]:
+        - img [ref=f4e60]
+        - heading "自动锁底盒" [level=3] [ref=f4e66]
+      - generic [ref=f4e67] [cursor=pointer]:
+        - img [ref=f4e69]
+        - heading "双插挂钩盒" [level=3] [ref=f4e75]
+      - generic [ref=f4e76] [cursor=pointer]:
+        - img [ref=f4e78]
+        - heading "手提袋" [level=3] [ref=f4e81]
+      - generic [ref=f4e82] [cursor=pointer]:
+        - img [ref=f4e84]
+        - heading "扣底挂钩盒" [level=3] [ref=f4e89]
+    - generic [ref=f4e90]: ② 报价参数
+    - generic [ref=f4e91]:
+      - generic [ref=f4e92]:
+        - generic [ref=f4e93]:
+          - generic [ref=f4e94]: "*成品尺寸"
+          - generic [ref=f4e95]:
+            - spinbutton "长" [ref=f4e96]: "200"
+            - generic [ref=f4e97]: x
+            - spinbutton "宽" [ref=f4e98]: "150"
+            - generic [ref=f4e99]: x
+            - spinbutton "高" [ref=f4e100]: "80"
+            - generic [ref=f4e101]: mm
+        - generic [ref=f4e102]:
+          - generic [ref=f4e103]: 展开尺寸：
+          - generic [ref=f4e104]:
+            - strong [ref=f4e204]: "712"
+            - text: ×
+            - strong [ref=f4e205]: "410"
+            - text: mm
+        - generic [ref=f4e107]:
+          - generic [ref=f4e108]: "*印刷数量"
+          - generic [ref=f4e109]:
+            - spinbutton [ref=f4e110]: "1000"
+            - text: 个
+        - generic [ref=f4e111]:
+          - generic [ref=f4e112]: "*纸张材质"
+          - generic [ref=f4e113]:
+            - generic [ref=f4e114] [cursor=pointer]: 白卡纸
+            - generic [ref=f4e115] [cursor=pointer]: 瓦楞纸(300g白卡+A4E黄坑)
+            - generic [ref=f4e116] [cursor=pointer]: 瓦楞纸(300g白卡+W4E白坑)
+            - generic [ref=f4e117] [cursor=pointer]: 银卡纸
+            - generic [ref=f4e118] [cursor=pointer]: F坑内托
+        - generic [ref=f4e119]:
+          - generic [ref=f4e120]: "*纸张克度"
+          - generic [ref=f4e121]:
+            - generic [ref=f4e122]: 240g
+            - generic [ref=f4e123]: 300g
+            - generic [ref=f4e124] [cursor=pointer]: 350g
+            - generic [ref=f4e125]: 375g
+            - generic [ref=f4e126] [cursor=pointer]: 400g
+            - generic [ref=f4e127]: 600g
+        - generic [ref=f4e128]:
+          - generic [ref=f4e129]: "*表面处理"
+          - generic [ref=f4e130]:
+            - generic [ref=f4e131]: 不处理
+            - generic [ref=f4e132] [cursor=pointer]: 过光膜
+            - generic [ref=f4e133] [cursor=pointer]: 过哑膜
+            - generic [ref=f4e134]: 白+UV逆向
+        - generic [ref=f4e135]:
+          - generic [ref=f4e136]: "*印刷颜色"
+          - generic [ref=f4e137]:
+            - generic [ref=f4e138] [cursor=pointer]: 不印刷
+            - generic [ref=f4e139] [cursor=pointer]: 四色
+        - generic [ref=f4e140]:
+          - generic [ref=f4e141]: "*增加工艺"
+          - generic [ref=f4e142]:
+            - generic [ref=f4e143] [cursor=pointer]:
+              - checkbox "击凹" [checked] [active] [ref=f4e144]
+              - text: 击凹
+            - generic [ref=f4e145] [cursor=pointer]:
+              - checkbox "局部UV" [ref=f4e146]
+              - text: 局部UV
+            - generic [ref=f4e147] [cursor=pointer]:
+              - checkbox "击凸" [ref=f4e148]
+              - text: 击凸
+            - generic [ref=f4e149] [cursor=pointer]:
+              - checkbox "缕空" [ref=f4e150]
+              - text: 缕空
+            - generic [ref=f4e151] [cursor=pointer]:
+              - checkbox "贴PVC" [ref=f4e152]
+              - text: 贴PVC
+            - generic [ref=f4e153] [cursor=pointer]:
+              - checkbox "烫金" [ref=f4e154]
+              - text: 烫金
+            - generic [ref=f4e155] [cursor=pointer]:
+              - checkbox "烫银" [ref=f4e156]
+              - text: 烫银
+            - generic [ref=f4e157] [cursor=pointer]:
+              - checkbox "4色印底不腹膜" [ref=f4e158]
+              - text: 4色印底不腹膜
+            - generic [ref=f4e159] [cursor=pointer]:
+              - checkbox "白卡1专色" [ref=f4e160]
+              - text: 白卡1专色
+            - generic [ref=f4e161] [cursor=pointer]:
+              - checkbox "银卡1专色" [ref=f4e162]
+              - text: 银卡1专色
+        - generic [ref=f4e163]:
+          - generic [ref=f4e164]: "*配件"
+          - generic [ref=f4e165]:
+            - generic [ref=f4e166] [cursor=pointer]:
+              - checkbox "塑料手提" [ref=f4e167]
+              - text: 塑料手提
+            - generic [ref=f4e168] [cursor=pointer]:
+              - checkbox "手提绳" [ref=f4e169]
+              - text: 手提绳
+        - generic [ref=f4e170]:
+          - generic [ref=f4e171]: "*服务"
+          - generic [ref=f4e172]:
+            - generic [ref=f4e173] [cursor=pointer]:
+              - checkbox "来样跟色" [ref=f4e174]
+              - text: 来样跟色
+            - generic [ref=f4e175] [cursor=pointer]:
+              - checkbox "屏幕跟色" [ref=f4e176]
+              - text: 屏幕跟色
+            - generic [ref=f4e177] [cursor=pointer]:
+              - checkbox "色稿跟色" [ref=f4e178]
+              - text: 色稿跟色
+            - generic [ref=f4e179] [cursor=pointer]:
+              - checkbox "适配" [ref=f4e180]
+              - text: 适配
+            - generic [ref=f4e181] [cursor=pointer]:
+              - checkbox "橡皮筋打包" [ref=f4e182]
+              - text: 橡皮筋打包
+      - generic [ref=f4e183]:
+        - generic [ref=f4e184]: 双插盒 报价信息
+        - generic [ref=f4e185]: ¥1536.98
+        - generic [ref=f4e186]: 总价（1,000个 · 合版印刷）
+        - generic [ref=f4e187]:
+          - generic [ref=f4e188]:
+            - generic [ref=f4e189]: ¥915
+            - generic [ref=f4e190]: 材料费
+          - generic [ref=f4e191]:
+            - generic [ref=f4e192]: ¥60
+            - generic [ref=f4e193]: 印刷费
+          - generic [ref=f4e194]:
+            - generic [ref=f4e195]: ¥563
+            - generic [ref=f4e196]: 工艺费
+          - generic [ref=f4e197]:
+            - generic [ref=f4e198]: ¥1.54
+            - generic [ref=f4e199]: 单价/个
+      - button "立即购买" [ref=f4e201] [cursor=pointer]
+      - paragraph [ref=f4e203]: 价格仅供参考，以实际下单为准

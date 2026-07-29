@@ -1,0 +1,464 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic "Ctrl[Command] + M" [ref=e5] [cursor=pointer]:
+        - generic [ref=e6]: 
+      - text:               
+      - generic [ref=e69]:
+        - generic "Click to stop record" [ref=e70] [cursor=pointer]:
+          - generic [ref=e71]: 
+          - text: Record
+        - text:   
+      - generic [ref=e9] [cursor=pointer]:
+        - generic [ref=e10]: 
+        - text: Import
+      - generic [ref=e11] [cursor=pointer]:
+        - generic [ref=e12]: 
+        - text: Export
+      - generic "Ctrl[Command] + X" [ref=e72] [cursor=pointer]:
+        - generic [ref=e73]: 
+        - text: Clear
+      - text:  + 
+      - generic [ref=e74]:
+        - generic [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]: 
+          - text: Replay
+        - text: 
+      - generic [ref=e77] [cursor=pointer]:
+        - generic [ref=e78]: 
+        - text: Edit
+      - text: 
+      - generic [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: 
+        - text: Settings
+      - generic [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: 
+          - text: Weinre
+        - text: 
+      - generic [ref=e26] [cursor=pointer]:
+        - generic [ref=e27]: 
+        - text: HTTPS
+      - generic [ref=e28]:
+        - link " Help" [ref=e29] [cursor=pointer]:
+          - /url: https://github.com/avwo/whistle#whistle
+          - generic [ref=e30]: 
+          - text: Help
+        - text:    
+      - generic [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: 
+        - text: Online
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: 
+          - generic [ref=e37]: Network
+        - generic [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]: 
+          - generic [ref=e40]: Rules
+        - generic [ref=e41] [cursor=pointer]:
+          - generic [ref=e42]: 
+          - generic [ref=e43]: Values
+        - generic [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]: 
+          - generic [ref=e46]: Plugins
+      - text:  
+      - generic [ref=e80]:
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - table [ref=e85]:
+              - rowgroup [ref=e86]:
+                - row "# APP   Result   Method   Protocol   ServerIP   Host   URL   Type   Time  " [ref=e87]:
+                  - columnheader "#" [ref=e88] [cursor=pointer]
+                  - columnheader "APP  " [ref=e89] [cursor=pointer]:
+                    - text: APP
+                    - generic [ref=e90]:
+                      - generic [ref=e91]: 
+                      - generic [ref=e92]: 
+                  - columnheader "Result  " [ref=e93] [cursor=pointer]:
+                    - text: Result
+                    - generic [ref=e94]:
+                      - generic [ref=e95]: 
+                      - generic [ref=e96]: 
+                  - columnheader "Method  " [ref=e97] [cursor=pointer]:
+                    - text: Method
+                    - generic [ref=e98]:
+                      - generic [ref=e99]: 
+                      - generic [ref=e100]: 
+                  - columnheader "Protocol  " [ref=e101] [cursor=pointer]:
+                    - text: Protocol
+                    - generic [ref=e102]:
+                      - generic [ref=e103]: 
+                      - generic [ref=e104]: 
+                  - columnheader "ServerIP  " [ref=e105] [cursor=pointer]:
+                    - text: ServerIP
+                    - generic [ref=e106]:
+                      - generic [ref=e107]: 
+                      - generic [ref=e108]: 
+                  - columnheader "Host  " [ref=e109] [cursor=pointer]:
+                    - text: Host
+                    - generic [ref=e110]:
+                      - generic [ref=e111]: 
+                      - generic [ref=e112]: 
+                  - columnheader "URL  " [ref=e113] [cursor=pointer]:
+                    - text: URL
+                    - generic [ref=e114]:
+                      - generic [ref=e115]: 
+                      - generic [ref=e116]: 
+                  - columnheader "Type  " [ref=e117] [cursor=pointer]:
+                    - text: Type
+                    - generic [ref=e118]:
+                      - generic [ref=e119]: 
+                      - generic [ref=e120]: 
+                  - columnheader "Time  " [ref=e121] [cursor=pointer]:
+                    - text: Time
+                    - generic [ref=e122]:
+                      - generic [ref=e123]: 
+                      - generic [ref=e124]: 
+            - grid "grid" [ref=e126]:
+              - rowgroup [ref=e127]:
+                - table [ref=e128]:
+                  - rowgroup [ref=e129]:
+                    - row "1 Chrome aborted CONNECT HTTP 172.253.117.100 Tunnel to android.clients.google.com:443 891ms" [ref=e130]:
+                      - rowheader "1" [ref=e131]
+                      - cell "Chrome" [ref=e132]:
+                        - img "Chrome" [ref=e133]
+                      - cell "aborted" [ref=e134]
+                      - cell "CONNECT" [ref=e135]
+                      - cell "HTTP" [ref=e136]
+                      - cell "172.253.117.100" [ref=e137]
+                      - cell "Tunnel to" [ref=e138]
+                      - cell "android.clients.google.com:443" [ref=e139]
+                      - cell [ref=e140]
+                      - cell "891ms" [ref=e141]
+                - table [ref=e142]:
+                  - rowgroup [ref=e143]:
+                    - row "2 Chrome 200 CONNECT HTTP 183.47.108.49 Tunnel to servicewechat.com:443 16ms" [ref=e144]:
+                      - rowheader "2" [ref=e145]
+                      - cell "Chrome" [ref=e146]:
+                        - img "Chrome" [ref=e147]
+                      - cell "200" [ref=e148]
+                      - cell "CONNECT" [ref=e149]
+                      - cell "HTTP" [ref=e150]
+                      - cell "183.47.108.49" [ref=e151]
+                      - cell "Tunnel to" [ref=e152]
+                      - cell "servicewechat.com:443" [ref=e153]
+                      - cell [ref=e154]
+                      - cell "16ms" [ref=e155]
+                - table [ref=e156]:
+                  - rowgroup [ref=e157]:
+                    - row "3 Chrome aborted CONNECT HTTP 74.125.135.84 Tunnel to accounts.google.com:443 30003ms" [ref=e158]:
+                      - rowheader "3" [ref=e159]
+                      - cell "Chrome" [ref=e160]:
+                        - img "Chrome" [ref=e161]
+                      - cell "aborted" [ref=e162]
+                      - cell "CONNECT" [ref=e163]
+                      - cell "HTTP" [ref=e164]
+                      - cell "74.125.135.84" [ref=e165]
+                      - cell "Tunnel to" [ref=e166]
+                      - cell "accounts.google.com:443" [ref=e167]
+                      - cell [ref=e168]
+                      - cell "30003ms" [ref=e169]
+                - table [ref=e170]:
+                  - rowgroup [ref=e171]:
+                    - row "4 Chrome aborted CONNECT HTTP 172.253.117.100 Tunnel to android.clients.google.com:443 29945ms" [ref=e172]:
+                      - rowheader "4" [ref=e173]
+                      - cell "Chrome" [ref=e174]:
+                        - img "Chrome" [ref=e175]
+                      - cell "aborted" [ref=e176]
+                      - cell "CONNECT" [ref=e177]
+                      - cell "HTTP" [ref=e178]
+                      - cell "172.253.117.100" [ref=e179]
+                      - cell "Tunnel to" [ref=e180]
+                      - cell "android.clients.google.com:443" [ref=e181]
+                      - cell [ref=e182]
+                      - cell "29945ms" [ref=e183]
+                - table [ref=e184]:
+                  - rowgroup [ref=e185]:
+                    - row "5 Chrome aborted CONNECT HTTP 69.171.235.22 Tunnel to www.google.com:443 29930ms" [ref=e186]:
+                      - rowheader "5" [ref=e187]
+                      - cell "Chrome" [ref=e188]:
+                        - img "Chrome" [ref=e189]
+                      - cell "aborted" [ref=e190]
+                      - cell "CONNECT" [ref=e191]
+                      - cell "HTTP" [ref=e192]
+                      - cell "69.171.235.22" [ref=e193]
+                      - cell "Tunnel to" [ref=e194]
+                      - cell "www.google.com:443" [ref=e195]
+                      - cell [ref=e196]
+                      - cell "29930ms" [ref=e197]
+                - table [ref=e198]:
+                  - rowgroup [ref=e199]:
+                    - row "6 Chrome aborted CONNECT HTTP 216.239.32.223 Tunnel to safebrowsingohttpgateway.googleapis.com:443 29917ms" [ref=e200]:
+                      - rowheader "6" [ref=e201]
+                      - cell "Chrome" [ref=e202]:
+                        - img "Chrome" [ref=e203]
+                      - cell "aborted" [ref=e204]
+                      - cell "CONNECT" [ref=e205]
+                      - cell "HTTP" [ref=e206]
+                      - cell "216.239.32.223" [ref=e207]
+                      - cell "Tunnel to" [ref=e208]
+                      - cell "safebrowsingohttpgateway.googleapis.com:443" [ref=e209]
+                      - cell [ref=e210]
+                      - cell "29917ms" [ref=e211]
+                - table [ref=e212]:
+                  - rowgroup [ref=e213]:
+                    - row "7 Chrome 200 CONNECT HTTP 113.108.239.161 Tunnel to update.googleapis.com:443 32ms" [ref=e214]:
+                      - rowheader "7" [ref=e215]
+                      - cell "Chrome" [ref=e216]:
+                        - img "Chrome" [ref=e217]
+                      - cell "200" [ref=e218]
+                      - cell "CONNECT" [ref=e219]
+                      - cell "HTTP" [ref=e220]
+                      - cell "113.108.239.161" [ref=e221]
+                      - cell "Tunnel to" [ref=e222]
+                      - cell "update.googleapis.com:443" [ref=e223]
+                      - cell [ref=e224]
+                      - cell "32ms" [ref=e225]
+                - table [ref=e226]:
+                  - rowgroup [ref=e227]:
+                    - row "8 Electron 200 CONNECT HTTP 34.160.81.0 Tunnel to o4511072101138432.ingest.us.sentry.io:443 240ms" [ref=e228]:
+                      - rowheader "8" [ref=e229]
+                      - cell "Electron" [ref=e230]:
+                        - img "Electron" [ref=e231]
+                      - cell "200" [ref=e232]
+                      - cell "CONNECT" [ref=e233]
+                      - cell "HTTP" [ref=e234]
+                      - cell "34.160.81.0" [ref=e235]
+                      - cell "Tunnel to" [ref=e236]
+                      - cell "o4511072101138432.ingest.us.sentry.io:443" [ref=e237]
+                      - cell [ref=e238]
+                      - cell "240ms" [ref=e239]
+                - table [ref=e240]:
+                  - rowgroup [ref=e241]:
+                    - row "9 Chrome 200 CONNECT HTTP 111.124.203.52 Tunnel to mail.163.com:443 25ms" [ref=e242]:
+                      - rowheader "9" [ref=e243]
+                      - cell "Chrome" [ref=e244]:
+                        - img "Chrome" [ref=e245]
+                      - cell "200" [ref=e246]
+                      - cell "CONNECT" [ref=e247]
+                      - cell "HTTP" [ref=e248]
+                      - cell "111.124.203.52" [ref=e249]
+                      - cell "Tunnel to" [ref=e250]
+                      - cell "mail.163.com:443" [ref=e251]
+                      - cell [ref=e252]
+                      - cell "25ms" [ref=e253]
+                - table [ref=e254]:
+                  - rowgroup [ref=e255]:
+                    - row "10 Chrome 200 CONNECT HTTP 117.68.24.84 Tunnel to mmbizwxadevlogiccos-1258344707.cos.ap-shanghai.myqcloud.com:443 37ms" [ref=e256]:
+                      - rowheader "10" [ref=e257]
+                      - cell "Chrome" [ref=e258]:
+                        - img "Chrome" [ref=e259]
+                      - cell "200" [ref=e260]
+                      - cell "CONNECT" [ref=e261]
+                      - cell "HTTP" [ref=e262]
+                      - cell "117.68.24.84" [ref=e263]
+                      - cell "Tunnel to" [ref=e264]
+                      - cell "mmbizwxadevlogiccos-1258344707.cos.ap-shanghai.myqcloud.com:443" [ref=e265]
+                      - cell [ref=e266]
+                      - cell "37ms" [ref=e267]
+                - table [ref=e268]:
+                  - rowgroup [ref=e269]:
+                    - row "11 Chrome 200 CONNECT HTTP 101.89.49.171 Tunnel to mp.weixin.qq.com:443 31ms" [ref=e270]:
+                      - rowheader "11" [ref=e271]
+                      - cell "Chrome" [ref=e272]:
+                        - img "Chrome" [ref=e273]
+                      - cell "200" [ref=e274]
+                      - cell "CONNECT" [ref=e275]
+                      - cell "HTTP" [ref=e276]
+                      - cell "101.89.49.171" [ref=e277]
+                      - cell "Tunnel to" [ref=e278]
+                      - cell "mp.weixin.qq.com:443" [ref=e279]
+                      - cell [ref=e280]
+                      - cell "31ms" [ref=e281]
+                - table [ref=e282]:
+                  - rowgroup [ref=e283]:
+                    - row "12 Chrome 200 CONNECT HTTP 183.47.108.49 Tunnel to servicewechat.com:443 13ms" [ref=e284]:
+                      - rowheader "12" [ref=e285]
+                      - cell "Chrome" [ref=e286]:
+                        - img "Chrome" [ref=e287]
+                      - cell "200" [ref=e288]
+                      - cell "CONNECT" [ref=e289]
+                      - cell "HTTP" [ref=e290]
+                      - cell "183.47.108.49" [ref=e291]
+                      - cell "Tunnel to" [ref=e292]
+                      - cell "servicewechat.com:443" [ref=e293]
+                      - cell [ref=e294]
+                      - cell "13ms" [ref=e295]
+                - table [ref=e296]:
+                  - rowgroup [ref=e297]:
+                    - row "13 Chrome 200 CONNECT HTTP 101.89.49.171 Tunnel to mp.weixin.qq.com:443 33ms" [ref=e298]:
+                      - rowheader "13" [ref=e299]
+                      - cell "Chrome" [ref=e300]:
+                        - img "Chrome" [ref=e301]
+                      - cell "200" [ref=e302]
+                      - cell "CONNECT" [ref=e303]
+                      - cell "HTTP" [ref=e304]
+                      - cell "101.89.49.171" [ref=e305]
+                      - cell "Tunnel to" [ref=e306]
+                      - cell "mp.weixin.qq.com:443" [ref=e307]
+                      - cell [ref=e308]
+                      - cell "33ms" [ref=e309]
+                - table [ref=e310]:
+                  - rowgroup [ref=e311]:
+                    - row "14 Electron 200 CONNECT HTTP 172.65.90.20 Tunnel to opencode.ai:443 206ms" [ref=e312]:
+                      - rowheader "14" [ref=e313]
+                      - cell "Electron" [ref=e314]:
+                        - img "Electron" [ref=e315]
+                      - cell "200" [ref=e316]
+                      - cell "CONNECT" [ref=e317]
+                      - cell "HTTP" [ref=e318]
+                      - cell "172.65.90.20" [ref=e319]
+                      - cell "Tunnel to" [ref=e320]
+                      - cell "opencode.ai:443" [ref=e321]
+                      - cell [ref=e322]
+                      - cell "206ms" [ref=e323]
+                - table [ref=e324]:
+                  - rowgroup [ref=e325]:
+                    - row "15 Chrome 200 CONNECT HTTP 117.68.24.84 Tunnel to mmbizwxadevlogiccos-1258344707.cos.ap-shanghai.myqcloud.com:443 37ms" [ref=e326]:
+                      - rowheader "15" [ref=e327]
+                      - cell "Chrome" [ref=e328]:
+                        - img "Chrome" [ref=e329]
+                      - cell "200" [ref=e330]
+                      - cell "CONNECT" [ref=e331]
+                      - cell "HTTP" [ref=e332]
+                      - cell "117.68.24.84" [ref=e333]
+                      - cell "Tunnel to" [ref=e334]
+                      - cell "mmbizwxadevlogiccos-1258344707.cos.ap-shanghai.myqcloud.com:443" [ref=e335]
+                      - cell [ref=e336]
+                      - cell "37ms" [ref=e337]
+                - table [ref=e338]:
+                  - rowgroup [ref=e339]:
+                    - row "16 Chrome 200 CONNECT HTTP 101.89.49.171 Tunnel to mp.weixin.qq.com:443 32ms" [ref=e340]:
+                      - rowheader "16" [ref=e341]
+                      - cell "Chrome" [ref=e342]:
+                        - img "Chrome" [ref=e343]
+                      - cell "200" [ref=e344]
+                      - cell "CONNECT" [ref=e345]
+                      - cell "HTTP" [ref=e346]
+                      - cell "101.89.49.171" [ref=e347]
+                      - cell "Tunnel to" [ref=e348]
+                      - cell "mp.weixin.qq.com:443" [ref=e349]
+                      - cell [ref=e350]
+                      - cell "32ms" [ref=e351]
+                - table [ref=e352]:
+                  - rowgroup [ref=e353]:
+                    - row "17 Chrome 200 CONNECT HTTP 183.47.108.49 Tunnel to servicewechat.com:443 18ms" [ref=e354]:
+                      - rowheader "17" [ref=e355]
+                      - cell "Chrome" [ref=e356]:
+                        - img "Chrome" [ref=e357]
+                      - cell "200" [ref=e358]
+                      - cell "CONNECT" [ref=e359]
+                      - cell "HTTP" [ref=e360]
+                      - cell "183.47.108.49" [ref=e361]
+                      - cell "Tunnel to" [ref=e362]
+                      - cell "servicewechat.com:443" [ref=e363]
+                      - cell [ref=e364]
+                      - cell "18ms" [ref=e365]
+                - table [ref=e366]:
+                  - rowgroup [ref=e367]:
+                    - row "18 Chrome - CONNECT HTTP 74.125.135.84 Tunnel to accounts.google.com:443 -" [ref=e368]:
+                      - rowheader "18" [ref=e369]
+                      - cell "Chrome" [ref=e370]:
+                        - img "Chrome" [ref=e371]
+                      - cell "-" [ref=e372]
+                      - cell "CONNECT" [ref=e373]
+                      - cell "HTTP" [ref=e374]
+                      - cell "74.125.135.84" [ref=e375]
+                      - cell "Tunnel to" [ref=e376]
+                      - cell "accounts.google.com:443" [ref=e377]
+                      - cell [ref=e378]
+                      - cell "-" [ref=e379]
+                - table [ref=e380]:
+                  - rowgroup [ref=e381]:
+                    - row "19 Chrome 200 CONNECT HTTP 101.89.49.171 Tunnel to mp.weixin.qq.com:443 30ms" [ref=e382]:
+                      - rowheader "19" [ref=e383]
+                      - cell "Chrome" [ref=e384]:
+                        - img "Chrome" [ref=e385]
+                      - cell "200" [ref=e386]
+                      - cell "CONNECT" [ref=e387]
+                      - cell "HTTP" [ref=e388]
+                      - cell "101.89.49.171" [ref=e389]
+                      - cell "Tunnel to" [ref=e390]
+                      - cell "mp.weixin.qq.com:443" [ref=e391]
+                      - cell [ref=e392]
+                      - cell "30ms" [ref=e393]
+                - table [ref=e394]:
+                  - rowgroup [ref=e395]:
+                    - row "20 Chrome - CONNECT HTTP 69.171.235.22 Tunnel to www.google.com:443 -" [ref=e396]:
+                      - rowheader "20" [ref=e397]
+                      - cell "Chrome" [ref=e398]:
+                        - img "Chrome" [ref=e399]
+                      - cell "-" [ref=e400]
+                      - cell "CONNECT" [ref=e401]
+                      - cell "HTTP" [ref=e402]
+                      - cell "69.171.235.22" [ref=e403]
+                      - cell "Tunnel to" [ref=e404]
+                      - cell "www.google.com:443" [ref=e405]
+                      - cell [ref=e406]
+                      - cell "-" [ref=e407]
+                - table [ref=e408]:
+                  - rowgroup [ref=e409]:
+                    - row "21 Chrome - CONNECT HTTP 101.226.99.155 Tunnel to cube.weixinbridge.com:443 -" [ref=e410]:
+                      - rowheader "21" [ref=e411]
+                      - cell "Chrome" [ref=e412]:
+                        - img "Chrome" [ref=e413]
+                      - cell "-" [ref=e414]
+                      - cell "CONNECT" [ref=e415]
+                      - cell "HTTP" [ref=e416]
+                      - cell "101.226.99.155" [ref=e417]
+                      - cell "Tunnel to" [ref=e418]
+                      - cell "cube.weixinbridge.com:443" [ref=e419]
+                      - cell [ref=e420]
+                      - cell "-" [ref=e421]
+          - text: 
+          - generic [ref=e422]:
+            - text: 
+            - generic [ref=e423]:
+              - generic [ref=e424]: All
+              - generic "Show only json requests" [ref=e425]: JSON
+              - generic "Show only html requests" [ref=e426]: HTML
+              - generic "Show only css requests" [ref=e427]: CSS
+              - generic "Show only javascript requests" [ref=e428]: JS
+              - generic "Show only font requests" [ref=e429]: Font
+              - generic "Show only image requests" [ref=e430]: Img
+              - generic "Show only media requests" [ref=e431]: Media
+              - generic "Show only websocket requests" [ref=e432]: WS
+              - generic "Show only tunnel requests" [ref=e433]: Tunnel
+              - generic "Show only webassembly requests" [ref=e434]: Wasm
+              - generic "Show only mock requests" [ref=e435]: Mock
+              - generic "Show requests matching the rules" [ref=e436]: Rules
+              - generic "Show import sessions" [ref=e437]: Import
+              - generic "Show only composer requests" [ref=e438]: Composer
+              - generic "Show only error requests" [ref=e439]: Error
+              - generic "Show only other requests" [ref=e440]: Other
+            - textbox "Type filter text" [ref=e441]
+        - generic [ref=e445]:
+          - button " Overview" [ref=e446] [cursor=pointer]:
+            - generic [ref=e447]: 
+            - text: Overview
+          - button " Inspectors" [ref=e448] [cursor=pointer]:
+            - generic [ref=e449]: 
+            - text: Inspectors
+          - button " Timeline" [ref=e450] [cursor=pointer]:
+            - generic [ref=e451]: 
+            - text: Timeline
+          - button " Composer" [ref=e452] [cursor=pointer]:
+            - generic [ref=e453]: 
+            - text: Composer
+          - button " Tools" [ref=e454] [cursor=pointer]:
+            - generic [ref=e455]: 
+            - text: Tools
+          - button " Saved" [ref=e456] [cursor=pointer]:
+            - generic [ref=e457]: 
+            - text: Saved
+          - button "" [ref=e458] [cursor=pointer]:
+            - generic [ref=e459]: 
+  - text:                
+  - text:     +     + +              + −  + −  + +    + − +      + −  + +    + −          + −   
+  - text:  
+  - text:  
+  - text:  
+  - text:  
+  - text:    +      
+  - text: 

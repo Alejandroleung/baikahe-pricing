@@ -1,0 +1,281 @@
+- generic [ref=f1e5]:
+  - generic [ref=f1e6]:
+    - generic [ref=f1e8] [cursor=pointer]:
+      - link "收藏本站" [ref=f1e9]:
+        - /url: javascript:void(0);
+        - generic [ref=f1e10]: 
+        - text: 收藏本站
+      - generic [ref=f1e11]:
+        - link "登录/注册" [ref=f1e12]:
+          - /url: /login
+        - link "我的订单" [ref=f1e13]:
+          - /url: /user/orderList?type=1
+        - link "购物车 (0)" [ref=f1e14]:
+          - /url: /shoppingCart
+          - generic [ref=f1e15]: 
+          - text: 购物车 (0)
+    - generic [ref=f1e18]:
+      - img [ref=f1e20] [cursor=pointer]
+      - generic [ref=f1e21]:
+        - link "自助报价" [ref=f1e22] [cursor=pointer]:
+          - /url: /
+        - link "下载刀模" [ref=f1e23] [cursor=pointer]:
+          - /url: /cutter
+        - link "领优惠券" [ref=f1e24] [cursor=pointer]:
+          - /url: /login
+  - generic [ref=f1e25]:
+    - generic [ref=f1e27]:
+      - tablist [ref=f1e31]:
+        - tab "卡纸盒" [selected] [ref=f1e32]
+        - tab "礼盒" [ref=f1e33]
+        - tab "自定义盒型" [ref=f1e34]
+      - tabpanel "卡纸盒" [ref=f1e36]:
+        - list [ref=f1e37]:
+          - listitem [ref=f1e38] [cursor=pointer]:
+            - img [ref=f1e41]
+            - generic [ref=f1e42]: 双插盒
+            - generic [ref=f1e43]: 0人付款
+          - listitem [ref=f1e44] [cursor=pointer]:
+            - img [ref=f1e47]
+            - generic [ref=f1e48]: 扣底盒
+            - generic [ref=f1e49]: 0人付款
+          - listitem [ref=f1e50] [cursor=pointer]:
+            - img [ref=f1e53]
+            - generic [ref=f1e54]: 平粘盒
+            - generic [ref=f1e55]: 0人付款
+          - listitem [ref=f1e56] [cursor=pointer]:
+            - img [ref=f1e59]
+            - generic [ref=f1e60]: 飞机盒
+            - generic [ref=f1e61]: 0人付款
+          - listitem [ref=f1e62] [cursor=pointer]:
+            - img [ref=f1e65]
+            - generic [ref=f1e66]: 封套盒
+            - generic [ref=f1e67]: 0人付款
+          - listitem [ref=f1e68] [cursor=pointer]:
+            - img [ref=f1e71]
+            - generic [ref=f1e72]: 天盒
+            - generic [ref=f1e73]: 0人付款
+          - listitem [ref=f1e74] [cursor=pointer]:
+            - img [ref=f1e77]
+            - generic [ref=f1e78]: 地盒
+            - generic [ref=f1e79]: 0人付款
+          - listitem [ref=f1e80] [cursor=pointer]:
+            - img [ref=f1e83]
+            - generic [ref=f1e84]: 自动锁底盒
+            - generic [ref=f1e85]: 0人付款
+          - listitem [ref=f1e86] [cursor=pointer]:
+            - img [ref=f1e89]
+            - generic [ref=f1e90]: 双插挂钩盒
+            - generic [ref=f1e91]: 0人付款
+          - listitem [ref=f1e92] [cursor=pointer]:
+            - img [ref=f1e95]
+            - generic [ref=f1e96]: 手提袋
+            - generic [ref=f1e97]: 0人付款
+          - listitem [ref=f1e98] [cursor=pointer]:
+            - img [ref=f1e101]
+            - generic [ref=f1e102]: 扣底挂钩盒
+            - generic [ref=f1e103]: 0人付款
+    - generic [ref=f1e104]:
+      - generic [ref=f1e107]:
+        - tablist [ref=f1e111]:
+          - tab "数码报价" [ref=f1e112]
+          - tab "合版报价" [selected] [ref=f1e113]
+          - tab "专版报价" [ref=f1e114]
+          - tab "加工报价" [ref=f1e115]
+          - tab "温馨提示:加工报价需要先选择自定义盒型!" [ref=f1e116]
+        - generic [ref=f1e117]:
+          - generic [ref=f1e118]:
+            - generic [ref=f1e119]:
+              - generic [ref=f1e120]:
+                - generic [ref=f1e121]: "*成品外尺寸"
+                - generic [ref=f1e123]:
+                  - generic [ref=f1e127]:
+                    - textbox "长" [ref=f1e128]
+                    - generic [ref=f1e129]: x
+                  - generic [ref=f1e133]:
+                    - textbox "宽" [ref=f1e134]
+                    - generic [ref=f1e135]: x
+                  - generic [ref=f1e139]:
+                    - textbox "高" [ref=f1e140]
+                    - generic [ref=f1e141]: mm
+              - generic [ref=f1e142]:
+                - generic [ref=f1e143]: "*印刷数量"
+                - generic [ref=f1e145]:
+                  - textbox [ref=f1e146]
+                  - generic [ref=f1e147]: 个
+            - generic [ref=f1e149]: 加载失败
+          - text: "* *"
+          - tabpanel "礼盒" [ref=f1e150]:
+            - generic [ref=f1e152]:
+              - generic [ref=f1e153]:
+                - generic [ref=f1e154]: "*纸张材质"
+                - radiogroup [ref=f1e156]:
+                  - radio "白卡纸" [checked] [ref=f1e157]:
+                    - radio "白卡纸" [checked] [ref=f1e158]
+                    - generic [ref=f1e159] [cursor=pointer]: 白卡纸
+                  - radio "瓦楞纸(300g白卡+A4E黄坑)" [ref=f1e160]:
+                    - radio "瓦楞纸(300g白卡+A4E黄坑)" [ref=f1e161]
+                    - generic [ref=f1e162] [cursor=pointer]: 瓦楞纸(300g白卡+A4E黄坑)
+                  - radio "瓦楞纸(300g白卡+W4E白坑)" [ref=f1e163]:
+                    - radio "瓦楞纸(300g白卡+W4E白坑)" [ref=f1e164]
+                    - generic [ref=f1e165] [cursor=pointer]: 瓦楞纸(300g白卡+W4E白坑)
+                  - radio "银卡纸" [ref=f1e166]:
+                    - radio "银卡纸" [ref=f1e167]
+                    - generic [ref=f1e168] [cursor=pointer]: 银卡纸
+                  - radio "F坑内托" [ref=f1e169]:
+                    - radio "F坑内托" [ref=f1e170]
+                    - generic [ref=f1e171] [cursor=pointer]: F坑内托
+              - generic [ref=f1e172]:
+                - generic [ref=f1e173]: "*纸张克度"
+                - radiogroup [ref=f1e175]:
+                  - radio "240g" [checked] [disabled] [ref=f1e176]:
+                    - radio "240g" [checked] [disabled] [ref=f1e177]
+                    - generic [ref=f1e178]: 240g
+                  - radio "300g" [disabled] [ref=f1e179]:
+                    - radio "300g" [disabled] [ref=f1e180]
+                    - generic [ref=f1e181]: 300g
+                  - radio "350g" [ref=f1e182]:
+                    - radio "350g" [ref=f1e183]
+                    - generic [ref=f1e184] [cursor=pointer]: 350g
+                  - radio "375g" [disabled] [ref=f1e185]:
+                    - radio "375g" [disabled] [ref=f1e186]
+                    - generic [ref=f1e187]: 375g
+                  - radio "400g" [ref=f1e188]:
+                    - radio "400g" [ref=f1e189]
+                    - generic [ref=f1e190] [cursor=pointer]: 400g
+                  - radio "600g" [disabled] [ref=f1e191]:
+                    - radio "600g" [disabled] [ref=f1e192]
+                    - generic [ref=f1e193]: 600g
+              - generic [ref=f1e194]:
+                - generic [ref=f1e195]: "*表面处理"
+                - radiogroup [ref=f1e197]:
+                  - radio "不处理" [disabled] [ref=f1e198]:
+                    - radio "不处理" [disabled] [ref=f1e199]
+                    - generic [ref=f1e200]: 不处理
+                  - radio "过光膜" [ref=f1e201]:
+                    - radio "过光膜" [ref=f1e202]
+                    - generic [ref=f1e203] [cursor=pointer]: 过光膜
+                  - radio "过哑膜" [checked] [ref=f1e204]:
+                    - radio "过哑膜" [checked] [ref=f1e205]
+                    - generic [ref=f1e206] [cursor=pointer]: 过哑膜
+                  - radio "白+UV逆向" [disabled] [ref=f1e207]:
+                    - radio "白+UV逆向" [disabled] [ref=f1e208]
+                    - generic [ref=f1e209]: 白+UV逆向
+              - generic [ref=f1e210]:
+                - generic [ref=f1e211]: "*印刷颜色"
+                - radiogroup [ref=f1e213]:
+                  - radio "不印刷" [ref=f1e214]:
+                    - radio "不印刷" [ref=f1e215]
+                    - generic [ref=f1e216] [cursor=pointer]: 不印刷
+                  - radio "四色" [checked] [ref=f1e217]:
+                    - radio "四色" [checked] [ref=f1e218]
+                    - generic [ref=f1e219] [cursor=pointer]: 四色
+              - generic [ref=f1e220]:
+                - generic [ref=f1e221]: "*增加工艺"
+                - group "checkbox-group" [ref=f1e223]:
+                  - checkbox "击凹" [ref=f1e224]:
+                    - checkbox "击凹" [ref=f1e225]
+                    - generic [ref=f1e229] [cursor=pointer]: 击凹
+                  - checkbox "局部UV" [ref=f1e230]:
+                    - checkbox "局部UV" [ref=f1e231]
+                    - generic [ref=f1e235] [cursor=pointer]: 局部UV
+                  - checkbox "击凸" [ref=f1e236]:
+                    - checkbox "击凸" [ref=f1e237]
+                    - generic [ref=f1e241] [cursor=pointer]: 击凸
+                  - checkbox "缕空" [ref=f1e242]:
+                    - checkbox "缕空" [ref=f1e243]
+                    - generic [ref=f1e247] [cursor=pointer]: 缕空
+                  - checkbox "贴PVC" [ref=f1e248]:
+                    - checkbox "贴PVC" [ref=f1e249]
+                    - generic [ref=f1e253] [cursor=pointer]: 贴PVC
+                  - checkbox "烫金" [ref=f1e254]:
+                    - checkbox "烫金" [ref=f1e255]
+                    - generic [ref=f1e259] [cursor=pointer]: 烫金
+                  - checkbox "烫银" [ref=f1e260]:
+                    - checkbox "烫银" [ref=f1e261]
+                    - generic [ref=f1e265] [cursor=pointer]: 烫银
+                  - checkbox "4色印底不腹膜" [ref=f1e266]:
+                    - checkbox "4色印底不腹膜" [ref=f1e267]
+                    - generic [ref=f1e271] [cursor=pointer]: 4色印底不腹膜
+                  - checkbox "白卡1专色" [ref=f1e272]:
+                    - checkbox "白卡1专色" [ref=f1e273]
+                    - generic [ref=f1e277] [cursor=pointer]: 白卡1专色
+                  - checkbox "银卡1专色" [ref=f1e278]:
+                    - checkbox "银卡1专色" [ref=f1e279]
+                    - generic [ref=f1e283] [cursor=pointer]: 银卡1专色
+              - generic [ref=f1e284]:
+                - generic [ref=f1e285]: "*配件"
+                - group "checkbox-group" [ref=f1e287]:
+                  - checkbox "塑料手提" [ref=f1e288]:
+                    - checkbox "塑料手提" [ref=f1e289]
+                    - generic [ref=f1e290] [cursor=pointer]: 塑料手提
+                  - checkbox "手提绳" [ref=f1e291]:
+                    - checkbox "手提绳" [ref=f1e292]
+                    - generic [ref=f1e293] [cursor=pointer]: 手提绳
+              - generic [ref=f1e294]:
+                - generic [ref=f1e295]: "*服务"
+                - group "checkbox-group" [ref=f1e297]:
+                  - checkbox "来样跟色" [ref=f1e298]:
+                    - checkbox "来样跟色" [ref=f1e299]
+                    - generic [ref=f1e300] [cursor=pointer]: 来样跟色
+                  - checkbox "屏幕跟色" [ref=f1e301]:
+                    - checkbox "屏幕跟色" [ref=f1e302]
+                    - generic [ref=f1e303] [cursor=pointer]: 屏幕跟色
+                  - checkbox "色稿跟色" [ref=f1e304]:
+                    - checkbox "色稿跟色" [ref=f1e305]
+                    - generic [ref=f1e306] [cursor=pointer]: 色稿跟色
+                  - checkbox "适配" [ref=f1e307]:
+                    - checkbox "适配" [ref=f1e308]
+                    - generic [ref=f1e309] [cursor=pointer]: 适配
+                  - checkbox "橡皮筋打包" [ref=f1e310]:
+                    - checkbox "橡皮筋打包" [ref=f1e311]
+                    - generic [ref=f1e312] [cursor=pointer]: 橡皮筋打包
+          - text: "* * * * * * *"
+      - generic [ref=f1e313]:
+        - generic [ref=f1e315]: 双插盒 报价信息
+        - generic [ref=f1e316]:
+          - generic [ref=f1e319]: 重量
+          - generic [ref=f1e322]: 0kg
+        - generic [ref=f1e324]: "总金额: ￥0"
+        - generic [ref=f1e325]:
+          - button "立即购买" [ref=f1e326] [cursor=pointer]
+          - button " 加入购物车" [ref=f1e327] [cursor=pointer]:
+            - generic [ref=f1e328]: 
+            - text: 加入购物车
+    - generic [ref=f1e329]:
+      - generic [ref=f1e331]:
+        - generic [ref=f1e332] [cursor=pointer]: 商品详情
+        - generic [ref=f1e333] [cursor=pointer]: 纸品工艺
+        - generic [ref=f1e334] [cursor=pointer]: 下单须知
+      - generic [ref=f1e336] [cursor=pointer]:
+        - generic [ref=f1e337]: 
+        - generic [ref=f1e338]: 点击查看详细内容
+  - generic [ref=f1e339]:
+    - generic [ref=f1e341]:
+      - list [ref=f1e342]:
+        - listitem [ref=f1e343]:
+          - generic [ref=f1e345]: 
+          - generic [ref=f1e346]: 品种齐全，购物轻松
+        - listitem [ref=f1e347]:
+          - generic [ref=f1e349]: 
+          - generic [ref=f1e350]: 多仓直发，极速配送
+        - listitem [ref=f1e351]:
+          - generic [ref=f1e353]: 
+          - generic [ref=f1e354]: 正品行货，精致服务
+        - listitem [ref=f1e355]:
+          - generic [ref=f1e357]: 
+          - generic [ref=f1e358]: 天天低价，畅选无忧
+      - generic [ref=f1e360]:
+        - link "粤ICP备2020112547号-2" [ref=f1e361] [cursor=pointer]:
+          - /url: https://beian.miit.gov.cn/
+        - text: Copyright © 2022 俊茂丰包装盒
+    - generic [ref=f1e363] [cursor=pointer]:
+      - generic [ref=f1e365]:
+        - generic [ref=f1e366]: 
+        - generic [ref=f1e367]: 手机购买
+      - generic [ref=f1e369]:
+        - generic [ref=f1e370]: 
+        - generic [ref=f1e371]: 联系客服
+      - generic [ref=f1e372]:
+        - generic [ref=f1e373]: 
+        - generic [ref=f1e374]: 购物车
