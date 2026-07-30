@@ -468,8 +468,12 @@ function syncOptions(){
     wg.querySelectorAll('.option-item').forEach(function(el){
       if(el.dataset.value!=='375'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
     });
-    wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
-    wg.querySelector('[data-value="375"]').classList.add('active');S.weight=375;
+    // 保留用户当前选择的克重，只有无效时才切到 375
+    var curActive=wg.querySelector('.option-item.active');
+    if(!curActive||curActive.classList.contains('disabled')){
+      wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+      wg.querySelector('[data-value="375"]').classList.add('active');S.weight=375;
+    }
   }else if(S.material==='白卡纸'&&S.quantity>0){
     var allowed=S.quantity<1000?['240','350','400']:['350','400'];
     wg.querySelectorAll('.option-item').forEach(function(el){
@@ -1131,9 +1135,10 @@ async function calcPrice(){
 
   // ── 拼一拼盒 API：q≥1000 白卡纸/银卡纸 ──
   // 展开尺寸基础上加 6mm 出血（每边3mm）后再传给API
+  // 注：拼一拼盒仅支持 350/400g 克重，银卡纸 375/425g 回退费率表
   var ppyhTotal = null;
   if (q >= 1000 && L > 0 && W > 0 && H > 0 &&
-      (S.material === '白卡纸' || S.material === '银卡纸')) {
+      S.material === '白卡纸') {
     document.getElementById('totalPrice').textContent = '计算中…';
     var ppyhW = u.width + 6;   // 展开宽 + 出血6mm
     var ppyhH = u.height + 6;  // 展开高 + 出血6mm
