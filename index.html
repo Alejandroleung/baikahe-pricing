@@ -875,6 +875,45 @@ var COLOR_CODE_MAP = {
 // calcPrice请求版本号，防止竞态
 var _calcReqVer = 0;
 
+// ── 拼一拼盒 API 配置 ──
+// GitHub Pages 上通过 Cloudflare Worker 转发（不支持 CORS 的 API）
+// 本地开发通过 server.js 代理（/api/ppyh/quote）
+var PPYH_WORKER_URL = '';  // 填入你的 Cloudflare Worker 地址，如 'https://ppyh-proxy.xxx.workers.dev'
+var PPYH_LOCAL_URL = '/api/ppyh/quote';
+var PPYH_AUTH = 'e76eb7565cc68344b2714b2fb7e759c8573326753c6367d4eb5c18fe72a18c62';
+var PPYH_APP_ID = '1674015465824976901';
+var PPYH_SPU_ID = '1780563650248048641';
+
+// 拼一拼盒 spuDetail 物料参数模板（基于抓包数据）
+var PPYH_SPEC = {
+  paperType: {
+    specId: '1791024650759700480',
+    map: { '白卡纸': { id: '1776224993986873102', name: '铜版纸' },
+           '银卡纸': { id: '1776224993986873103', name: '银卡纸' } }
+  },
+  grammage: {
+    specId: '1791024650818420736',
+    map: { 350: { id: '1776224993986875003', name: '350' },
+           400: { id: '1776224993986875005', name: '400' },
+           375: { id: '1776224993986875004', name: '375' },
+           425: { id: '1776224993986875006', name: '425' } }
+  },
+  surface: {
+    specId: '1791024651179130880',
+    map: {
+      '白卡纸': { '过哑膜': { id: '1776224993986876401', name: '哑胶' },
+                  '过光膜': { id: '1776224993986876402', name: '光胶' } },
+      '银卡纸': { '过+UV哑油': { id: '1776224993986876600', name: '过油UV' } }
+    }
+  },
+  print: {
+    specId: '1791024650994581504',
+    map: { '白卡纸': { id: '1776224993986876111', name: '四色(CMYK)' },
+           '银卡纸': { id: '1776224993986876113', name: 'UV四色(CMYK)' } }
+  },
+  unfoldSize: '1791024650889723904'
+};
+
 // 调用俊茂丰API获取合版总价，返回 {total, weight, openSize} 或 null
 async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, print) {
   var boxId = BOX_ID_MAP[boxType];
@@ -901,7 +940,127 @@ async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, pri
   return null;
 }
 
-// ── 拼一拼盒 spuDetail 模板（spuId=1780563650248048641 卡纸盒）──
+// ── 拼一拼盒 spuDetail 物料参数模板 ──
+function getPpyhSpuDetail(unfoldedW, unfoldedH, qty, material, weight, surface) {
+  var isSilver = material === '银卡纸';
+  var paperTypeId = PPYH_SPEC.paperType.map[material] ? PPYH_SPEC.paperType.map[material].id : '1776224993986873102';
+  var paperTypeName = PPYH_SPEC.paperType.map[material] ? PPYH_SPEC.paperType.map[material].name : '铜版纸';
+  var grammageId = PPYH_SPEC.grammage.map[weight] ? PPYH_SPEC.grammage.map[weight].id : '1776224993986875003';
+  var surfaceMap = PPYH_SPEC.surface.map[isSilver ? '银卡纸' : '白卡纸'];
+  var surfaceId = surfaceMap && surfaceMap[surface] ? surfaceMap[surface].id : (isSilver ? '1776224993986876600' : '1776224993986876401');
+  var surfaceName = surfaceMap && surfaceMap[surface] ? surfaceMap[surface].name : (isSilver ? '过油UV' : '哑胶');
+  var unfoldedVal = unfoldedW + 'x' + unfoldedH;
+
+  return {
+    id: PPYH_SPU_ID, name: '卡纸盒', quantity: qty,
+    picList: [{id:'1901449495984472064',type:1,url:'https://fn-emall-prod.oss-accelerate.aliyuncs.com/images/663c81f3055a56294e0931d1.png',sortNo:0}],
+    categoryList: [{id:'1776220322752757760',name:'彩盒'}],
+    spuSpecList: [
+      {id:'1791024650629677056',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:'1776224993986872000',type:1,displayName:'纸张标准尺寸',valueMethod:null,minQuantity:0,maxQuantity:1,uiComponent:'hidden',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[],optValueList:[
+        {spuSpecId:'1791024650629677056',bizMetaAttrId:'1776224993986872001',displayName:'正度(680x980mm)',instanceIndex:1,checked:false,value:null},
+        {spuSpecId:'1791024650629677056',bizMetaAttrId:'1776224993986872002',displayName:'大度对开(787x545mm)',instanceIndex:1,checked:false,value:null},
+        {spuSpecId:'1791024650629677056',bizMetaAttrId:'1776224993986872003',displayName:'特度对开(889x595mm)',instanceIndex:1,checked:false,value:null}
+      ]},
+      {id:'1791024650721951744',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:'1776224993986873000',type:2,displayName:'纸张材质',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'group',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[
+        {id:'1791024650759700480',spuId:PPYH_SPU_ID,parentId:'1791024650721951744',bizMetaAttrId:'1776224993986873100',type:1,displayName:'纸类',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'button_radio',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'8',childSpuSpecList:[],optValueList:[
+          {spuSpecId:'1791024650759700480',bizMetaAttrId:'1776224993986873102',displayName:'铜版纸',instanceIndex:1,checked:material==='白卡纸',value:null},
+          {spuSpecId:'1791024650759700480',bizMetaAttrId:'1776224993986873103',displayName:'银卡纸',instanceIndex:1,checked:isSilver,value:null}
+        ]},
+        {id:'1791024650818420736',spuId:PPYH_SPU_ID,parentId:'1791024650721951744',bizMetaAttrId:'1776224993986875000',type:1,displayName:'克重',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'button_radio',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'8',childSpuSpecList:[],optValueList:[
+          {spuSpecId:'1791024650818420736',bizMetaAttrId:'1776224993986875003',displayName:'350',instanceIndex:1,checked:weight===350,value:null},
+          {spuSpecId:'1791024650818420736',bizMetaAttrId:'1776224993986875004',displayName:'375',instanceIndex:1,checked:weight===375,value:null},
+          {spuSpecId:'1791024650818420736',bizMetaAttrId:'1776224993986875005',displayName:'400',instanceIndex:1,checked:weight===400,value:null},
+          {spuSpecId:'1791024650818420736',bizMetaAttrId:'1776224993986875006',displayName:'425',instanceIndex:1,checked:weight===425,value:null}
+        ]}
+      ],optValueList:[]},
+      {id:'1791024650889723904',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:'1776224993986871000',type:1,displayName:'展开尺寸',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'size_2d',value:unfoldedVal,checked:true,instanceIndex:1,pricingCalculatorId:'7',childSpuSpecList:[],optValueList:[]},
+      {id:'1791024650923278336',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:'1776224993986874000',type:2,displayName:'纸张表面',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'linkage',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[
+        {id:'1791024650948444160',spuId:PPYH_SPU_ID,parentId:'1791024650923278336',bizMetaAttrId:'1776224993986874001',type:2,displayName:'正面',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'group',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[
+          {id:'1791024650969415680',spuId:PPYH_SPU_ID,parentId:'1791024650948444160',bizMetaAttrId:'1776224993986876100',type:2,displayName:'正面印刷',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'group',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[
+            {id:'1791024650994581504',spuId:PPYH_SPU_ID,parentId:'1791024650969415680',bizMetaAttrId:'1776224993986876101',type:1,displayName:'印刷',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'button_radio',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'8',childSpuSpecList:[],optValueList:[
+              {spuSpecId:'1791024650994581504',bizMetaAttrId:'1776224993986876111',displayName:'四色(CMYK)',instanceIndex:1,checked:!isSilver,value:null},
+              {spuSpecId:'1791024650994581504',bizMetaAttrId:'1776224993986876113',displayName:'UV四色(CMYK)',instanceIndex:1,checked:isSilver,value:null}
+            ]},
+            {id:'1791024651061690368',spuId:PPYH_SPU_ID,parentId:'1791024650969415680',bizMetaAttrId:'1776224993986876102',type:1,displayName:'专色',valueMethod:null,minQuantity:0,maxQuantity:2,uiComponent:'select_num_input',value:'0',checked:true,instanceIndex:1,pricingCalculatorId:'2',childSpuSpecList:[],optValueList:[]},
+            {id:'1791024651132993536',spuId:PPYH_SPU_ID,parentId:'1791024650969415680',bizMetaAttrId:'1776224993986876200',type:1,displayName:'黑墨',valueMethod:null,minQuantity:0,maxQuantity:2,uiComponent:'button_radio',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[],optValueList:[]}
+          ],optValueList:[]},
+          {id:'1791024651179130880',spuId:PPYH_SPU_ID,parentId:'1791024650948444160',bizMetaAttrId:'1776224993986876000',type:1,displayName:'表面',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'button_radio',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'8',childSpuSpecList:[],optValueList:[
+            {spuSpecId:'1791024651179130880',bizMetaAttrId:'1776224993986876401',displayName:'哑胶',instanceIndex:1,checked:surface==='过哑膜',value:null},
+            {spuSpecId:'1791024651179130880',bizMetaAttrId:'1776224993986876402',displayName:'光胶',instanceIndex:1,checked:surface==='过光膜',value:null},
+            {spuSpecId:'1791024651179130880',bizMetaAttrId:'1776224993986876600',displayName:'过油UV',instanceIndex:1,checked:surface==='过+UV哑油',value:null}
+          ]},
+          {id:'1791024651258822656',spuId:PPYH_SPU_ID,parentId:'1791024650948444160',bizMetaAttrId:'1776224993986877000',type:2,displayName:'后',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'linkage',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[
+            {id:'1791024651279794176',spuId:PPYH_SPU_ID,parentId:'1791024651258822656',bizMetaAttrId:'1776224993986877100',type:2,displayName:'粘胶',valueMethod:null,minQuantity:0,maxQuantity:2,uiComponent:'group',value:null,checked:false,instanceIndex:1,pricingCalculatorId:'3',childSpuSpecList:[],optValueList:[]},
+            {id:'1791024651506286592',spuId:PPYH_SPU_ID,parentId:'1791024651258822656',bizMetaAttrId:'1776224993986877300',type:2,displayName:'击凸',valueMethod:null,minQuantity:0,maxQuantity:1,uiComponent:'group',value:null,checked:false,instanceIndex:1,pricingCalculatorId:'3',childSpuSpecList:[],optValueList:[{spuSpecId:'1791024651506286592',bizMetaAttrId:'1776224993986877300',displayName:'击凸',instanceIndex:1,checked:false,value:null}]},
+            {id:'1791024651590172672',spuId:PPYH_SPU_ID,parentId:'1791024651258822656',bizMetaAttrId:'1776224993986877400',type:2,displayName:'压纹',valueMethod:null,minQuantity:0,maxQuantity:1,uiComponent:'group',value:null,checked:false,instanceIndex:1,pricingCalculatorId:'3',childSpuSpecList:[],optValueList:[{spuSpecId:'1791024651590172672',bizMetaAttrId:'1776224993986877400',displayName:'压纹',instanceIndex:1,checked:false,value:null}]},
+            {id:'1791024651669864448',spuId:PPYH_SPU_ID,parentId:'1791024651258822656',bizMetaAttrId:'1776224993986877200',type:2,displayName:'局部UV',valueMethod:null,minQuantity:0,maxQuantity:1,uiComponent:'group',value:null,checked:false,instanceIndex:1,pricingCalculatorId:'3',childSpuSpecList:[],optValueList:[]}
+          ],optValueList:[]}
+        ],optValueList:[]},
+        {id:'1791024651728584704',spuId:PPYH_SPU_ID,parentId:'1791024650923278336',bizMetaAttrId:'1776224993986874002',type:2,displayName:'反面',valueMethod:null,minQuantity:0,maxQuantity:1,uiComponent:'group',value:null,checked:false,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[],optValueList:[]}
+      ],optValueList:[]},
+      {id:'1791024652500336640',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:'1776224993986878001',type:1,displayName:'裱',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'hidden',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'8',childSpuSpecList:[],optValueList:[{spuSpecId:'1791024652500336640',bizMetaAttrId:'1776224993986878001',displayName:'裱',instanceIndex:1,checked:true,value:null}]},
+      {id:'1826911385884295168',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:'1776224993986878003',type:2,displayName:'后道',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'linkage',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[{id:'1826912584649932800',spuId:PPYH_SPU_ID,parentId:'1826911385884295168',bizMetaAttrId:'1776224993986878003',type:2,displayName:'后道',valueMethod:null,minQuantity:0,maxQuantity:1,uiComponent:'group',value:null,checked:false,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[],optValueList:[]}],optValueList:[]},
+      {id:'1791024652638748672',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:'1776224993986878007',type:2,displayName:'预涂',valueMethod:null,minQuantity:0,maxQuantity:1,uiComponent:'group',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'3',childSpuSpecList:[],optValueList:[{spuSpecId:'1791024652638748672',bizMetaAttrId:'1776224993986878007',displayName:'预涂',instanceIndex:1,checked:false,value:null}]},
+      {id:'1791024652693274624',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:'1776224993986878005',type:1,displayName:'粘',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'hidden',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'8',childSpuSpecList:[],optValueList:[{spuSpecId:'1791024652693274624',bizMetaAttrId:'1776224993986878005',displayName:'粘',instanceIndex:1,checked:true,value:null}]},
+      {id:'1827248317285793792',spuId:PPYH_SPU_ID,parentId:null,bizMetaAttrId:null,type:1,displayName:'工艺',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'button_radio',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'3',childSpuSpecList:[],optValueList:[
+        {spuSpecId:'1827248317285793792',bizMetaAttrId:'1827248623960719360',displayName:'专版印刷',instanceIndex:1,checked:true,value:null},
+        {spuSpecId:'1827248317285793792',bizMetaAttrId:'1776224993986879001',displayName:'数码打样',instanceIndex:1,checked:false,value:null}
+      ]}
+    ]
+  };
+}
+
+// 调用拼一拼盒 render/spu-detail API 获取精确报价
+// 三层调用链：Cloudflare Worker → 本地 server.js 代理 → 费率表
+// 返回 {amount: 总价} 或 null
+async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface) {
+  var body = JSON.stringify({
+    basic: false,
+    spuId: PPYH_SPU_ID,
+    operateRenderSpuSpecList: [{
+      spuSpecId: PPYH_SPEC.unfoldSize,
+      instanceIndex: 1,
+      operateType: 3,
+      value: unfoldedW + 'x' + unfoldedH
+    }],
+    spuDetail: getPpyhSpuDetail(unfoldedW, unfoldedH, qty, material, weight, surface)
+  });
+  var headers = { 'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization': PPYH_AUTH,
+                  'X-APP-ID': PPYH_APP_ID };
+
+  // 第1层：Cloudflare Worker（GitHub Pages 主力）
+  if (PPYH_WORKER_URL) {
+    try {
+      var resp = await fetch(PPYH_WORKER_URL, {
+        method: 'POST', headers: headers, body: body
+      });
+      var data = await resp.json();
+      if (data && (data.code === '200' || data.type === 1) && data.result && data.result.spuQuote) {
+        var q = data.result.spuQuote;
+        return { amount: q.amount, price: q.price, count: q.count };
+      }
+      // 兼容不同响应格式
+      if (data && data.amount) return data;
+    } catch(e) { console.warn('PPYH Worker 失败:', e); }
+  }
+
+  // 第2层：本地 server.js 代理（开发环境）
+  try {
+    var resp = await fetch(PPYH_LOCAL_URL, {
+      method: 'POST', headers: headers, body: body
+    });
+    var data = await resp.json();
+    if (data && (data.code === '200' || data.type === 1) && data.result && data.result.spuQuote) {
+      var q = data.result.spuQuote;
+      return { amount: q.amount, price: q.price, count: q.count };
+    }
+    if (data && data.amount) return data;
+  } catch(e) { console.warn('PPYH 本地代理失败:', e); }
+
+  return null;
+}
+
 async function calcPrice(){
   var b=boxTypes.find(function(x){return x.id===S.boxType});if(!b)return;
   var L=S.length,W=S.width,H=S.height,q=S.quantity;
@@ -984,6 +1143,18 @@ async function calcPrice(){
     var apiRes = await callZsmfApi(S.boxType, L, W, H, q, S.material, S.weight, S.surface, S.print);
     if (_reqVer !== _calcReqVer) return;
     apiTotal = apiRes ? apiRes.total : null;
+  }
+
+  // q≥1000：调用拼一拼盒 API 获取精确报价（白卡纸/银卡纸）
+  if (q >= 1000 && ['白卡纸','银卡纸'].includes(S.material) && L > 0 && W > 0 && H > 0) {
+    var ppyhW = u.width + (hasInterval ? 3 : 0) + 6;  // PPYH API 用含出血宽度
+    var ppyhH = u.height + 6;                           // PPYH API 用含出血高度
+    document.getElementById('totalPrice').textContent = '计算中…';
+    var ppyhRes = await callPpyhApi(ppyhW, ppyhH, q, S.material, S.weight, S.surface);
+    if (_reqVer !== _calcReqVer) return;
+    if (ppyhRes && ppyhRes.amount) {
+      apiTotal = ppyhRes.amount;
+    }
   }
 
   // 最低基价
