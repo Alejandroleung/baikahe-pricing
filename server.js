@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const dir = 'C:\\Users\\13426\\Desktop\\白卡盒算价系统';
+const dir = 'D:\\opencode\\白卡盒算价系统';
 http.createServer((q, r) => {
   let f = q.url === '/' ? 'index.html' : q.url.slice(1);
   try {

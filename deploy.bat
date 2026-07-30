@@ -1,7 +1,7 @@
 ﻿@echo off
 chcp 65001 >nul
 title Auto Deploy
-cd /d "C:\Users\13426\Desktop\白卡盒算价系统"
+cd /d "D:\opencode\白卡盒算价系统"
 
 echo ========================================
 echo  Deploying to GitHub Pages ...
@@ -10,7 +10,7 @@ echo.
 
 git add -A
 git commit -m "auto update %date% %time%"
-git push --set-upstream origin main
+git push origin master
 
 echo.
 echo ========================================

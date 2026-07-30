@@ -3,3 +3,8 @@ node_modules/
 *.log
 
 .omo/
+.playwright-mcp/
+*.png
+server.js
+serve.py
+_serve.vbs
