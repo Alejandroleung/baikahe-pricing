@@ -5,3 +5,6 @@ node_modules/
 .omo/
 .playwright-mcp/
 *.png
+server.js
+serve.py
+_serve.vbs

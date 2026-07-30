@@ -848,7 +848,54 @@ var smallBoxBase = {
   '银卡纸_425':  {pts:[[500,530],[1000,500],[2000,680],[3000,888],[5000,1280]]}
 };
 
-function calcPrice(){
+// ── 俊茂丰API直连 ──
+// 数据源：POST http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
+// q≤500时直接调用获取精确价格，替代费率表估算
+var ZSMAF_API = 'http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute';
+
+// App盒型ID → 俊茂丰boxId映射（数据来源：/api/box/manager/list）
+var BOX_ID_MAP = {
+  'double-tuck':11,'lock-bottom':12,'flat-seal':15,
+  'mailer':16,'sleeve':17,'lid':18,'base':26,
+  'auto-lock':31,'hook-tuck':33,'bag':37,'hook-lock':38
+};
+
+// 印刷方式 → colorCode映射
+var COLOR_CODE_MAP = {
+  '不印刷':'BYS','单黑':'1_单黑','四色':'SS',
+  '四色+1专色':'5_四色+1专色','四色+2专色':'8_四色+2专色'
+};
+
+// calcPrice请求版本号，防止竞态
+var _calcReqVer = 0;
+
+// 调用俊茂丰API获取合版总价，返回 {total, weight, openSize} 或 null
+async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, print) {
+  var boxId = BOX_ID_MAP[boxType];
+  if (!boxId) return null;
+  try {
+    var resp = await fetch(ZSMAF_API, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        boxId:boxId, bl:L, bw:W, bh:H, coNumber:qty,
+        coType:weight+'g', material:material,
+        surfaceHandle:surface, colorCode:COLOR_CODE_MAP[print]||'SS',
+        composeId:0, processArray:[], parts:[], serviceList:[],
+        createBy:'', createTime:'', openLength:'', openWide:'',
+        remark:'', searchValue:'', updateBy:'', updateTime:'',
+        minPrice:0, price:0, params:{}
+      })
+    });
+    var data = await resp.json();
+    if (data && data.code === 200 && data.data) {
+      return {total: parseFloat(data.data.totalPrice), weight: data.data.weight, openSize: data.data.openSize};
+    }
+  } catch(e) {}
+  return null;
+}
+
+async function calcPrice(){
   var b=boxTypes.find(function(x){return x.id===S.boxType});if(!b)return;
   var L=S.length,W=S.width,H=S.height,q=S.quantity;
 
@@ -922,45 +969,46 @@ function calcPrice(){
     sv+=parseFloat(c.dataset.cost)*q;
   });
 
-  // ── API校准总价（基于俊茂丰合版定价实测数据）──
-  // 数据源：http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
-  var rate = getRateFromQty(q, S.material, S.weight, area, S.boxType);
+  // ── 合版总价：API直连 q≤500 / 费率表 q>500 ──
+  var _reqVer = ++_calcReqVer;
+  var apiTotal = null;
+  if (q > 0 && q <= 500 && L > 0 && W > 0 && H > 0 && BOX_ID_MAP[S.boxType]) {
+    document.getElementById('totalPrice').textContent = '计算中…';
+    var apiRes = await callZsmfApi(S.boxType, L, W, H, q, S.material, S.weight, S.surface, S.print);
+    if (_reqVer !== _calcReqVer) return; // 被后续calcPrice覆盖
+    apiTotal = apiRes ? apiRes.total : null;
+  }
 
-  // 面积校正：费率表基于标准面积(约0.3m²)校准，小盒型费率适当上浮
-  // 2026-07-24 更新：minPrice最低价已覆盖小盒固定成本，无需额外校正
-  // 验证数据：6组尺寸×3数量，公式 total = max(费率总价, 最低基价)
-  //     误差均<0.5%（详见zsmaofeng.com实测数据）
-
-  // 参照配置成本（白卡350g 过哑膜 四色，固定不变，用于计算校准系数）
-  var refMc = area * 350 / 1000 * q * 5.7;
-  var refPc = area * q * 0.13;
-  var refSc = area * q * 0.90;
-  var refBase = refMc + refPc + refSc;
-
-  // 校准系数 = API真实总价 / 参照配置的估算成本
-  var refTotal = rate * area * q;
-  var ratio = refBase > 0 ? refTotal / refBase : 1;
-
-  // 实际配置总价
-  // 工艺费不含校准系数（data-cost已是含税最终价），q≤500用俊茂丰实测总价，q≥1000用data-cost单价×数量
-  // 2026-07-24 更新：统一使用 max(费率总价, 最低基价) 公式
-  // 验证数据：68×24×91mm 双插盒 白卡350g zsmaofeng.com实测
-  //     100=¥120, 200=¥150, 500=¥189
-  //     50×20×70：全部最低基价
-  //     80×30×100：全部最低基价
-  //     100×50×120：费率计算约¥272，实测¥271
-  //     150×80×160：费率计算约¥575，实测¥574
-  //     200×100×200：费率计算约¥915，实测¥914
-  // 多组尺寸验证所有数量误差<1%
+  // 最低基价
   var baseKey = S.material==='银卡纸' ? '银卡纸_'+S.weight : 'white';
   var minPrice = lookupRate((smallBoxBase[baseKey]||smallBoxBase.white).pts, q);
   var total;
-  if (S.material === '银卡纸') {
-    // 银卡纸：费率已含材料+印刷+表面总价，直接使用（避免校准系数放大高纸价）
-    total = Math.max(rate * area * q, minPrice) + ap + ax + sv;
+
+  if (apiTotal !== null) {
+    // ── API直连（q≤500，俊茂丰实时报价）──
+    // API总价已含材料+印刷+表面+基本工艺
+    total = Math.max(apiTotal, minPrice) + ap + ax + sv;
   } else {
-    // 白卡纸/瓦楞纸：用校准系数 = API总价 / 参照成本
-    total = Math.max((mc + pc + sc) * ratio, minPrice) + ap + ax + sv;
+    // ── 费率表（API不可用或q>500，回退方案）──
+    var rate = getRateFromQty(q, S.material, S.weight, area, S.boxType);
+
+    // 参照配置成本（白卡350g 过哑膜 四色，固定不变，用于计算校准系数）
+    var refMc = area * 350 / 1000 * q * 5.7;
+    var refPc = area * q * 0.13;
+    var refSc = area * q * 0.90;
+    var refBase = refMc + refPc + refSc;
+
+    // 校准系数 = API真实总价 / 参照配置的估算成本
+    var refTotal = rate * area * q;
+    var ratio = refBase > 0 ? refTotal / refBase : 1;
+
+    if (S.material === '银卡纸') {
+      // 银卡纸：费率已含材料+印刷+表面总价，直接使用
+      total = Math.max(rate * area * q, minPrice) + ap + ax + sv;
+    } else {
+      // 白卡纸/瓦楞纸：用校准系数 = API总价 / 参照成本
+      total = Math.max((mc + pc + sc) * ratio, minPrice) + ap + ax + sv;
+    }
   }
 
   // 1000个最低价：白卡¥160，银卡375g¥350
@@ -1146,12 +1194,13 @@ function animatePrice(newVal) {
 // 改写 calcPrice 使总价跳动
 var _origCp = calcPrice;
 calcPrice = function() {
-  _origCp();
-  var t = document.getElementById('totalPrice').textContent;
-  if (parseFloat(t) > 0) {
-    var finalT = parseFloat(t);
-    setTimeout(function(){ animatePrice(finalT); }, 30);
-  }
+  Promise.resolve(_origCp()).then(function() {
+    var t = document.getElementById('totalPrice').textContent;
+    if (t !== '计算中…' && parseFloat(t) > 0) {
+      var finalT = parseFloat(t);
+      setTimeout(function(){ animatePrice(finalT); }, 30);
+    }
+  });
 };
 
 renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();setupMultiplier();syncOptions();initAddress();calcPrice();
