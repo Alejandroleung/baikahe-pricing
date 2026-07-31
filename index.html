@@ -878,7 +878,7 @@ var _calcReqVer = 0;
 // ── 拼一拼盒 API 配置 ──
 // GitHub Pages 上通过 Cloudflare Worker 转发（不支持 CORS 的 API）
 // 本地开发通过 server.js 代理（/api/ppyh/quote）
-var PPYH_WORKER_URL = '';  // 填入你的 Cloudflare Worker 地址，如 'https://ppyh-proxy.xxx.workers.dev'
+var PPYH_WORKER_URL = 'https://ppyh-proxy.leungalejandro.workers.dev';  // Cloudflare Worker 代理
 var PPYH_LOCAL_URL = '/api/ppyh/quote';
 var PPYH_AUTH = 'e76eb7565cc68344b2714b2fb7e759c8573326753c6367d4eb5c18fe72a18c62';
 var PPYH_APP_ID = '1674015465824976901';
@@ -1010,8 +1010,65 @@ function getPpyhSpuDetail(unfoldedW, unfoldedH, qty, material, weight, surface) 
   };
 }
 
+// ── 拼一拼盒离线定价模型 (由 generate-model.mjs 从 97 条样本拟合, 勿手改) ──
+// amount = max(round(rate(family,qty) × 面积m² × qty), floor(family,qty))
+// rate: 材质族×数量断点阶梯 (断点 1000/1500/2500/4000/5000/6000/7500/10000, 封底后不变)
+// floor: 材质族×数量 最低价 (小盒地板, 与尺寸无关, 分段线性插值)
+var PPYH_MODEL = {
+  qtyBreaks: [1000,1500,2500,4000,5000,6000,7500,10000],
+  families: [
+    { name: '白卡纸 350/375/425g', members: [['白卡纸',350],['白卡纸',375],['白卡纸',425]],
+      rateTable: [{qty:1000,rate:3.9},{qty:1500,rate:3.7},{qty:2500,rate:3.5},{qty:4000,rate:3.3},{qty:5000,rate:2.9},{qty:6000,rate:2.8},{qty:7500,rate:2.8},{qty:10000,rate:2.7}],
+      floorTable: [{qty:1000,floor:160},{qty:2000,floor:260},{qty:5000,floor:550},{qty:10000,floor:650}] },
+    { name: '白卡纸 400g', members: [['白卡纸',400]],
+      rateTable: [{qty:1000,rate:4.6},{qty:1500,rate:4.2},{qty:2500,rate:4},{qty:4000,rate:3.8},{qty:5000,rate:3.5},{qty:6000,rate:3.4},{qty:7500,rate:3.2},{qty:10000,rate:3.1}],
+      floorTable: [{qty:1000,floor:300},{qty:1500,floor:450},{qty:2000,floor:450},{qty:3000,floor:580},{qty:5000,floor:800},{qty:7500,floor:860},{qty:10000,floor:900}] },
+    { name: '银卡纸 350/375/400g', members: [['银卡纸',350],['银卡纸',375],['银卡纸',400]],
+      rateTable: [{qty:1000,rate:6.9},{qty:1500,rate:5.9},{qty:2500,rate:4.9},{qty:4000,rate:4.5},{qty:5000,rate:3.9},{qty:6000,rate:3.8},{qty:7500,rate:3.6},{qty:10000,rate:3.3}],
+      floorTable: [{qty:1000,floor:350},{qty:2000,floor:560},{qty:5000,floor:950}] },
+    { name: '银卡纸 425g', members: [['银卡纸',425]],
+      rateTable: [{qty:1000,rate:7.3},{qty:1500,rate:6.2},{qty:2500,rate:5.3},{qty:4000,rate:4.8},{qty:5000,rate:4.3},{qty:6000,rate:4.1},{qty:7500,rate:3.8},{qty:10000,rate:3.6}],
+      floorTable: [{qty:1000,floor:500},{qty:2000,floor:680},{qty:5000,floor:1280},{qty:10000,floor:1680}] }
+  ]
+};
+
+// 离线模型报价: 返回 {amount} 或 null (未覆盖材质/克重)
+function ppyhModelPrice(m, weight, qty, w, h) {
+  var fam = null;
+  for (var i = 0; i < PPYH_MODEL.families.length; i++) {
+    var f = PPYH_MODEL.families[i];
+    for (var j = 0; j < f.members.length; j++) {
+      if (f.members[j][0] === m && f.members[j][1] === weight) { fam = f; break; }
+    }
+    if (fam) break;
+  }
+  if (!fam) return null;
+  var area = (w * h) / 1e6;
+  var rate = fam.rateTable[0].rate;
+  for (var k = 0; k < fam.rateTable.length; k++) {
+    if (qty >= fam.rateTable[k].qty) rate = fam.rateTable[k].rate; else break;
+  }
+  var linear = Math.round(rate * area * qty);
+  var floor = 0;
+  var ft = fam.floorTable;
+  if (ft.length) {
+    if (qty <= ft[0].qty) floor = ft[0].floor;
+    else if (qty >= ft[ft.length - 1].qty) floor = ft[ft.length - 1].floor;
+    else {
+      for (var i2 = 0; i2 < ft.length - 1; i2++) {
+        if (qty >= ft[i2].qty && qty <= ft[i2 + 1].qty) {
+          var t = (qty - ft[i2].qty) / (ft[i2 + 1].qty - ft[i2].qty);
+          floor = Math.round(ft[i2].floor + t * (ft[i2 + 1].floor - ft[i2].floor));
+          break;
+        }
+      }
+    }
+  }
+  return { amount: Math.max(linear, floor), offline: true };
+}
+
 // 调用拼一拼盒 render/spu-detail API 获取精确报价
-// 三层调用链：Cloudflare Worker → 本地 server.js 代理 → 费率表
+// 三层调用链：Cloudflare Worker → 本地 server.js 代理 → 离线模型(费率表兜底)
 // 返回 {amount: 总价} 或 null
 async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface) {
   var body = JSON.stringify({
@@ -1057,6 +1114,15 @@ async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface)
     }
     if (data && data.amount) return data;
   } catch(e) { console.warn('PPYH 本地代理失败:', e); }
+
+  // 第3层：离线定价模型（API 均不可用时的兜底，97 条样本拟合零误差）
+  try {
+    var off = ppyhModelPrice(material, weight, qty, unfoldedW, unfoldedH);
+    if (off) {
+      console.info('PPYH API 不可用，使用离线模型报价');
+      return off;
+    }
+  } catch(e) { console.warn('PPYH 离线模型失败:', e); }
 
   return null;
 }
