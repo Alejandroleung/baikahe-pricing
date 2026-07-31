@@ -1429,9 +1429,14 @@ function animatePrice(newVal) {
 }
 
 // 改写 calcPrice 使总价跳动
+// 注意：必须带版本守卫。calcPrice 内部 _reqVer=++_calcReqVer 只会阻止过期
+// API 结果写入 DOM，但外层 .then 若无条件执行，会把旧调用期间读取到的
+// animatePrice 中间值当 finalT 重新动画，导致总价卡死在错误值（竞态 bug）。
 var _origCp = calcPrice;
 calcPrice = function() {
+  var myVer = _calcReqVer + 1;  // 本次调用预期版本号（_origCp 内部会 ++_calcReqVer）
   Promise.resolve(_origCp()).then(function() {
+    if (myVer !== _calcReqVer) return;  // 已有更新的 calcPrice 调用，忽略本次动画
     var t = document.getElementById('totalPrice').textContent;
     if (t !== '计算中…' && parseFloat(t) > 0) {
       var finalT = parseFloat(t);
