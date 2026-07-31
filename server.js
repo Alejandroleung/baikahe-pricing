@@ -4,9 +4,13 @@ const path = require('path');
 const dir = __dirname;
 
 // 拼一拼盒 API 代理配置
-const PPYH_UPSTREAM = 'https://www.ppyh.xyz/cbm-service/buyer/render/spu-detail';
+// 2024 域名迁移: www.ppyh.xyz → api-client.qchezuo.cn
+const PPYH_UPSTREAM = 'https://api-client.qchezuo.cn/cbm-service/buyer/render/spu-detail';
 const PPYH_AUTH = 'e76eb7565cc68344b2714b2fb7e759c8573326753c6367d4eb5c18fe72a18c62';
 const PPYH_APP_ID = '1674015465824976901';
+// 模拟微信小程序环境请求头（抓包所得）
+const PPYH_REFERER = 'https://servicewechat.com/wx3a0305d291f9a769/10/page-frame.html';
+const PPYH_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.75(0x18004b2b) NetType/WIFI Language/zh_CN';
 
 http.createServer((q, r) => {
   r.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,9 +24,11 @@ http.createServer((q, r) => {
       fetch(PPYH_UPSTREAM, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8',
           'Authorization': PPYH_AUTH,
           'X-APP-ID': PPYH_APP_ID,
+          'Referer': PPYH_REFERER,
+          'User-Agent': PPYH_UA,
         },
         body: body,
       })
