@@ -464,11 +464,10 @@ function syncOptions(){
   wg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
   sg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
   // ── 克重限制 ──
-  // 银卡纸：离线模型与拼一拼盒 API 均支持 350/375/400/425g（PPYH_MODEL 银卡纸 350/375/400 + 425 两个族）
-  // 历史问题：曾硬编码仅 375/425，导致 350/400g 无法选择，与模型/API 不一致
+  // 银卡纸：业务规格只有 375g / 425g 两种可选（350/400 为无效克重，禁用）
   if(S.material==='银卡纸'){
     wg.querySelectorAll('.option-item').forEach(function(el){
-      if(el.dataset.value!=='350'&&el.dataset.value!=='375'&&el.dataset.value!=='400'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
+      if(el.dataset.value!=='375'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
     });
     // 保留用户当前选择的克重，只有无效时才切到 375
     var curActive=wg.querySelector('.option-item.active');
