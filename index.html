@@ -464,9 +464,11 @@ function syncOptions(){
   wg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
   sg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
   // ── 克重限制 ──
+  // 银卡纸：离线模型与拼一拼盒 API 均支持 350/375/400/425g（PPYH_MODEL 银卡纸 350/375/400 + 425 两个族）
+  // 历史问题：曾硬编码仅 375/425，导致 350/400g 无法选择，与模型/API 不一致
   if(S.material==='银卡纸'){
     wg.querySelectorAll('.option-item').forEach(function(el){
-      if(el.dataset.value!=='375'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
+      if(el.dataset.value!=='350'&&el.dataset.value!=='375'&&el.dataset.value!=='400'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
     });
     // 保留用户当前选择的克重，只有无效时才切到 375
     var curActive=wg.querySelector('.option-item.active');
@@ -874,6 +876,8 @@ var COLOR_CODE_MAP = {
 
 // calcPrice请求版本号，防止竞态
 var _calcReqVer = 0;
+// 最近一次成功拼一拼盒 API 报价缓存（后台校准用，避免重复慢请求）
+var _pphCachedApi = null;
 
 // ── 拼一拼盒 API 配置 ──
 // GitHub Pages 上通过 Cloudflare Worker 转发（不支持 CORS 的 API）
@@ -1087,11 +1091,15 @@ async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface)
                   'X-APP-ID': PPYH_APP_ID };
 
   // 第1层：Cloudflare Worker（GitHub Pages 主力）
+  // 5s 超时：Worker/上游偶尔响应慢（实测 1.3s~11s），超时立即降级离线模型
   if (PPYH_WORKER_URL) {
     try {
+      var ctrl = new AbortController();
+      var timer = setTimeout(function(){ ctrl.abort(); }, 5000);
       var resp = await fetch(PPYH_WORKER_URL, {
-        method: 'POST', headers: headers, body: body
+        method: 'POST', headers: headers, body: body, signal: ctrl.signal
       });
+      clearTimeout(timer);
       var data = await resp.json();
       if (data && (data.code === '200' || data.type === 1) && data.result && data.result.spuQuote) {
         var q = data.result.spuQuote;
@@ -1104,9 +1112,12 @@ async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface)
 
   // 第2层：本地 server.js 代理（开发环境）
   try {
+    var ctrl = new AbortController();
+    var timer = setTimeout(function(){ ctrl.abort(); }, 3000);
     var resp = await fetch(PPYH_LOCAL_URL, {
-      method: 'POST', headers: headers, body: body
+      method: 'POST', headers: headers, body: body, signal: ctrl.signal
     });
+    clearTimeout(timer);
     var data = await resp.json();
     if (data && (data.code === '200' || data.type === 1) && data.result && data.result.spuQuote) {
       var q = data.result.spuQuote;
@@ -1211,15 +1222,32 @@ async function calcPrice(){
     apiTotal = apiRes ? apiRes.total : null;
   }
 
-  // q≥1000：调用拼一拼盒 API 获取精确报价（白卡纸/银卡纸）
+  // q≥1000：拼一拼盒 API 报价（白卡纸/银卡纸）
+  // 策略：离线模型立即出价（零延迟），后台异步 API 校准（5s 超时兜底）
   if (q >= 1000 && ['白卡纸','银卡纸'].includes(S.material) && L > 0 && W > 0 && H > 0) {
-    var ppyhW = u.width + (hasInterval ? 3 : 0) + 6;  // PPYH API 用含出血宽度
-    var ppyhH = u.height + 6;                           // PPYH API 用含出血高度
-    document.getElementById('totalPrice').textContent = '计算中…';
-    var ppyhRes = await callPpyhApi(ppyhW, ppyhH, q, S.material, S.weight, S.surface);
-    if (_reqVer !== _calcReqVer) return;
-    if (ppyhRes && ppyhRes.amount) {
-      apiTotal = ppyhRes.amount;
+    // PPYH API 尺寸 = 展开尺寸 + 6mm 出血（每边 3mm），宽高各 +6
+    // 实测验证：双插盒 120×120×120 → 展开 492×390 → API 用 498×396
+    // 历史 bug：误加 hasInterval 3mm 间隔，导致宽度 501 而非 498，价格偏高
+    var ppyhW = u.width + 6;  // PPYH API 用含出血宽度
+    var ppyhH = u.height + 6;  // PPYH API 用含出血高度
+    var ppyhKey = S.material + '|' + S.weight + '|' + q + '|' + ppyhW + '|' + ppyhH;
+    if (_pphCachedApi && _pphCachedApi.key === ppyhKey) {
+      // 命中缓存：直接用上次 API 成功报价，跳过慢请求
+      apiTotal = _pphCachedApi.amount;
+    } else {
+      // 先用离线模型立即出价（零延迟，97 样本零误差，与拼一拼盒一致）
+      var offModel = ppyhModelPrice(S.material, S.weight, q, ppyhW, ppyhH);
+      if (offModel && offModel.amount) apiTotal = offModel.amount;
+      // 后台异步 API 校准，不阻塞出价；返回价与离线价不同且请求仍最新时重算
+      (function(bgVer, offAmt) {
+        callPpyhApi(ppyhW, ppyhH, q, S.material, S.weight, S.surface).then(function(apiRes) {
+          if (!apiRes || !apiRes.amount) return;
+          _pphCachedApi = { key: ppyhKey, amount: apiRes.amount };
+          if (bgVer === _calcReqVer && Math.abs(apiRes.amount - offAmt) > 0.005) {
+            calcPrice();  // 命中缓存重算，秒出 API 校准价
+          }
+        }).catch(function() { /* 超时/失败：保持离线模型价 */ });
+      })(_reqVer, apiTotal);
     }
   }
 
