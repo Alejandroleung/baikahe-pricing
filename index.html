@@ -491,8 +491,18 @@ function syncOptions(){
   wg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
   sg.querySelectorAll('.option-item').forEach(function(el){el.classList.remove('disabled');});
   // ── 克重限制 ──
-  // 银卡纸：业务规格只有 375g / 425g 两种可选（350/400 为无效克重，禁用）
-  if(S.material==='银卡纸'){
+  // 瓦楞纸：克重固定 600g（网站合版瓦楞纸克重即锁定 600g）
+  if(S.material.indexOf('瓦楞纸')===0){
+    wg.querySelectorAll('.option-item').forEach(function(el){
+      if(el.dataset.value!=='600'){el.classList.add('disabled');el.classList.remove('active');}
+      else{el.classList.remove('disabled');}
+    });
+    var curActive=wg.querySelector('.option-item.active');
+    if(!curActive||curActive.classList.contains('disabled')){
+      wg.querySelectorAll('.option-item').forEach(function(c){c.classList.remove('active');});
+      wg.querySelector('[data-value="600"]').classList.add('active');S.weight=600;
+    }
+  }else if(S.material==='银卡纸'){
     wg.querySelectorAll('.option-item').forEach(function(el){
       if(el.dataset.value!=='375'&&el.dataset.value!=='425'){el.classList.add('disabled');el.classList.remove('active');}
     });
