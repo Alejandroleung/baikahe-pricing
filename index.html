@@ -177,6 +177,24 @@
     .unfolded-display .unfolded-label { font-size: 13px; font-weight: 600; color: var(--text2); }
     .unfolded-display .unfolded-value { font-size: 13px; color: var(--primary); font-weight: 500; }
     .unfolded-display .unfolded-value strong { font-size: 15px; font-weight: 700; color: var(--text); }
+    .unfolded-display .unfolded-input {
+      width: 62px; padding: 4px 6px; border: 1px solid rgba(37,99,235,0.25); border-radius: 6px;
+      font-size: 13px; font-weight: 600; color: var(--text); text-align: center; outline: none;
+      background: #fff; -moz-appearance: textfield; appearance: textfield;
+    }
+    .unfolded-display .unfolded-input::-webkit-outer-spin-button,
+    .unfolded-display .unfolded-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .unfolded-display .unfolded-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.12); }
+    .unfolded-display .unfolded-input.custom { border-color: var(--accent,#f59e0b); background: rgba(245,158,11,0.06); }
+    .unfolded-display .unfolded-x { color: var(--text3); font-weight: 600; }
+    .unfolded-display .unfolded-unit { font-size: 12px; color: var(--text3); }
+    .unfolded-display .unfolded-reset {
+      padding: 3px 10px; border: 1px solid rgba(37,99,235,0.25); border-radius: 6px;
+      font-size: 12px; font-weight: 600; color: var(--primary); background: #fff; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .unfolded-display .unfolded-reset:hover { background: rgba(37,99,235,0.08); border-color: var(--primary); }
+    .unfolded-display .unfolded-tip { font-size: 11px; color: var(--text3); }
     .address-section { margin-bottom: 10px !important; }
     .address-section select { color-scheme: light; }
     .address-section select option { background: #fff; color: var(--text); }
@@ -283,7 +301,12 @@
     </div>
     <div class="unfolded-display">
       <span class="unfolded-label">展开尺寸：</span>
-      <span class="unfolded-value" id="unfoldedSize">选择盒型并输入尺寸后自动计算</span>
+      <input type="number" class="unfolded-input" id="unfoldedW" min="1" step="1" placeholder="宽">
+      <span class="unfolded-x">&times;</span>
+      <input type="number" class="unfolded-input" id="unfoldedH" min="1" step="1" placeholder="高">
+      <span class="unfolded-unit">mm</span>
+      <button type="button" class="unfolded-reset" id="unfoldedReset" title="恢复为公式自动计算" style="display:none;">↺ 自动</button>
+      <span class="unfolded-tip" id="unfoldedTip">选择盒型并输入尺寸后自动计算</span>
     </div>
     <div class="form-row">
       <div class="form-label">*印刷数量</div>
@@ -455,9 +478,13 @@ const boxTypes=[
   {id:'bag',name:'手提袋',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/06/ee4413afdc6f4f918972ad8ed23ede1bins8jasoww.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2022/09/30/c2320b2bfc4a4092a86be7b65674e4e9rhni4hnmjg.jpg'},
   {id:'hook-lock',name:'扣底挂钩盒',thumb:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/769e77a3eaf64b1f95d06f62201e7ea15i5r5eo22q.png',preview:'https://image.zsmaofeng.com//crmebimage/public/content/2023/03/08/769e77a3eaf64b1f95d06f62201e7ea15i5r5eo22q.png'}
 ];
-let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0,spotColor:0,multiplier:1.30};
+let S={boxType:'double-tuck',material:'白卡纸',weight:350,surface:'过哑膜',print:'四色',length:0,width:0,height:0,quantity:0,spotColor:0,multiplier:1.30,customUnfold:null};
 function renderBoxCards(){document.getElementById('boxGrid').innerHTML=boxTypes.map(function(b,i){return '<div class="box-card anim-fade-up'+(b.id===S.boxType?' active':'')+'" style="animation-delay:'+(i*0.04)+'s" onclick="selectBox('+"'"+b.id+"'"+')" onmouseenter="showPreview(this,\''+b.preview+'\')" onmouseleave="hidePreview()"><div class="box-icon"><img src="'+b.thumb+'" alt="'+b.name+'" loading="lazy"></div><h3>'+b.name+'</h3></div>';}).join('');}
-function selectBox(id){S.boxType=id;renderBoxCards();calcPrice();}
+function selectBox(id){S.boxType=id;S.customUnfold=null;
+  var uw=document.getElementById('unfoldedW'),uh=document.getElementById('unfoldedH');
+  if(uw&&uh){uw.classList.remove('custom');uh.classList.remove('custom');
+    document.getElementById('unfoldedReset').style.display='none';}
+  renderBoxCards();calcPrice();}
 function syncOptions(){
   var wg=document.getElementById('weightGroup');
   var sg=document.getElementById('surfaceGroup');
@@ -540,7 +567,45 @@ function setupCG(){document.querySelectorAll('.check-group input[type="checkbox"
 var lastValidQty=0;
 function setupIn(){
   ['length','width','height'].forEach(function(id){
-    document.getElementById(id).addEventListener('input',function(e){S[id]=parseInt(e.target.value)||0;calcPrice();});
+    document.getElementById(id).addEventListener('input',function(e){
+      S[id]=parseInt(e.target.value)||0;
+      // 尺寸变化后，若公式展开尺寸与自定义值一致，则清除自定义标记（视为自动）
+      if(S.customUnfold){
+        var uf=getUnfoldedSize(S.boxType,S.length,S.width,S.height);
+        if(uf&&uf.width===S.customUnfold.width&&uf.height===S.customUnfold.height){
+          S.customUnfold=null;
+          document.getElementById('unfoldedW').classList.remove('custom');
+          document.getElementById('unfoldedH').classList.remove('custom');
+          document.getElementById('unfoldedReset').style.display='none';
+        }
+      }
+      calcPrice();
+    });
+  });
+  // 展开尺寸手动自定义：任一输入变化 → 记录自定义展开尺寸
+  ['unfoldedW','unfoldedH'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',function(e){
+      var w=parseInt(document.getElementById('unfoldedW').value)||0;
+      var h=parseInt(document.getElementById('unfoldedH').value)||0;
+      if(w>0&&h>0){
+        S.customUnfold={width:w,height:h};
+        document.getElementById('unfoldedW').classList.add('custom');
+        document.getElementById('unfoldedH').classList.add('custom');
+        document.getElementById('unfoldedReset').style.display='';
+        document.getElementById('unfoldedTip').textContent='自定义';
+      }else{
+        document.getElementById('unfoldedTip').textContent='请输入有效的展开尺寸';
+      }
+      calcPrice();
+    });
+  });
+  // 恢复自动计算：清空自定义展开尺寸
+  document.getElementById('unfoldedReset').addEventListener('click',function(){
+    S.customUnfold=null;
+    document.getElementById('unfoldedW').classList.remove('custom');
+    document.getElementById('unfoldedH').classList.remove('custom');
+    document.getElementById('unfoldedReset').style.display='none';
+    calcPrice();
   });
   var qtyEl=document.getElementById('quantity');
   // 键盘方向键：手动步进
@@ -918,7 +983,7 @@ var PPYH_SPEC = {
 };
 
 // 调用俊茂丰API获取合版总价，返回 {total, weight, openSize} 或 null
-async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, print) {
+async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, print, unfolded) {
   var boxId = BOX_ID_MAP[boxType];
   if (!boxId) return null;
   try {
@@ -930,7 +995,8 @@ async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, pri
         coType:weight+'g', material:material,
         surfaceHandle:surface, colorCode:COLOR_CODE_MAP[print]||'SS',
         composeId:0, processArray:[], parts:[], serviceList:[],
-        createBy:'', createTime:'', openLength:'', openWide:'',
+        createBy:'', createTime:'',
+        openLength:unfolded?unfolded.width:'', openWide:unfolded?unfolded.height:'',
         remark:'', searchValue:'', updateBy:'', updateTime:'',
         minPrice:0, price:0, params:{}
       })
@@ -1149,6 +1215,10 @@ async function calcPrice(){
   // 飞机盒(16)、封套盒(17)、天盒(18) 均需3mm间隔
   // 地盒(26) 的+50公式已含间隔，不加3mm
   var u=getUnfoldedSize(b.id,L,W,H);
+  // 用户手动自定义展开尺寸时，以自定义值为准（替代公式值）
+  if(S.customUnfold&&S.customUnfold.width>0&&S.customUnfold.height>0){
+    u={width:S.customUnfold.width,height:S.customUnfold.height};
+  }
   var hasInterval=b.id!=='base';  // 地盒例外
   var eaw=u.width+(hasInterval?3:0)+(q>=1000?6:0);    // 原有间隔 + 大货加6mm出血
   var eah=u.height+(q>=1000?6:0);                      // 大货高度加6mm出血
@@ -1214,16 +1284,31 @@ async function calcPrice(){
   // ── 合版总价：俊茂丰API q≤500 / 拼一拼盒API q≥1000 / 费率表 q>500 ──
   var _reqVer = ++_calcReqVer;
   var apiTotal = null;
-  if (q > 0 && q <= 500 && L > 0 && W > 0 && H > 0 && BOX_ID_MAP[S.boxType]) {
+  // API 报价可仅凭展开尺寸驱动（quickCompute 按展开尺寸计价，成品尺寸传 0 不影响价格）
+  var hasCustomUnfold = !!(S.customUnfold && S.customUnfold.width > 0 && S.customUnfold.height > 0);
+  var hasDims = L > 0 && W > 0 && H > 0;
+  var isCorrugated = S.material.indexOf('瓦楞纸') === 0;
+  // 瓦楞纸专版API按成品尺寸计价（bl/bw/bh 为 0 时后端报 / by zero），只填展开尺寸无法报价
+  if (isCorrugated && !hasDims && q > 0) {
+    document.getElementById('totalPrice').textContent = '瓦楞纸需填写成品尺寸（长/宽/高）';
+    document.getElementById('quotePrice').textContent = '¥0.00';
+    document.getElementById('profitRate').textContent = '0%';
+    document.getElementById('profitAmount').textContent = '¥0.00';
+    document.getElementById('quoteUnitPrice').textContent = '¥0.00';
+    updateUnfoldedDisplay(b);
+    return;
+  }
+  if (q > 0 && q <= 500 && (hasDims || hasCustomUnfold) && BOX_ID_MAP[S.boxType]) {
     document.getElementById('totalPrice').textContent = '计算中…';
-    var apiRes = await callZsmfApi(S.boxType, L, W, H, q, S.material, S.weight, S.surface, S.print);
+    var unfoldedArg = hasCustomUnfold ? S.customUnfold : null;
+    var apiRes = await callZsmfApi(S.boxType, L, W, H, q, S.material, S.weight, S.surface, S.print, unfoldedArg);
     if (_reqVer !== _calcReqVer) return;
     apiTotal = apiRes ? apiRes.total : null;
   }
 
   // q≥1000：拼一拼盒 API 报价（白卡纸/银卡纸）
   // 策略：离线模型立即出价（零延迟），后台异步 API 校准（5s 超时兜底）
-  if (q >= 1000 && ['白卡纸','银卡纸'].includes(S.material) && L > 0 && W > 0 && H > 0) {
+  if (q >= 1000 && ['白卡纸','银卡纸'].includes(S.material) && (hasDims || hasCustomUnfold)) {
     // PPYH API 尺寸 = 展开尺寸 + 6mm 出血（每边 3mm），宽高各 +6
     // 实测验证：双插盒 120×120×120 → 展开 492×390 → API 用 498×396
     // 历史 bug：误加 hasInterval 3mm 间隔，导致宽度 501 而非 498，价格偏高
@@ -1351,15 +1436,35 @@ async function calcPrice(){
   document.getElementById('profitAmount').textContent = hideQuote ? '¥0.00' : '¥' + profit.toFixed(2);
   document.getElementById('quoteUnitPrice').textContent = hideQuote ? '¥0.00' : '¥' + quoteUnit.toFixed(2);
 
-  // 更新展开尺寸
+  // 更新展开尺寸（input 可编辑；自定义时不覆盖用户输入）
+  updateUnfoldedDisplay(b);
+}
+
+// 展开尺寸输入框显示：自定义保留输入 / 自动同步公式值
+function updateUnfoldedDisplay(b) {
   var unfolded = getUnfoldedSize(b.id, S.length, S.width, S.height);
-  var el = document.getElementById('unfoldedSize');
-  if (unfolded && S.length > 0 && S.width > 0 && S.height > 0) {
-    el.innerHTML = '<strong>'+unfolded.width+'</strong> &times; <strong>'+unfolded.height+'</strong> mm';
+  var wEl = document.getElementById('unfoldedW');
+  var hEl = document.getElementById('unfoldedH');
+  var tipEl = document.getElementById('unfoldedTip');
+  var resetBtn = document.getElementById('unfoldedReset');
+  var isCustom = S.customUnfold && S.customUnfold.width > 0 && S.customUnfold.height > 0;
+  if (isCustom) {
+    // 自定义模式：保持用户输入值，仅当输入框为空时回填
+    if (!wEl.value) wEl.value = S.customUnfold.width;
+    if (!hEl.value) hEl.value = S.customUnfold.height;
+    tipEl.textContent = '自定义（点击 ↺ 恢复公式计算）';
+    resetBtn.style.display = '';
+  } else if (unfolded && S.length > 0 && S.width > 0 && S.height > 0) {
+    wEl.value = unfolded.width;
+    hEl.value = unfolded.height;
+    tipEl.textContent = '自动计算，可手动修改';
+    resetBtn.style.display = 'none';
   } else if (!unfolded) {
-    el.textContent = '该盒型暂无展开公式，需按实际刀模图计算';
+    tipEl.textContent = '该盒型暂无展开公式，请手动输入';
+    resetBtn.style.display = 'none';
   } else {
-    el.textContent = '选择盒型并输入尺寸后自动计算';
+    tipEl.textContent = '选择盒型并输入尺寸后自动计算';
+    resetBtn.style.display = 'none';
   }
 }
 
