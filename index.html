@@ -992,15 +992,46 @@ var PPYH_SPEC = {
   unfoldSize: '1791024650889723904'
 };
 
+// 瓦楞纸专版报价 API（按成品尺寸计价，面纸固定足克白卡300g + 裱瓦坑纸）
+var ZSMAF_COMPUTE_API = 'http://www.zsmaofeng.com:20001/api/offer/compute';
+// 瓦楞纸材质 → 坑纸 paperId（6=A4E黄坑 7=W4E白坑；两者实测同价）
+var CORRUGATED_PAPER_ID = { '瓦楞纸(300g白卡+A4E黄坑)': 6, '瓦楞纸(300g白卡+W4E白坑)': 7 };
+// 表面处理 → 专版 API 编码（实测：过光膜/过哑膜同价 899，不处理=871）
+var CORRUGATED_SURFACE = { '过光膜':'32_过光膜', '过哑膜':'33_过哑膜', '不处理':null };
+// 印刷 → 专版 API 编码（实测：四色 899、单黑 729、不印刷 null=444）
+var CORRUGATED_PRINT = { '四色':'2_四色(彩色)', '单黑':'1_单黑', '不印刷':null };
+
 // 调用俊茂丰API获取合版总价，返回 {total, weight, openSize} 或 null
+// 白卡纸/银卡纸 → quickCompute（合版，按展开尺寸计价）
+// 瓦楞纸 → offer/compute（专版，按成品尺寸计价，gramWeight 固定 24_300_0.38 面纸）
 async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, print, unfolded) {
   var boxId = BOX_ID_MAP[boxType];
   if (!boxId) return null;
   try {
-    var resp = await fetch(ZSMAF_API, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
+    var url = ZSMAF_API;
+    var body;
+    if (material.indexOf('瓦楞纸') === 0) {
+      var paperId = CORRUGATED_PAPER_ID[material] || 6;
+      var boxName = '';
+      for (var bi = 0; bi < boxTypes.length; bi++) {
+        if (boxTypes[bi].id === boxType) { boxName = boxTypes[bi].name; break; }
+      }
+      url = ZSMAF_COMPUTE_API;
+      body = JSON.stringify({
+        boxInfo: {
+          boxId: boxId, boxName: boxName, printQuantity: String(qty), sameAmount: 1,
+          bl: String(L), bw: String(W), bh: String(H),
+          paperMaterial: '卡纸类_足克白卡纸', gramWeight: '24_300_0.38',
+          surfaceHandle: CORRUGATED_SURFACE.hasOwnProperty(surface) ? CORRUGATED_SURFACE[surface] : '32_过光膜',
+          backHandle: null,
+          printColor: CORRUGATED_PRINT.hasOwnProperty(print) ? CORRUGATED_PRINT[print] : '2_四色(彩色)',
+          backColor: null,
+          openLength: '', openWide: '', spotColor: null
+        },
+        boxItem: [{ processId: 42, processCategory: 'BW', processName: '裱瓦', byArea: 0, paperId: paperId }]
+      });
+    } else {
+      body = JSON.stringify({
         boxId:boxId, bl:L, bw:W, bh:H, coNumber:qty,
         coType:weight+'g', material:material,
         surfaceHandle:surface, colorCode:COLOR_CODE_MAP[print]||'SS',
@@ -1009,7 +1040,12 @@ async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, pri
         openLength:unfolded?unfolded.width:'', openWide:unfolded?unfolded.height:'',
         remark:'', searchValue:'', updateBy:'', updateTime:'',
         minPrice:0, price:0, params:{}
-      })
+      });
+    }
+    var resp = await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:body
     });
     var data = await resp.json();
     if (data && data.code === 200 && data.data) {
@@ -1308,7 +1344,8 @@ async function calcPrice(){
     updateUnfoldedDisplay(b);
     return;
   }
-  if (q > 0 && q <= 500 && (hasDims || hasCustomUnfold) && BOX_ID_MAP[S.boxType]) {
+  // 瓦楞纸专版API任意数量可报（实测 1000=1536/3000=3260）；白卡纸/银卡纸合版API仅 q≤500
+  if (q > 0 && (q <= 500 || isCorrugated) && (hasDims || hasCustomUnfold) && BOX_ID_MAP[S.boxType]) {
     document.getElementById('totalPrice').textContent = '计算中…';
     var unfoldedArg = hasCustomUnfold ? S.customUnfold : null;
     var apiRes = await callZsmfApi(S.boxType, L, W, H, q, S.material, S.weight, S.surface, S.print, unfoldedArg);
