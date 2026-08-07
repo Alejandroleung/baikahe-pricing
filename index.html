@@ -1056,7 +1056,7 @@ async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, pri
 }
 
 // ── 拼一拼盒 spuDetail 物料参数模板 ──
-function getPpyhSpuDetail(unfoldedW, unfoldedH, qty, material, weight, surface) {
+function getPpyhSpuDetail(unfoldedW, unfoldedH, qty, material, weight, surface, spotColor) {
   var isSilver = material === '银卡纸';
   var paperTypeId = PPYH_SPEC.paperType.map[material] ? PPYH_SPEC.paperType.map[material].id : '1776224993986873102';
   var paperTypeName = PPYH_SPEC.paperType.map[material] ? PPYH_SPEC.paperType.map[material].name : '铜版纸';
@@ -1096,7 +1096,7 @@ function getPpyhSpuDetail(unfoldedW, unfoldedH, qty, material, weight, surface) 
               {spuSpecId:'1791024650994581504',bizMetaAttrId:'1776224993986876111',displayName:'四色(CMYK)',instanceIndex:1,checked:!isSilver,value:null},
               {spuSpecId:'1791024650994581504',bizMetaAttrId:'1776224993986876113',displayName:'UV四色(CMYK)',instanceIndex:1,checked:isSilver,value:null}
             ]},
-            {id:'1791024651061690368',spuId:PPYH_SPU_ID,parentId:'1791024650969415680',bizMetaAttrId:'1776224993986876102',type:1,displayName:'专色',valueMethod:null,minQuantity:0,maxQuantity:2,uiComponent:'select_num_input',value:'0',checked:true,instanceIndex:1,pricingCalculatorId:'2',childSpuSpecList:[],optValueList:[]},
+            {id:'1791024651061690368',spuId:PPYH_SPU_ID,parentId:'1791024650969415680',bizMetaAttrId:'1776224993986876102',type:1,displayName:'专色',valueMethod:null,minQuantity:0,maxQuantity:2,uiComponent:'select_num_input',value:String(spotColor||0),checked:true,instanceIndex:1,pricingCalculatorId:'2',childSpuSpecList:[],optValueList:[]},
             {id:'1791024651132993536',spuId:PPYH_SPU_ID,parentId:'1791024650969415680',bizMetaAttrId:'1776224993986876200',type:1,displayName:'黑墨',valueMethod:null,minQuantity:0,maxQuantity:2,uiComponent:'button_radio',value:null,checked:true,instanceIndex:1,pricingCalculatorId:null,childSpuSpecList:[],optValueList:[]}
           ],optValueList:[]},
           {id:'1791024651179130880',spuId:PPYH_SPU_ID,parentId:'1791024650948444160',bizMetaAttrId:'1776224993986876000',type:1,displayName:'表面',valueMethod:null,minQuantity:1,maxQuantity:1,uiComponent:'button_radio',value:null,checked:true,instanceIndex:1,pricingCalculatorId:'8',childSpuSpecList:[],optValueList:[
@@ -1147,8 +1147,21 @@ var PPYH_MODEL = {
   ]
 };
 
+// 专色加价阶梯（拼一拼盒实测：与面积无关，只随材质族+数量变化；每1专色费用，2专色=2倍）
+// 数据源：offer/compute 实测（2026-08-07）：银卡 1000=+400/5000=+470/10000=+620；白卡 1000=+300/5000=+380/10000=+450
+var PPYH_SPOT_FEE = {
+  '银卡纸': [[1000,400],[2500,410],[3500,440],[5000,470],[6000,500],[7500,560],[10000,620]],
+  '白卡纸': [[1000,300],[3000,310],[4000,360],[5000,380],[6000,400],[7500,440],[10000,450]]
+};
+function ppyhSpotFee(material, qty, spotColor) {
+  var s = spotColor || 0;
+  if (!s) return 0;
+  var tbl = PPYH_SPOT_FEE[material] || PPYH_SPOT_FEE['白卡纸'];
+  return lookupRate(tbl, qty) * s;
+}
+
 // 离线模型报价: 返回 {amount} 或 null (未覆盖材质/克重)
-function ppyhModelPrice(m, weight, qty, w, h) {
+function ppyhModelPrice(m, weight, qty, w, h, spotColor) {
   var fam = null;
   for (var i = 0; i < PPYH_MODEL.families.length; i++) {
     var f = PPYH_MODEL.families[i];
@@ -1179,13 +1192,15 @@ function ppyhModelPrice(m, weight, qty, w, h) {
       }
     }
   }
-  return { amount: Math.max(linear, floor), offline: true };
+  var baseAmt = Math.max(linear, floor);
+  // 专色加价（实测与面积无关，只随材质族+数量）
+  return { amount: baseAmt + ppyhSpotFee(m, qty, spotColor), offline: true };
 }
 
 // 调用拼一拼盒 render/spu-detail API 获取精确报价
 // 三层调用链：Cloudflare Worker → 本地 server.js 代理 → 离线模型(费率表兜底)
 // 返回 {amount: 总价} 或 null
-async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface) {
+async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface, spotColor) {
   var body = JSON.stringify({
     basic: false,
     spuId: PPYH_SPU_ID,
@@ -1195,7 +1210,7 @@ async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface)
       operateType: 3,
       value: unfoldedW + 'x' + unfoldedH
     }],
-    spuDetail: getPpyhSpuDetail(unfoldedW, unfoldedH, qty, material, weight, surface)
+    spuDetail: getPpyhSpuDetail(unfoldedW, unfoldedH, qty, material, weight, surface, spotColor)
   });
   var headers = { 'Content-Type': 'application/json;charset=UTF-8',
                   'Authorization': PPYH_AUTH,
@@ -1361,17 +1376,17 @@ async function calcPrice(){
     // 历史 bug：误加 hasInterval 3mm 间隔，导致宽度 501 而非 498，价格偏高
     var ppyhW = u.width + 6;  // PPYH API 用含出血宽度
     var ppyhH = u.height + 6;  // PPYH API 用含出血高度
-    var ppyhKey = S.material + '|' + S.weight + '|' + q + '|' + ppyhW + '|' + ppyhH;
+    var ppyhKey = S.material + '|' + S.weight + '|' + q + '|' + ppyhW + '|' + ppyhH + '|spot' + S.spotColor;
     if (_pphCachedApi && _pphCachedApi.key === ppyhKey) {
       // 命中缓存：直接用上次 API 成功报价，跳过慢请求
       apiTotal = _pphCachedApi.amount;
     } else {
       // 先用离线模型立即出价（零延迟，97 样本零误差，与拼一拼盒一致）
-      var offModel = ppyhModelPrice(S.material, S.weight, q, ppyhW, ppyhH);
+      var offModel = ppyhModelPrice(S.material, S.weight, q, ppyhW, ppyhH, S.spotColor);
       if (offModel && offModel.amount) apiTotal = offModel.amount;
       // 后台异步 API 校准，不阻塞出价；返回价与离线价不同且请求仍最新时重算
       (function(bgVer, offAmt) {
-        callPpyhApi(ppyhW, ppyhH, q, S.material, S.weight, S.surface).then(function(apiRes) {
+        callPpyhApi(ppyhW, ppyhH, q, S.material, S.weight, S.surface, S.spotColor).then(function(apiRes) {
           if (!apiRes || !apiRes.amount) return;
           _pphCachedApi = { key: ppyhKey, amount: apiRes.amount };
           if (bgVer === _calcReqVer && Math.abs(apiRes.amount - offAmt) > 0.005) {
@@ -1423,12 +1438,16 @@ async function calcPrice(){
     var minFloor = lookupRate(pt, q);
     if(total < minFloor) total = minFloor;
   } else if(S.spotColor>0){
-    // 非极小盒型：专色按固定费用加价（已有正常面积计价，专色为附加费）
+    // 非极小盒型：专色费用
+    // q<1000 → 俊茂丰 quickCompute 未含专色，手工 +200（历史校准）
+    // q≥1000 白卡/银卡 → 拼一拼盒 API/离线模型已含专色费用（ppyhSpotFee 数量阶梯），不重复加
+    // q≥1000 其他材质（瓦楞纸等）→ 专版 API 不含专色，维持固定加价
+    var ppyhCovered = q>=1000 && (S.material==='白卡纸' || S.material==='银卡纸');
     if(q<1000){
       total += 200;
-    }else if(S.spotColor===1){
+    }else if(!ppyhCovered && S.spotColor===1){
       total += 300;
-    }else if(S.spotColor===2){
+    }else if(!ppyhCovered && S.spotColor===2){
       total += 600;
     }
   }
