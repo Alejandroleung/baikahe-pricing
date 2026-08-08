@@ -1051,6 +1051,10 @@ async function callZsmfApi(boxType, L, W, H, qty, material, weight, surface, pri
     if (data && data.code === 200 && data.data) {
       return {total: parseFloat(data.data.totalPrice), weight: data.data.weight, openSize: data.data.openSize};
     }
+    // 官网明确无此报价（code:500 "材料-没有查询到对应的价格"）→ 与网络故障区分开
+    if (data && data.code === 500 && data.message && data.message.indexOf('没有查询到对应的价格') >= 0) {
+      return {noPrice: true};
+    }
   } catch(e) {}
   return null;
 }
@@ -1365,6 +1369,12 @@ async function calcPrice(){
     var unfoldedArg = hasCustomUnfold ? S.customUnfold : null;
     var apiRes = await callZsmfApi(S.boxType, L, W, H, q, S.material, S.weight, S.surface, S.print, unfoldedArg);
     if (_reqVer !== _calcReqVer) return;
+    if (apiRes && apiRes.noPrice) {
+      // 官网明确无此报价（如银卡375/425、白卡400g@100-200）→ 严格照官网显示无价
+      renderNoPrice(b, q);
+      updateUnfoldedDisplay(b);
+      return;
+    }
     apiTotal = apiRes ? apiRes.total : null;
   }
 
@@ -1504,6 +1514,27 @@ async function calcPrice(){
 
   // 更新展开尺寸（input 可编辑；自定义时不覆盖用户输入）
   updateUnfoldedDisplay(b);
+}
+
+// 官网明确无此报价（如银卡375/425、白卡400g@100-200）→ 严格照官网显示无价
+function renderNoPrice(b, q) {
+  _lastTotal = 0;  // 重置动画基准，防止下次动画从旧值起跳
+  document.getElementById('priceLabel').textContent = b.name + ' 报价信息';
+  document.getElementById('totalPrice').textContent = '—';
+  document.getElementById('priceUnit').textContent = '';
+  document.getElementById('unitPrice').textContent = '';
+  document.getElementById('quotePrice').textContent = '¥0.00';
+  document.getElementById('profitRate').textContent = '0%';
+  document.getElementById('quoteUnitPrice').textContent = '¥0.00';
+  document.getElementById('profitAmount').textContent = '¥0.00';
+  var swEl = document.getElementById('singleWeight');
+  var twEl = document.getElementById('totalWeight');
+  swEl.textContent = '—';
+  twEl.textContent = '—';
+  var freightEl = document.getElementById('freightPrice');
+  var freightItem = freightEl && freightEl.closest('.freight-item');
+  if (freightEl) freightEl.textContent = '¥0.00';
+  if (freightItem) freightItem.style.display = 'none';
 }
 
 // 展开尺寸输入框显示：自定义保留输入 / 自动同步公式值
