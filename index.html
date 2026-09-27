@@ -954,9 +954,12 @@ var _calcReqVer = 0;
 var _pphCachedApi = null;
 
 // ── 拼一拼盒 API 配置 ──
-// GitHub Pages 上通过 Cloudflare Worker 转发（不支持 CORS 的 API）
+// 直连上游（首选）：上游返回 Access-Control-Allow-Origin: * 且预检放行 POST/authorization/x-app-id，
+//   国内可直连（2026-09-27 实测 165~235ms），无需任何代理
+// GitHub Pages 上通过 Cloudflare Worker 转发（备选；国内 *.workers.dev 被 DNS 污染，通常不可达）
 // 本地开发通过 server.js 代理（/api/ppyh/quote）
-var PPYH_WORKER_URL = 'https://ppyh-proxy.leungalejandro.workers.dev';  // Cloudflare Worker 代理
+var PPYH_DIRECT_URL = 'https://api-client.qchezuo.cn/cbm-service/buyer/render/spu-detail';  // 直连上游（首选）
+var PPYH_WORKER_URL = 'https://ppyh-proxy.leungalejandro.workers.dev';  // Cloudflare Worker 代理（备选）
 var PPYH_LOCAL_URL = '/api/ppyh/quote';
 var PPYH_AUTH = 'e76eb7565cc68344b2714b2fb7e759c8573326753c6367d4eb5c18fe72a18c62';
 var PPYH_APP_ID = '1674015465824976901';
@@ -1202,7 +1205,7 @@ function ppyhModelPrice(m, weight, qty, w, h, spotColor) {
 }
 
 // 调用拼一拼盒 render/spu-detail API 获取精确报价
-// 三层调用链：Cloudflare Worker → 本地 server.js 代理 → 离线模型(费率表兜底)
+// 四层调用链：直连上游 → Cloudflare Worker → 本地 server.js 代理 → 离线模型(费率表兜底)
 // 返回 {amount: 总价} 或 null
 async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface, spotColor) {
   var body = JSON.stringify({
@@ -1220,7 +1223,26 @@ async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface,
                   'Authorization': PPYH_AUTH,
                   'X-APP-ID': PPYH_APP_ID };
 
-  // 第1层：Cloudflare Worker（GitHub Pages 主力）
+  // 第1层：直连上游（首选；国内实测 165~235ms，跨域由上游 Access-Control-Allow-Origin: * 放行）
+  if (PPYH_DIRECT_URL) {
+    try {
+      var ctrl = new AbortController();
+      var timer = setTimeout(function(){ ctrl.abort(); }, 4000);
+      var resp = await fetch(PPYH_DIRECT_URL, {
+        method: 'POST', headers: headers, body: body, signal: ctrl.signal
+      });
+      clearTimeout(timer);
+      var data = await resp.json();
+      if (data && (data.code === '200' || data.type === 1) && data.result && data.result.spuQuote) {
+        var q = data.result.spuQuote;
+        return { amount: q.amount, price: q.price, count: q.count };
+      }
+      // 兼容不同响应格式
+      if (data && data.amount) return data;
+    } catch(e) { console.warn('PPYH 直连上游失败:', e); }
+  }
+
+  // 第2层：Cloudflare Worker（备选；国内 *.workers.dev 多被 DNS 污染，通常超时）
   // 5s 超时：Worker/上游偶尔响应慢（实测 1.3s~11s），超时立即降级离线模型
   if (PPYH_WORKER_URL) {
     try {
@@ -1240,7 +1262,7 @@ async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface,
     } catch(e) { console.warn('PPYH Worker 失败:', e); }
   }
 
-  // 第2层：本地 server.js 代理（开发环境）
+  // 第3层：本地 server.js 代理（开发环境）
   try {
     var ctrl = new AbortController();
     var timer = setTimeout(function(){ ctrl.abort(); }, 3000);
@@ -1256,7 +1278,7 @@ async function callPpyhApi(unfoldedW, unfoldedH, qty, material, weight, surface,
     if (data && data.amount) return data;
   } catch(e) { console.warn('PPYH 本地代理失败:', e); }
 
-  // 第3层：离线定价模型（API 均不可用时的兜底，97 条样本拟合零误差）
+  // 第4层：离线定价模型（API 均不可用时的兜底）
   try {
     var off = ppyhModelPrice(material, weight, qty, unfoldedW, unfoldedH);
     if (off) {
