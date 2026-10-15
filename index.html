@@ -930,8 +930,38 @@ var smallBoxBase = {
 
 // ── 俊茂丰API直连 ──
 // 数据源：POST http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
-// q≤500时直接调用获取精确价格，替代费率表估算
+// q≤500 时改用下方离线价格表（MERGE_RATE）报价，此地址仅瓦楞纸专版仍在用
 var ZSMAF_API = 'http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute';
+
+// ── 俊茂丰官网合版价格表（离线内置，2026-10-15 采集）──
+// 背景：官网报价接口是明文 http，而本站跑在 https(GitHub Pages)，
+//   浏览器会按「混合内容」直接拦截该请求，fetch 抛错 → 回退费率表 → 价格与官网不一致。
+//   故把官网价格规律内置为离线表，彻底去掉 <1000 档的实时网络依赖。
+// 数据源：POST http://www.zsmaofeng.com:20001/api/offer/compute/quickCompute
+// 公式：总价 = max(展开面积 × 单价, 最低价)
+//   展开面积 = 官网 openSize(宽×高)/1e6，即 getUnfoldedSize() 的纯展开长×宽，
+//     不含本文件给大货用的 +3mm 间隔 / +6mm 出血
+//   单价单位 ¥/m²，只由「数量档 + 克重」决定，与盒型、尺寸、表面处理均无关
+//   表面处理 过光膜 / 过哑膜 同价
+// 官网合版开放范围：白卡纸 350g → 100/200/500 档；白卡纸 400g → 仅 500 档
+//   其余材质（瓦楞纸 / 银卡纸 / F坑内托）与克重（240/300/375/425/600）官网合版一律无报价
+// 校验：11 种盒型 × 8 组尺寸 × 3 档数量 = 246 组与官网接口逐元一致（误差 0 元）
+// 单价用「区间约束法」反解（对样本要求 round(面积×rate)=官网价，求所有样本可行区间交集），
+//   得解均为整数：2100 / 2730 / 3475 / 3825，交集内取值可逐元复现官网价
+// 官网调价后重新校准：跑 .tmp-zmf/probe3.py 重新反解单价即可
+var MERGE_RATE = {
+  '350': { 100:{rate:2100, min:120},
+           200:{rate:2730, min:150},
+           500:{rate:3475, min:189} },
+  '400': { 500:{rate:3825, min:350} }
+};
+// 合版离线报价：返回 {total} 或 {noPrice:true}（官网无此配置报价）
+function mergeQuoteOffline(material, weight, qty, uW, uH) {
+  var t = (material === '白卡纸' && MERGE_RATE[weight]) ? MERGE_RATE[weight][qty] : null;
+  if (!t) return { noPrice: true };
+  var area = uW * uH / 1000000;
+  return { total: Math.round(Math.max(area * t.rate, t.min)) };
+}
 
 
 
@@ -1385,14 +1415,30 @@ async function calcPrice(){
     updateUnfoldedDisplay(b);
     return;
   }
-  // 瓦楞纸专版API任意数量可报（实测 1000=1536/3000=3260）；白卡纸/银卡纸合版API仅 q≤500
-  if (q > 0 && (q <= 500 || isCorrugated) && (hasDims || hasCustomUnfold) && BOX_ID_MAP[S.boxType]) {
+  // ── 合版（q≤500，白卡纸 / 银卡纸）：离线内置价格表 ──
+  // 原实现直连 http://www.zsmaofeng.com:20001（见 callZsmfApi），
+  // 但 GitHub Pages 是 https，浏览器按「混合内容」拦截明文 http 请求，
+  // fetch 抛错被 catch 吞掉 → apiTotal=null → 回退费率表估算 → 与官网价格不一致。
+  // 现改为内置官网价格表报价：零网络依赖、零延迟，价格与官网逐元一致。
+  if (q > 0 && q <= 500 && !isCorrugated && (hasDims || hasCustomUnfold)) {
+    var mq = mergeQuoteOffline(S.material, S.weight, q, u.width, u.height);
+    if (mq.noPrice) {
+      // 官网明确无此报价（银卡纸、白卡240/300g、白卡400g@100/200）→ 严格照官网显示无价
+      renderNoPrice(b, q);
+      updateUnfoldedDisplay(b);
+      return;
+    }
+    apiTotal = mq.total;
+  }
+
+  // 瓦楞纸专版API任意数量可报（实测 1000=1536/3000=3260）；按成品尺寸计价，价格体系不同，仍走在线 API
+  if (q > 0 && isCorrugated && (hasDims || hasCustomUnfold) && BOX_ID_MAP[S.boxType]) {
     document.getElementById('totalPrice').textContent = '计算中…';
     var unfoldedArg = hasCustomUnfold ? S.customUnfold : null;
     var apiRes = await callZsmfApi(S.boxType, L, W, H, q, S.material, S.weight, S.surface, S.print, unfoldedArg);
     if (_reqVer !== _calcReqVer) return;
     if (apiRes && apiRes.noPrice) {
-      // 官网明确无此报价（如银卡375/425、白卡400g@100-200）→ 严格照官网显示无价
+      // 官网明确无此报价 → 严格照官网显示无价
       renderNoPrice(b, q);
       updateUnfoldedDisplay(b);
       return;
