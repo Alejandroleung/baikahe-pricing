@@ -924,7 +924,7 @@ function getRateFromQty(qty, material, weight, area, boxType) {
 // q≥1000数据来源：35x23x114mm 实测总价
 var smallBoxBase = {
   white:         {pts:[[100,120],[200,150],[500,189],[1000,160],[2000,260],[3000,350],[5000,550]]},
-  '银卡纸_375':  {pts:[[500,380],[1000,350],[2000,560],[3000,750],[5000,950]]},
+  '银卡纸_375':  {pts:[[500,380],[1000,350],[2000,510],[2500,600],[3000,600],[4000,650],[5000,750]]},
   '银卡纸_425':  {pts:[[500,530],[1000,500],[2000,680],[3000,888],[5000,1280]]}
 };
 
@@ -1401,6 +1401,7 @@ async function calcPrice(){
   // ── 合版总价：俊茂丰API q≤500 / 拼一拼盒API q≥1000 / 费率表 q>500 ──
   var _reqVer = ++_calcReqVer;
   var apiTotal = null;
+  var apiFromPpyh = false;   // apiTotal 是否为拼一拼盒实时价（是则不再叠加本站小盒地板价）
   // API 报价可仅凭展开尺寸驱动（quickCompute 按展开尺寸计价，成品尺寸传 0 不影响价格）
   var hasCustomUnfold = !!(S.customUnfold && S.customUnfold.width > 0 && S.customUnfold.height > 0);
   var hasDims = L > 0 && W > 0 && H > 0;
@@ -1458,6 +1459,7 @@ async function calcPrice(){
     if (_pphCachedApi && _pphCachedApi.key === ppyhKey) {
       // 命中缓存：直接用上次 API 成功报价，跳过慢请求
       apiTotal = _pphCachedApi.amount;
+      apiFromPpyh = true;   // 真·拼一拼盒现价，不再套 minPrice
     } else {
       // 先用离线模型立即出价（零延迟，97 样本零误差，与拼一拼盒一致）
       var offModel = ppyhModelPrice(S.material, S.weight, q, ppyhW, ppyhH, S.spotColor);
@@ -1481,8 +1483,10 @@ async function calcPrice(){
   var total;
 
   if (apiTotal !== null) {
-    // ── 俊茂丰 API 实时报价（q≤500）──
-    total = Math.max(apiTotal, minPrice) + ap + ax + sv;
+    // ── 实时 API 报价（q≤500 俊茂丰合版 / q≥1000 拼一拼盒）──
+    // 拼一拼盒现价已含对方自己的"小盒最低价"规则；再套本站 minPrice 会把真价顶高
+    // （实例：3000个 银卡375 161×241，API ¥600 被旧表 ¥750 顶掉，比小程序高 25%）
+    total = (apiFromPpyh ? apiTotal : Math.max(apiTotal, minPrice)) + ap + ax + sv;
   } else {
     // ── 费率表（API不可用或q不在直达范围）──
     var rate = getRateFromQty(q, S.material, S.weight, area, S.boxType);
