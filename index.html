@@ -35,15 +35,24 @@ body {
 /* ---------- Aerial 动态背景：滚动全景画布 ---------- */
 #bg {
   backface-visibility: hidden;
-  background: #140d0a url("src/assets/mecha.jpg") center top;
-  background-repeat: no-repeat;
-  background-size: cover;
+  /* 底层：同图拉伸铺满，为两侧补色 */
+  background: #140d0a url("src/assets/mecha.jpg") center / 100% 100% no-repeat;
   height: 100%;
   left: 0;
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 0;
+}
+
+/* 上层：机甲按视口高度完整显示，左右羽化融入底层 */
+#bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("src/assets/mecha.jpg") center top / auto 100% no-repeat;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 15%, #000 85%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 15%, #000 85%, transparent 100%);
 }
 
 }
