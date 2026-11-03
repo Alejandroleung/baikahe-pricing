@@ -1,286 +1,719 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>白卡盒算价系统 · Glassmorphism</title>
+  <title>白卡盒算价系统 · Aerial</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --primary: #2563EB;
-      --primary-light: #DBEAFE;
-      --primary-glow: rgba(37,99,235,0.12);
-      --accent: #F97316;
-      --accent-light: #FB923C;
-      --bg: #F0F5FF;
-      --bg-secondary: #E8F0FE;
-      --card-bg: rgba(255,255,255,0.65);
-      --card-border: rgba(255,255,255,0.4);
-      --card-hover: rgba(255,255,255,0.8);
-      --text: #1E293B;
-      --text2: #64748B;
-      --text3: #94A3B8;
-      --border: rgba(37,99,235,0.12);
-      --shadow: 0 4px 16px rgba(37,99,235,0.06);
-      --shadow-lg: 0 20px 60px rgba(37,99,235,0.08), 0 8px 20px rgba(37,99,235,0.04);
-      --radius: 16px;
-      --radius-sm: 10px;
-    }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(135deg, #F0F5FF 0%, #EDF2FA 30%, #F5F0FF 70%, #FFF0F5 100%);
-      color: var(--text);
-      line-height: 1.6;
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-    #particleCanvas { display: none; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-    .anim-fade { animation: fadeIn 0.5s ease both; }
-    .anim-fade-up { animation: fadeInUp 0.5s ease both; }
-    .anim-fade-up:nth-child(1) { animation-delay: 0.04s; }
-    .anim-fade-up:nth-child(2) { animation-delay: 0.08s; }
-    .anim-fade-up:nth-child(3) { animation-delay: 0.12s; }
-    .anim-fade-up:nth-child(4) { animation-delay: 0.16s; }
-    .anim-fade-up:nth-child(5) { animation-delay: 0.20s; }
-    .anim-fade-up:nth-child(6) { animation-delay: 0.24s; }
-    .anim-fade-up:nth-child(7) { animation-delay: 0.28s; }
-    .anim-fade-up:nth-child(8) { animation-delay: 0.32s; }
-    .anim-fade-up:nth-child(9) { animation-delay: 0.36s; }
-    .anim-fade-up:nth-child(10){ animation-delay: 0.40s; }
-    .anim-fade-up:nth-child(11){ animation-delay: 0.44s; }
-    .anim-fade-up:nth-child(12){ animation-delay: 0.48s; }
-    .header {
-      background: rgba(255,255,255,0.5);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.6);
-      padding: 28px 0 20px; text-align: center;
-      position: sticky; top: 0; z-index: 100;
-    }
-    .header .brand-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
-    .header .logo { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; color: var(--primary); }
-    .header h1 { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
-    .header p { font-size: 14px; color: var(--text2); margin-top: 2px; }
-    .header .badge {
-      display: inline-block; background: rgba(249,115,22,0.08);
-      border: 1px solid rgba(249,115,22,0.15);
-      padding: 3px 14px; border-radius: 20px; font-size: 12px; color: var(--accent);
-      margin-top: 6px; font-weight: 500;
-    }
-    .container { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
-    .section-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--text); padding-left: 12px; border-left: 3px solid var(--primary); }
-    .box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 28px; }
-    .box-card {
-      background: var(--card-bg); backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border); border-radius: var(--radius);
-      padding: 14px 8px; text-align: center; cursor: pointer;
-      transition: all 0.3s; box-shadow: var(--shadow);
-    }
-    .box-card:hover { background: var(--card-hover); transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: rgba(255,255,255,0.6); }
-    .box-card.active { background: rgba(37,99,235,0.08); border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
-    .box-card.active::after {
-      content: "\2713"; position: absolute; top: 6px; right: 6px;
-      background: var(--primary); color: #fff; width: 20px; height: 20px;
-      border-radius: 50%; font-size: 11px; display: flex;
-      align-items: center; justify-content: center; font-weight: 700;
-    }
-    .box-icon { width: 56px; height: 56px; margin: 0 auto 6px; }
-    .box-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 4px; }
-    .box-card { position: relative; }
-    .box-card h3 { font-size: 13px; font-weight: 600; color: var(--text2); }
-    .box-card.active h3 { color: var(--primary); }
-    .preview-tooltip {
-      position: fixed; z-index: 9999; pointer-events: none;
-      width: 360px; height: 360px; border-radius: 16px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0;
-      transform: scale(0.85); transition: opacity 0.2s, transform 0.25s;
-      overflow: hidden; border: 2px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(4px); background: rgba(0,0,0,0.5);
-    }
-    .preview-tooltip.show { opacity: 1; transform: scale(1); }
-    .preview-tooltip img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .form-section {
-      background: var(--card-bg); backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: var(--radius); box-shadow: var(--shadow);
-      padding: 22px; margin-bottom: 18px; border: 1px solid var(--card-border);
-    }
-    .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: flex-start; }
-    .form-row:last-child { margin-bottom: 0; }
-    .form-label { font-size: 13px; font-weight: 600; min-width: 76px; padding-top: 8px; color: var(--text2); }
-    .dim-group { display: flex; align-items: center; gap: 6px; flex: 1; }
-    .dim-group input {
-      width: 76px; padding: 9px 12px; background: rgba(255,255,255,0.5);
-      border: 1px solid rgba(37,99,235,0.1); border-radius: var(--radius-sm); font-size: 14px;
-      text-align: center; color: var(--text); transition: all 0.2s;
-      font-family: 'Inter', sans-serif; backdrop-filter: blur(4px);
-    }
-    .dim-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); background: rgba(255,255,255,0.8); }
-    .dim-group span { font-size: 13px; color: var(--text3); }
-    .qty-input {
-      width: 100px; padding: 9px 0; background: rgba(255,255,255,0.5);
-      border: none; font-size: 14px; color: var(--text); text-align: center;
-      font-family: 'Inter', sans-serif;
-    }
-    .qty-input:focus { outline: none; }
-    /* 隐藏浏览器原生步进器 */
-    .qty-stepper input[type="number"]::-webkit-inner-spin-button,
-    .qty-stepper input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    .qty-stepper input[type="number"] { -moz-appearance: textfield; }
-    /* 自定义步进按钮 */
-    .qty-stepper {
-      display: inline-flex; align-items: stretch;
-      border: 1px solid rgba(37,99,235,0.1); border-radius: var(--radius-sm);
-      overflow: hidden; background: rgba(255,255,255,0.5);
-      backdrop-filter: blur(4px);
-    }
-    .qty-stepper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); background: rgba(255,255,255,0.8); }
-    .step-btn {
-      background: transparent; border: none; padding: 0 14px;
-      font-size: 18px; font-weight: 500; color: var(--text2); cursor: pointer;
-      user-select: none; line-height: 1;
-    }
-    .step-btn:hover { background: rgba(37,99,235,0.06); color: var(--primary); }
-    .step-btn:active { background: rgba(37,99,235,0.12); }
-    .option-group { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
-    .option-item {
-      padding: 7px 14px; border: 1px solid rgba(37,99,235,0.08); border-radius: 8px;
-      font-size: 12px; cursor: pointer; transition: all 0.2s;
-      background: rgba(255,255,255,0.3); user-select: none; color: var(--text2); font-weight: 500; backdrop-filter: blur(4px);
-    }
-    .option-item:hover { border-color: rgba(37,99,235,0.3); color: var(--primary); background: rgba(255,255,255,0.5); }
-    .option-item.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
-    .option-item.disabled { opacity: 0.3; cursor: not-allowed; }
-    .check-group { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
-    .check-item {
-      display: flex; align-items: center; gap: 5px; padding: 7px 12px;
-      border: 1px solid rgba(37,99,235,0.08); border-radius: 8px; font-size: 12px;
-      cursor: pointer; transition: all 0.2s;
-      background: rgba(255,255,255,0.3); user-select: none; color: var(--text2); backdrop-filter: blur(4px);
-    }
-    .check-item:hover { border-color: rgba(37,99,235,0.3); background: rgba(255,255,255,0.5); }
-    .check-item.active { border-color: var(--primary); background: rgba(37,99,235,0.06); color: var(--primary); }
-    .check-item input[type="checkbox"] { accent-color: var(--primary); width: 14px; height: 14px; }
-    .unfolded-display {
-      margin-top: 6px; margin-bottom: 2px; padding: 8px 14px;
-      background: rgba(37,99,235,0.04); border: 1px solid rgba(37,99,235,0.08);
-      border-radius: var(--radius-sm); display: flex; align-items: center;
-      gap: 6px; flex-wrap: wrap; backdrop-filter: blur(4px);
-    }
-    .unfolded-display .unfolded-label { font-size: 13px; font-weight: 600; color: var(--text2); }
-    .unfolded-display .unfolded-value { font-size: 13px; color: var(--primary); font-weight: 500; }
-    .unfolded-display .unfolded-value strong { font-size: 15px; font-weight: 700; color: var(--text); }
-    .unfolded-display .unfolded-input {
-      width: 62px; padding: 4px 6px; border: 1px solid rgba(37,99,235,0.25); border-radius: 6px;
-      font-size: 13px; font-weight: 600; color: var(--text); text-align: center; outline: none;
-      background: #fff; -moz-appearance: textfield; appearance: textfield;
-    }
-    .unfolded-display .unfolded-input::-webkit-outer-spin-button,
-    .unfolded-display .unfolded-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .unfolded-display .unfolded-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.12); }
-    .unfolded-display .unfolded-input.custom { border-color: var(--accent,#f59e0b); background: rgba(245,158,11,0.06); }
-    .unfolded-display .unfolded-x { color: var(--text3); font-weight: 600; }
-    .unfolded-display .unfolded-unit { font-size: 12px; color: var(--text3); }
-    .unfolded-display .unfolded-reset {
-      padding: 3px 10px; border: 1px solid rgba(37,99,235,0.25); border-radius: 6px;
-      font-size: 12px; font-weight: 600; color: var(--primary); background: #fff; cursor: pointer;
-      transition: all 0.2s;
-    }
-    .unfolded-display .unfolded-reset:hover { background: rgba(37,99,235,0.08); border-color: var(--primary); }
-    .unfolded-display .unfolded-tip { font-size: 11px; color: var(--text3); }
-    .address-section { margin-bottom: 10px !important; }
-    .address-section select { color-scheme: light; }
-    .address-section select option { background: #fff; color: var(--text); }
-    .freight-item .val { font-size: 14px !important; }
-    .freight-item .lbl { font-size: 11px !important; }
-    .price-result {
-      background: rgba(37,99,235,0.06); backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: var(--radius); padding: 26px; color: var(--text);
-      text-align: center; margin-bottom: 22px;
-      border: 1px solid rgba(255,255,255,0.5); box-shadow: var(--shadow-lg);
-    }
-    .price-result .label { font-size: 13px; color: var(--text3); margin-bottom: 6px; letter-spacing: 0.3px; }
-    .price-result .price { font-size: 42px; font-weight: 800; line-height: 1.2; color: var(--primary); letter-spacing: -1px; }
-    .price-result .price small { font-size: 18px; font-weight: 400; color: var(--text3); }
-    .price-result .unit { font-size: 13px; color: var(--text3); margin-top: 6px; }
-    .price-result .breakdown { display: flex; justify-content: center; gap: 24px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(37,99,235,0.06); }
-    .price-result .breakdown-item { text-align: center; }
-    .price-result .breakdown-item .val { font-size: 16px; font-weight: 700; color: var(--accent); }
-    .price-result .breakdown-item .lbl { font-size: 11px; color: var(--text3); }
-    .price-result .weight-info { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(37,99,235,0.04); font-size: 12px; color: var(--text3); }
-      .price-result .weight-info strong { color: var(--primary); font-weight: 600; }
-      .price-result .weight-info .wi-dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: var(--text3); }
-      /* ── 报价倍率 ── */
-      .multiplier-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(37,99,235,0.06); }
-      .multiplier-section .ms-label { font-size: 12px; font-weight: 600; color: var(--text3); margin-bottom: 8px; letter-spacing: 0.3px; text-align: center; }
-      .multiplier-presets { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; justify-content: center; }
-      .multiplier-presets .mp-btn {
-        padding: 5px 14px; border: 1px solid rgba(37,99,235,0.1); border-radius: 8px;
-        font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-        background: rgba(255,255,255,0.4); user-select: none; color: var(--text2); backdrop-filter: blur(4px);
-        font-family: 'Inter', sans-serif;
-      }
-      .multiplier-presets .mp-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(37,99,235,0.04); }
-      .multiplier-presets .mp-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
-      .multiplier-custom { display: flex; align-items: center; gap: 8px; justify-content: center; }
-      .multiplier-custom label { font-size: 12px; color: var(--text3); }
-      .multiplier-custom input {
-        width: 72px; padding: 5px 8px; background: rgba(255,255,255,0.5);
-        border: 1px solid rgba(37,99,235,0.1); border-radius: 6px; font-size: 14px;
-        text-align: center; color: var(--text); transition: all 0.2s;
-        font-family: 'Inter', sans-serif; font-weight: 600;
-      }
-      .multiplier-custom input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
-      .quote-result { margin-top: 12px; padding-top: 14px; border-top: 1px solid rgba(37,99,235,0.08); }
-      .quote-result .qr-row { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
-      .quote-result .qr-item { text-align: center; }
-      .quote-result .qr-item .qr-val { font-size: 24px; font-weight: 800; color: var(--accent); line-height: 1.3; }
-      .quote-result .qr-item .qr-val.profit-rate { color: #22c55e; }
-      .quote-result .qr-item .qr-val.profit-rate.high { color: var(--accent); }
-      .quote-result .qr-item .qr-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
-      @media (max-width: 600px) {
-        .quote-result .qr-row { gap: 12px; }
-        .quote-result .qr-item .qr-val { font-size: 18px; }
-      }
-      .btn-submit {
-      display: inline-block; background: linear-gradient(135deg, var(--primary), #1D4ED8);
-      color: #fff; border: none; padding: 13px 40px; border-radius: var(--radius-sm);
-      font-size: 15px; font-weight: 600; cursor: pointer;
-      transition: all 0.25s; font-family: 'Inter', sans-serif;
-      box-shadow: 0 8px 24px rgba(37,99,235,0.2);
-    }
-    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.3); }
-    .btn-submit:active { transform: translateY(0); }
-    .footer { text-align: center; padding: 20px; color: var(--text3); font-size: 12px; border-top: 1px solid rgba(37,99,235,0.06); margin-top: 28px; }
-    @media (max-width: 600px) {
-      .header h1 { font-size: 18px; }
-      .header .logo { font-size: 18px; }
-      .box-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-      .box-card { padding: 8px 4px; }
-      .box-icon { width: 40px; height: 40px; }
-      .form-row { flex-direction: column; }
-      .price-result .price { font-size: 28px; }
-      .price-result .breakdown { flex-direction: column; gap: 8px; }
-    }
+/* ============================================================
+   白卡纸卡盒报价系统 · Aerial 风格重制
+   模板来源：HTML5 UP "Aerial" (html5up.net) · CCA 3.0 授权
+   ============================================================ */
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;900&display=swap");
+
+html { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: inherit; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: #348cb2;
+  color: #fff;
+  font-family: 'Source Sans Pro', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  font-size: 15pt;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.75em;
+  overflow-x: hidden;
+}
+
+::selection { background: rgba(255,255,255,0.85); color: #348cb2; }
+
+/* ---------- Aerial 动态背景：滚动全景画布 ---------- */
+#bg {
+  backface-visibility: hidden;
+  background: #140d0a url("src/assets/mecha.jpg") center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 0;
+}
+
+}
+
+@keyframes bg {
+  0%   { transform: translate3d(0,0,0); }
+  100% { transform: translate3d(-2250px,0,0); }
+}
+
+/* ---------- Aerial 暗角纹理叠层 ---------- */
+#overlay {
+  /* 顶部渐变压暗（保证抬头可读）+ 径向暗角聚焦中心 */
+  background:
+    linear-gradient(rgba(16,9,6,0.62), rgba(16,9,6,0.28) 22%, transparent 36%),
+    radial-gradient(115% 90% at 50% 30%, transparent 55%, rgba(10,5,2,0.55) 100%);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 原站自带粒子画布（保留功能，压暗融入风格） */
+#particleCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+/* ---------- 布局容器 ---------- */
+.header, .container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.container { padding-bottom: 30px; }
+
+/* ---------- 抬头（Aerial 居中式） ---------- */
+.header {
+  text-align: center;
+  padding-top: 48px;
+  padding-bottom: 34px;
+}
+
+/* 主标题：ALEJANDRO（大 · 粗 · 居中） */
+.logo {
+  display: block;
+  font-size: 3.6em;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em; /* 平衡末字符字距，保证视觉居中 */
+  line-height: 1.1em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 14px rgba(10,4,2,0.65), 0 1px 3px rgba(10,4,2,0.5);
+  margin: 0;
+}
+
+.brand-sub {
+  display: block;
+  font-size: 1.05em;
+  font-weight: 300;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  opacity: 0.92;
+  margin-top: 0.5em;
+  text-shadow: 0 1px 10px rgba(10,4,2,0.6);
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 16px 0 10px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.72em;
+  letter-spacing: 0.22em;
+  opacity: 0.7;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 100px;
+  padding: 4px 16px 3px;
+  line-height: 1.6;
+}
+
+.header-sub {
+  font-size: 1.05em;
+  opacity: 0.88;
+  text-shadow: 0 1px 10px rgba(10,4,2,0.6);
+}
+
+/* ---------- 区块面板：半透明白框，透出滚动背景 ---------- */
+.form-section, .price-result, .multiplier-section {
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: 16px;
+  padding: 24px 26px 20px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* 所有面板垫半透明暖黑：文字清晰，同时保留背景透出 */
+.form-section, .price-result, .multiplier-section {
+  background:
+    linear-gradient(rgba(26,17,13,0.48), rgba(26,17,13,0.48)),
+    rgba(255,255,255,0.10);
+}
+  border-radius: 16px;
+  padding: 24px 26px 20px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.address-section { padding-bottom: 24px; }
+
+/* 区块标题：面板外，左竖线式 */
+.section-title {
+  font-size: 15px;
+  font-weight: 900;
+  margin: 0 0 14px;
+  padding-left: 12px;
+  border-left: 3px solid #fff;
+  line-height: 1.4em;
+  text-shadow: 0 1px 8px rgba(10,4,2,0.7), 0 1px 2px rgba(10,4,2,0.6);
+}
+
+/* ---------- 行式布局：左标签 + 右控件（原站排列） ---------- */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.form-row:last-child { margin-bottom: 0; }
+
+.form-label {
+  min-width: 76px;
+  padding-top: 0;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+/* 控件组跟随标签同行铺开 */
+.option-group, .check-group { flex: 1; }
+
+.lbl, .ms-label, .qr-lbl {
+  font-weight: 400;
+  opacity: 1;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- 盒型卡片 ---------- */
+.box-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.box-card {
+  background:
+    linear-gradient(rgba(26,17,13,0.42), rgba(26,17,13,0.42)),
+    rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: 16px;
+  padding: 18px 12px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease-in-out, background 0.2s ease-in-out, transform 0.2s ease-in-out;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.box-card:hover {
+  border-color: rgba(255,255,255,0.7);
+  transform: translateY(-2px);
+}
+
+.box-card.active {
+  background: rgba(255,255,255,0.92);
+  border-color: #fff;
+  color: #2b6f94;
+}
+.box-card.active .box-icon { filter: none; }
+
+.box-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.92);
+}
+
+.box-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.box-card h3 {
+  font-size: 1em;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+.box-card.active h3 { font-weight: 900; }
+
+/* ---------- 参数表单 ---------- */
+.form-row {
+  margin-bottom: 16px;
+}
+
+.form-row input[type="number"],
+.dim-group input[type="number"],
+.qty-input {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 10px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  padding: 9px 12px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s ease-in-out, background 0.2s ease-in-out;
+}
+
+.form-row input[type="number"]:focus,
+.dim-group input[type="number"]:focus,
+.qty-input:focus {
+  border-color: #fff;
+  background: rgba(255,255,255,0.14);
+}
+
+input::placeholder { color: rgba(255,255,255,0.45); }
+
+/* 下拉框 */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255,255,255,0.08) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.8)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 10px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95em;
+  font-weight: 300;
+  padding: 8px 30px 8px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+select:focus { border-color: #fff; }
+select option { background: #1d4a66; color: #fff; font-weight: 300; }
+select#spotColorCount {
+  padding: 3px 26px 3px 10px !important;
+  border: 1px solid rgba(255,255,255,0.35) !important;
+  border-radius: 10px !important;
+  background-color: rgba(255,255,255,0.08) !important;
+  color: #fff !important;
+  font-size: 0.85em !important;
+}
+.ms-label { margin-right: 8px; }
+
+/* 尺寸组 */
+.dim-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 1;
+  min-width: 260px;
+}
+.dim-group input[type="number"] { flex: 1; min-width: 0; }
+.dim-group span { opacity: 0.6; font-size: 0.9em; flex-shrink: 0; }
+
+/* 展开尺寸条 */
+.unfolded-display {
+  background: rgba(255,255,255,0.08);
+  border: 1px dashed rgba(255,255,255,0.35);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.95em;
+  opacity: 0.9;
+  margin: 10px 0 16px;
+}
+.unfolded-display input.unfolded-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.4);
+  border-radius: 0;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1em;
+  width: 72px;
+  padding: 2px 4px;
+  outline: none;
+}
+.unfolded-display input.unfolded-input:focus { border-bottom-color: #fff; }
+.unfolded-reset {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 100px;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8em;
+  padding: 2px 12px;
+  margin-left: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+.unfolded-reset:hover { background: #fff; color: #2b6f94; }
+
+/* 数量步进器 */
+.qty-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.qty-input { width: 110px; text-align: center; }
+.step-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-family: inherit;
+  width: 42px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.step-btn:hover { background: #fff; color: #2b6f94; border-color: #fff; }
+
+/* ---------- 选项芯片 ---------- */
+.option-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.option-item {
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 100px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  padding: 6px 18px 5px;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  user-select: none;
+}
+
+.option-item:hover { border-color: #fff; }
+
+.option-item.active {
+  background: #fff;
+  border-color: #fff;
+  color: #2b6f94;
+  font-weight: 900;
+}
+
+.option-item.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* ---------- 表面处理复选 ---------- */
+.check-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.check-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.check-item input[type="checkbox"]:checked {
+  background: #fff;
+  border-color: #fff;
+}
+
+.check-item input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1.5px;
+  width: 4px;
+  height: 9px;
+  border: solid #2b6f94;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ---------- 倍率 ---------- */
+.multiplier-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.mp-btn {
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 100px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 6px 18px 5px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.mp-btn:hover { border-color: #fff; }
+
+.mp-btn.active {
+  background: #fff;
+  border-color: #fff;
+  color: #2b6f94;
+  font-weight: 900;
+}
+
+.multiplier-custom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.multiplier-custom input[type="number"] {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 10px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1em;
+  padding: 8px 12px;
+  width: 110px;
+  outline: none;
+}
+.multiplier-custom input[type="number"]:focus { border-color: #fff; }
+
+/* ---------- 报价结果 ---------- */
+.price-result { text-align: center; }
+
+.price-result .price {
+  font-size: 3em;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1.1em;
+  margin: 6px 0 2px;
+  text-shadow: 0 2px 14px rgba(10,4,2,0.65), 0 1px 3px rgba(10,4,2,0.5);
+}
+
+.price-result .price-unit { opacity: 0.75; font-size: 1em; }
+
+.breakdown {
+  margin-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding-top: 14px;
+  text-align: left;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.92em;
+  opacity: 0.85;
+  padding: 3px 0;
+}
+
+.qr-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.qr-item { text-align: center; }
+
+.qr-val {
+  font-size: 1.5em;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.qr-val.profit-rate { opacity: 0.95; }
+
+/* ---------- 提交按钮（Aerial 极简白边） ---------- */
+.btn-submit {
+  position: relative;
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 100px;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1.25em;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.4em;
+  padding: 15px 0 13px;
+  transition: background 0.25s ease-in-out, color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+  margin: 4px 0 30px;
+}
+
+.btn-submit:hover {
+  background: #fff;
+  color: #2b6f94;
+  box-shadow: 0 4px 28px rgba(255,255,255,0.35);
+}
+
+.btn-submit:active { transform: translateY(1px); }
+
+/* ---------- 提示气泡 ---------- */
+.preview-tooltip {
+  display: none;
+  position: fixed;
+  z-index: 50;
+  background: rgba(255,255,255,0.96);
+  border-radius: 12px;
+  color: #2b6f94;
+  font-size: 0.85em;
+  font-weight: 300;
+  padding: 8px;
+  box-shadow: 0 4px 22px rgba(10,40,60,0.4);
+}
+
+.preview-tooltip.show { display: block; }
+
+.preview-tooltip img {
+  display: block;
+  max-width: 240px;
+  max-height: 240px;
+  border-radius: 8px;
+}
+
+/* ---------- 页脚 ---------- */
+.footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 10px 20px 34px;
+  font-size: 0.8em;
+  opacity: 0.55;
+}
+
+/* ---------- 入场动画（Aerial 式上浮淡入） ---------- */
+.anim-fade { animation: fadeIn 0.8s ease-out both; }
+.anim-fade-up { animation: fadeUp 0.8s ease-out both; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate3d(0,1em,0); }
+  to   { opacity: 1; transform: translate3d(0,0,0); }
+}
+
+/* ---------- 响应式 ---------- */
+@media screen and (max-width: 736px) {
+  body { font-size: 13pt; }
+  .header { padding-top: 34px; }
+  .logo { font-size: 2.4em; letter-spacing: 0.12em; text-indent: 0.12em; }
+  .header-bar { gap: 10px; }
+  .form-section, .price-result, .multiplier-section { padding: 20px 18px 18px; }
+  .price-result .price { font-size: 2.4em; }
+  .check-group { grid-template-columns: 1fr; }
+}
+
+/* ---------- 无障碍：减少动态（背景滚动由 JS 驱动，保持移动） ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade, .anim-fade-up { animation: none !important; opacity: 1; }
+  * { transition: none !important; }
+}
+
+/* ---------- 控件尺寸：紧凑但数字易读 ---------- */
+.form-section, .address-section, .multiplier-section, .price-result { font-size: 14px; }
+
+.form-row { gap: 8px; margin-bottom: 12px; }
+
+.form-row input[type="number"],
+.qty-input,
+.multiplier-custom input[type="number"] {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 6px 12px;
+}
+
+.dim-group { gap: 6px; min-width: 0; flex: 0 1 auto; }
+.dim-group input[type="number"] { flex: 0 0 96px; width: 96px; }
+.dim-group span { font-size: 13px; }
+
+.unfolded-display { font-size: 14px; padding: 6px 12px; margin: 0 0 12px; }
+.unfolded-display input.unfolded-input { font-size: 15px; width: 74px; }
+.unfolded-reset { font-size: 12px; padding: 1px 10px; }
+
+.qty-input { width: 110px; height: 34px; }
+.step-btn { width: 34px; height: 34px; font-size: 15px; }
+
+.option-item, .mp-btn { font-size: 14px; padding: 6px 15px; }
+.check-item { font-size: 13px; gap: 6px; }
+.check-item input[type="checkbox"] { width: 15px; height: 15px; }
+.check-item input[type="checkbox"]:checked::after { left: 4.5px; top: 1px; width: 3px; height: 8px; }
+
+select { font-size: 14px; padding: 6px 28px 6px 12px; }
+select#spotColorCount { font-size: 14px !important; }
+
+.lbl, .ms-label, .qr-lbl { font-size: 13px; }
+.breakdown-item { font-size: 13px; }
+.multiplier-custom input[type="number"] { width: 100px; }
+
   </style>
 </head>
 <body>
+<div id="bg" aria-hidden="true"></div>
+<div id="overlay" aria-hidden="true"></div>
 <canvas id="particleCanvas"></canvas>
 <div class="header">
-  <div class="brand-wrap">
-    <div class="logo">Alejandro</div>
+  <h1 class="logo">Alejandro</h1>
+  <div class="brand-sub">白卡盒算价系统</div>
+  <div class="header-bar">
+    <div class="badge">合版印刷 · 价格更优 · 交期更快</div>
   </div>
-  <h1>白卡纸卡盒报价系统</h1>
-  <p>专业卡纸盒合版印刷报价 · 支持多种盒型 · 即时出价</p>
-  <div class="badge">合版印刷 · 价格更优 · 交期更快</div>
+  <div class="header-title">
+    <p class="header-sub">专业卡纸盒合版印刷报价 · 支持多种盒型 · 即时出价</p>
+  </div>
 </div>
 <div class="container">
   <div class="section-title">① 选择盒型</div>
@@ -1751,5 +2184,8 @@ calcPrice = function() {
 renderBoxCards();setupOG('materialGroup','material');setupOG('weightGroup','weight');setupOG('surfaceGroup','surface');setupOG('printGroup','print');setupCG();setupIn();setupMultiplier();syncOptions();initAddress();calcPrice();
 </script>
 <div class="preview-tooltip" id="previewTooltip"><img id="previewImg" src="" alt="预览"></div>
+<script>
+/* Aerial 全景背景滚动：rAF 驱动，不受 prefers-reduced-motion 影响 */
+</script>
 </body>
 </html>
